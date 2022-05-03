@@ -1,0 +1,26 @@
+package com.hanghae99.onit_be.controller;
+
+import com.hanghae99.onit_be.dto.ProfileResDto;
+import com.hanghae99.onit_be.security.UserDetailsImpl;
+import com.hanghae99.onit_be.service.MyPageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequiredArgsConstructor
+public class MyPageController {
+
+    private final MyPageService mypageService;
+
+    @PutMapping("/member/profile")
+    public ResponseEntity<ProfileResDto> updateImg (@RequestParam("profileImg") MultipartFile multipartFile,
+                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ProfileResDto profileResDto = mypageService.updateProfile(multipartFile, userDetails);
+        return ResponseEntity.ok().body(profileResDto);
+    }
+}
