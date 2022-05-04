@@ -27,7 +27,7 @@ public class HeaderTokenExtractor {
         }
 
         /*
-         * - Token 값이 존재하는 경우 -
+         * - Token 값이 존재하는 경우
          * (bearer ) 부분만 제거 후 token 값 반환
          */
         return header.substring(
