@@ -1,10 +1,10 @@
 package com.hanghae99.onit_be.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hanghae99.onit_be.dto.IdCheckResDto;
-import com.hanghae99.onit_be.dto.KakaoUserInfoResDto;
-import com.hanghae99.onit_be.dto.LoginReqDto;
-import com.hanghae99.onit_be.dto.SignupReqDto;
+import com.hanghae99.onit_be.dto.response.IdCheckResDto;
+import com.hanghae99.onit_be.dto.response.KakaoUserInfoResDto;
+import com.hanghae99.onit_be.dto.request.LoginReqDto;
+import com.hanghae99.onit_be.dto.request.SignupReqDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.service.KakaoUserService;
 import com.hanghae99.onit_be.service.UserService;

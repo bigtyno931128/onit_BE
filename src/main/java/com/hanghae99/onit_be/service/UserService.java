@@ -1,8 +1,8 @@
 package com.hanghae99.onit_be.service;
 
-import com.hanghae99.onit_be.dto.IdCheckResDto;
-import com.hanghae99.onit_be.dto.LoginReqDto;
-import com.hanghae99.onit_be.dto.SignupReqDto;
+import com.hanghae99.onit_be.dto.response.IdCheckResDto;
+import com.hanghae99.onit_be.dto.request.LoginReqDto;
+import com.hanghae99.onit_be.dto.request.SignupReqDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.entity.UserRoleEnum;
 import com.hanghae99.onit_be.repository.UserRepository;
@@ -30,7 +30,7 @@ public class UserService {
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        String userNickname = requestDto.getUserNickname();
+        String nickname = requestDto.getNickname();
 
         // 중복 아이디 확인   == 프론트 분들과 얘기 필요 유효성검증 어떤 부분에서 할 것인지 /
         if (userRepository.existsByUsername(username)){
@@ -52,7 +52,7 @@ public class UserService {
         //사용자 ROLE 을 생성 하는 부분 추가 .
         UserRoleEnum role = UserRoleEnum.USER;
         //사용자 profileImg 기본 이미지 부여
-        User user = new User(username, password,userNickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png");
+        User user = new User(username, password,nickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png");
         return userRepository.save(user);
     }
 

@@ -18,7 +18,7 @@ public class User {
     private Long id;
 
     @Column
-    private String userNickname;
+    private String nickname;
 
     @Column
     private String password;
@@ -45,16 +45,16 @@ public class User {
 
     User(Builder builder) {
         this.username = builder.username;
-        this.userNickname = builder.nickname;
+        this.nickname = builder.nickname;
         this.password = builder.password;
         this.profileImg = builder.profileImg;
         this.kakaoId = builder.kakaoId;
     }
 
-    public User(String username, String password, String userNickname, UserRoleEnum role, String profileImg) {
+    public User(String username, String password, String nickname, UserRoleEnum role, String profileImg) {
         this.username = username;
         this.password = password;
-        this.userNickname = userNickname;
+        this.nickname = nickname;
         this.userRole = role;
         this.profileImg = profileImg;
     }
@@ -102,18 +102,18 @@ public class User {
     }
 
     public void updateNicknameAndProfileImg(String nickname, String imgUrl) {
-        this.userNickname = nickname;
+        this.nickname = nickname;
         this.profileImg = imgUrl;
     }
 
     public void updateNickname(String nickname) {
-        this.userNickname = nickname;
+        this.nickname = nickname;
     }
 
-    public User(String username, String password, String userNickname) {
+    public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
-        this.userNickname = userNickname;
+        this.nickname = nickname;
     }
 
 }

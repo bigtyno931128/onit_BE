@@ -1,6 +1,6 @@
 package com.hanghae99.onit_be.service;
 
-import com.hanghae99.onit_be.dto.ProfileResDto;
+import com.hanghae99.onit_be.dto.response.ProfileResDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.repository.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
