@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
+    private CorsFilter corsFilter;
 
     private ObjectMapper objectMapper;
     private UserRepository userRepository;
@@ -67,8 +69,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        http.httpBasic().disable();
         http.cors();
         http.csrf().disable();
+//        http.headers().frameOptions().sameOrigin();
 
         // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
         http
@@ -89,6 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
+//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -172,4 +177,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+    // Cors
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("http://localhost:3000");
+//        configuration.addAllowedOrigin("https://localhost:3000");
+//        configuration.addAllowedOrigin("https://imonint.shop/");
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addExposedHeader("*");
+//        configuration.setAllowedHeaders(Arrays.asList("authorization", "Authorization", "content-type"));
+//        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+//                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
+//        configuration.setAllowCredentials(true);
+//        configuration.validateAllowCredentials();
+//        configuration.setMaxAge(3600L);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }

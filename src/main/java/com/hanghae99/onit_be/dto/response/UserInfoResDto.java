@@ -1,4 +1,4 @@
-package com.hanghae99.onit_be.dto;
+package com.hanghae99.onit_be.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

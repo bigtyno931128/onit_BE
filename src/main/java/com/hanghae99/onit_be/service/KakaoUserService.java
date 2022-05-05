@@ -4,7 +4,7 @@ package com.hanghae99.onit_be.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae99.onit_be.dto.KakaoUserInfoResDto;
+import com.hanghae99.onit_be.dto.response.KakaoUserInfoResDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.repository.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;

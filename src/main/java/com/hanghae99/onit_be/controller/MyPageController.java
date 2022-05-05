@@ -1,6 +1,6 @@
 package com.hanghae99.onit_be.controller;
 
-import com.hanghae99.onit_be.dto.ProfileResDto;
+import com.hanghae99.onit_be.dto.response.ProfileResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.service.MyPageService;
 import lombok.RequiredArgsConstructor;
