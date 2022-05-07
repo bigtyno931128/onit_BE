@@ -39,6 +39,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum userRole;
 
+    @Column(name = "isNoticeAllowed", nullable = false)
+    private boolean isNoticeAllowed;
+
+    @Column
+    private String token;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Plan> planList = new ArrayList<>();
 
@@ -49,6 +55,7 @@ public class User {
         this.password = builder.password;
         this.profileImg = builder.profileImg;
         this.kakaoId = builder.kakaoId;
+        this.isNoticeAllowed = false;
     }
 
     public User(String username, String password, String nickname, UserRoleEnum role, String profileImg) {
