@@ -1,6 +1,7 @@
 package com.hanghae99.onit_be.controller;
 
 import com.hanghae99.onit_be.dto.response.ProfileResDto;
+import com.hanghae99.onit_be.dto.response.ResultDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ public class MyPageController {
     private final MyPageService mypageService;
 
     @PutMapping("/member/profile")
-    public ResponseEntity<ProfileResDto> updateImg (@RequestParam("profileImg") MultipartFile multipartFile,
-                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ProfileResDto profileResDto = mypageService.updateProfile(multipartFile, userDetails);
-        return ResponseEntity.ok().body(profileResDto);
+    public ResponseEntity<ResultDto<ProfileResDto>> updateImg (@RequestParam("profileImg") MultipartFile multipartFile,
+                                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        mypageService.updateProfile(multipartFile, userDetails);
+        return ResponseEntity.ok().body(new ResultDto<>("프로필 이미지 수정 성공!"));
     }
 }

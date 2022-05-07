@@ -12,4 +12,5 @@ public class UserInfoResDto {
     private String username;
     private String nickname;
     private String profileImg;
+
 }

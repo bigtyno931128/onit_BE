@@ -1,8 +1,11 @@
-package com.hanghae99.onit_be.security;
+package com.hanghae99.onit_be.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.security.FilterSkipMatcher;
+import com.hanghae99.onit_be.security.FormLoginFailHandler;
+import com.hanghae99.onit_be.security.FormLoginSuccessHandler;
 import com.hanghae99.onit_be.security.filter.FormLoginFilter;
 import com.hanghae99.onit_be.security.filter.JwtAuthFilter;
 import com.hanghae99.onit_be.security.jwt.HeaderTokenExtractor;
@@ -20,6 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
@@ -69,10 +73,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.httpBasic().disable();
+        http.httpBasic().disable();
         http.cors();
         http.csrf().disable();
-//        http.headers().frameOptions().sameOrigin();
+        http.headers().frameOptions().sameOrigin();
 
         // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
         http
@@ -81,7 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//토크 기반이라 세션 사용 해제.
-
         /*
          * 1.
          * UsernamePasswordAuthenticationFilter 이전에 FormLoginFilter, JwtFilter 를 등록합니다.
@@ -93,7 +96,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("https://imonint.shop/ws").permitAll()
+                .antMatchers("ws/**").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -157,6 +162,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/basic.js");
 
         skipPathList.add("GET,/favicon.ico");
+        skipPathList.add("POST,/api/idCheck");
+        skipPathList.add("GET,/map/**");
+        skipPathList.add("GET,/ws/**");
+        skipPathList.add("GET,/ws/**/**");
+//        skipPathList.add("GET, https://onit-a1529.firebaseapp.com/detail/1");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

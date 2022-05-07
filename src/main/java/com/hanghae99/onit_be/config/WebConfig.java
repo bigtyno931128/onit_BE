@@ -21,28 +21,41 @@ public class WebConfig implements WebMvcConfigurer {
     @Override public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://localhost:3000","https://imonint.shop/","https://localhost:3000","http://localhost:8080")
+                .allowedOrigins("http://localhost:3000","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://onit-a1529.firebaseapp.com/","https://imonint.shop/ws","https://imonint.shop/details/**","https://onit-a1529.firebaseapp.com/")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization")
-                .allowCredentials(true);
+                .exposedHeaders("Authorization");
     }
+
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOriginPattern("*");
-//        configuration.addAllowedMethod("*");
+//        final CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://imonint.shop/", "https://localhost:3000", "http://localhost:8080", "https://onit-a1529.firebaseapp.com/"));
 //        configuration.addAllowedHeader("*");
-//        configuration.addExposedHeader("*");
-//        configuration.setAllowedHeaders(Arrays.asList("authorization", "Authorization", "content-type"));
-//        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
-//                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
+//        configuration.addAllowedMethod("*");
 //        configuration.setAllowCredentials(true);
-//        configuration.validateAllowCredentials();
-//        configuration.setMaxAge(3600L);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//
+//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", configuration);
 //        return source;
 //    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("https://onit-a1529.firebaseapp.com/");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("*");
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "Authorization", "content-type"));
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
+        configuration.setAllowCredentials(true);
+        configuration.validateAllowCredentials();
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
 }

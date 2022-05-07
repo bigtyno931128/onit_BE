@@ -36,20 +36,22 @@ public class Plan extends TimeStamped implements Serializable {
     //일정 추가 시, 받아온 패널티를 저장해두기 위해 컬럼 추가
     private String penalty;
 
+    private String url;
 
-    public Plan(PlanReqDto planReqDto, User user) {
+
+    public Plan(PlanReqDto planReqDto, User user, String url) {
         this.planName = planReqDto.getPlanName();
         this.planDate = planReqDto.getPlanDate();
         this.user = user;
         this.location = planReqDto.getLocation();
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
+        this.url = url;
     }
 
-    public void update(PlanReqDto planReqDto, User user) {
+    public void update(PlanReqDto planReqDto, LocalDateTime editTime) {
         this.planName = planReqDto.getPlanName();
-        this.planDate = planReqDto.getPlanDate();
-        this.user = user;
+        this.planDate = editTime;
         this.location = planReqDto.getLocation();
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
