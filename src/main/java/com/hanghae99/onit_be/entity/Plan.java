@@ -57,7 +57,4 @@ public class Plan extends TimeStamped implements Serializable {
         this.penalty = planReqDto.getPenalty();
     }
 
-//    @OneToMany
-//    @JoinColumn
-//    private List<Guest> guests;
 }

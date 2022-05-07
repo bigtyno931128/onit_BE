@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.hanghae99.onit_be.utils.Date.compareDay;
+import static com.hanghae99.onit_be.utils.Valid.validWriter;
+
 @RequiredArgsConstructor
 @Service
 public class PlanService {
@@ -35,6 +38,11 @@ public class PlanService {
     // 일정 생성
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
+
+        //과거 이면 등록 x
+        if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())){
+            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
+        }
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회
         List<Plan> planList = planRepository.findAllByWriter(user.getNickname());
@@ -55,12 +63,7 @@ public class PlanService {
         planRepository.save(plan);
     }
 
-    // Day 비교
-    public static int compareDay (LocalDateTime date1, LocalDateTime date2) {
-        LocalDateTime dayDate1 = date1.truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime dayDate2 = date2.truncatedTo(ChronoUnit.DAYS);
-        return dayDate1.compareTo(dayDate2);
-    }
+
 
     // 일정 목록 조회
     public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user){
@@ -86,6 +89,10 @@ public class PlanService {
 
     // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
     private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user){
+
+        //
+        if(planList.isEmpty())
+
         for(Plan plan : planList){
             int status = 0;
             LocalDateTime planDate = plan.getPlanDate();
@@ -130,16 +137,20 @@ public class PlanService {
         Plan plan = planRepository.findById(planid).orElseThrow(IllegalArgumentException::new);
 
         LocalDateTime editTime = planRequestDto.getPlanDate();
-
+        System.out.println(!Objects.equals(plan.getWriter(), user.getNickname()));
+        System.out.println(user.getNickname());
+        System.out.println(plan.getWriter());
         if(!Objects.equals(plan.getWriter(), user.getNickname())){
+
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
         // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
         if(LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(editTime)){
-            throw new IllegalArgumentException("만남 일정을 이미 지난 날짜로 수정하는 것은 불가능합니다.");
+            throw new IllegalArgumentException("만남 일정을 이미지난 날짜로 수정하는 것은 불가능합니다.");
         }
-        plan.update(planRequestDto,editTime);
     }
+
+
 
     // 일정 삭제
     public void deletePlan(Long planId, User user){
@@ -147,7 +158,8 @@ public class PlanService {
         // 작성자만 삭제 가능
         if(Objects.equals(plan.getWriter(), user.getNickname())){
             planRepository.deleteById(planId);
-        } else { throw new IllegalArgumentException ("작성자만 삭제 가능합니다."); }
+        } else {
+            throw new IllegalArgumentException ("작성자만 삭제 가능합니다."); }
     }
 
 }
