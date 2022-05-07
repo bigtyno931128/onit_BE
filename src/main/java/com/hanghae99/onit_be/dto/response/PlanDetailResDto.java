@@ -16,6 +16,7 @@ public class PlanDetailResDto {
     private String writer;
     private Location locationDetail;
     private String penalty;
+    private String url;
 
     public PlanDetailResDto(Plan plan) {
         // planId는 url을 위해 필요?
@@ -25,5 +26,6 @@ public class PlanDetailResDto {
         this.writer = plan.getWriter();
         this.locationDetail = plan.getLocation();
         this.penalty = plan.getPenalty();
+        this.url = plan.getUrl();
     }
 }

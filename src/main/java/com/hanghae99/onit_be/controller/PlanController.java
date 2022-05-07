@@ -2,11 +2,13 @@ package com.hanghae99.onit_be.controller;
 
 import com.hanghae99.onit_be.aop.LogExecutionTime;
 import com.hanghae99.onit_be.dto.request.PlanReqDto;
+import com.hanghae99.onit_be.dto.response.ResultDto;
 import com.hanghae99.onit_be.dto.response.PlanDetailResDto;
 import com.hanghae99.onit_be.dto.response.PlanListResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.service.PlanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,40 +23,46 @@ public class PlanController {
     //모모에서는 url 도 저장 하던데 이걸 어떻게 쓰는건지 ?
     @LogExecutionTime
     @PostMapping("/member/plan")
-    public void createPlan (@RequestBody PlanReqDto planReqDto,
-                          @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResultDto> createPlan (@RequestBody PlanReqDto planReqDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         planService.createPlan(planReqDto, userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto<>("일정 등록 성공!"));
     }
 
     // 일정 목록 조회
     // 페이징 처리
     @LogExecutionTime
     @GetMapping("/member/list/{userId}/{pageno}")
-    public PlanListResDto getPlanList (@PathVariable Long userId,
-                                       @PathVariable int pageno) {
-        return new PlanListResDto(planService.getPlanList(userId, pageno-1));
+    public ResponseEntity<ResultDto<PlanListResDto>> getPlanList (@PathVariable Long userId,
+                                                                  @PathVariable int pageno,
+                                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        PlanListResDto planListResDto = new PlanListResDto(planService.getPlanList(userId, pageno-1, userDetails.getUser()));
+        return ResponseEntity.ok().body(new ResultDto<>("일정 목록 조회 성공!", planListResDto));
     }
 
     // 일정 상세 조회
     @LogExecutionTime
     @GetMapping("/member/list/{planId}")
-    public PlanDetailResDto getPlan (@PathVariable Long planId){
-        return planService.getPlan(planId);
+    public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable Long planId){
+        PlanDetailResDto planDetailResDto = planService.getPlan(planId);
+        return ResponseEntity.ok().body(new ResultDto<>("일정 상세 조회 성공!", planDetailResDto));
     }
 
     // 일정 수정
     @LogExecutionTime
     @PutMapping("/member/list/{planId}")
-    public void editPlan (@PathVariable Long planId, @RequestBody PlanReqDto planReqDto,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResultDto> editPlan (@PathVariable Long planId, @RequestBody PlanReqDto planReqDto,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.editPlan(planId, planReqDto, userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto("일정 수정 성공!"));
     }
 
     // 일정 삭제
     @LogExecutionTime
     @DeleteMapping("/member/list/{planId}")
-    public void deletePlan (@PathVariable Long planId) {
-        planService.deletePlan(planId);
+    public ResponseEntity<ResultDto> deletePlan (@PathVariable Long planId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        planService.deletePlan(planId, userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }
 }
 

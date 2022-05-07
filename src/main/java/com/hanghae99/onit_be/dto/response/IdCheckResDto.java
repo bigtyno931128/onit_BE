@@ -8,5 +8,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class IdCheckResDto {
-    boolean result;
+    private boolean result;
 }

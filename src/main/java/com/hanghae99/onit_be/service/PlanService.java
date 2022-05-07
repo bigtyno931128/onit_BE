@@ -8,6 +8,7 @@ import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.*;
@@ -21,6 +22,8 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -47,7 +50,8 @@ public class PlanService {
                     throw new IllegalArgumentException("오늘 일정은 이미 있습니다.");
             }
         }
-        Plan plan = new Plan(planReqDto, user);
+        String url = UUID.randomUUID().toString();
+        Plan plan = new Plan(planReqDto, user, url);
         planRepository.save(plan);
     }
 
@@ -59,12 +63,12 @@ public class PlanService {
     }
 
     // 일정 목록 조회
-    public Page<PlanResDto> getPlanList(Long user_id, int pageno){
+    public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user){
         List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
         Pageable pageable = getPageable(pageno);
         List<PlanResDto> planResDtoList = new ArrayList<>();
         // 일정 시간 비교 메서드
-        forPlanList(planList, planResDtoList);
+        forPlanList(planList, planResDtoList, user);
 
         int start = pageno * 5;
         int end = Math.min((start + 5), planList.size());
@@ -81,7 +85,7 @@ public class PlanService {
     }
 
     // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
-    private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList){
+    private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user){
         for(Plan plan : planList){
             int status = 0;
             LocalDateTime planDate = plan.getPlanDate();
@@ -101,8 +105,13 @@ public class PlanService {
             Long planId = plan.getId();
             String planName = plan.getPlanName();
             Location locationDetail = plan.getLocation();
-
-            PlanResDto planResDto = new PlanResDto(planId,planName,planDate,locationDetail,status);
+            // 작성자 판별
+            boolean result = true;
+            if(!Objects.equals(plan.getWriter(), user.getNickname())){
+                result = false;
+            }
+            String url = plan.getUrl();
+            PlanResDto planResDto = new PlanResDto(planId,planName,planDate,locationDetail,status,result,url);
             planResDtoList.add(planResDto);
         }
     }
@@ -113,17 +122,32 @@ public class PlanService {
         return new PlanDetailResDto(plan);
     }
 
-    // 일정 수정
-    // 일정 수정시에도 이중 약속에 대한 유효처리가 필요하지 않나 싶네요.
+    //일정 수정.
+    //.작성자만 수정가능 , 약속 날짜는 과거 x ,
     @Transactional
-    public void editPlan(Long planId, PlanReqDto planReqDto, User user) {
-        Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
-        plan.update(planReqDto, user);
+    //@CachePut(value = CacheKey.PLAN, key ="#userDetails.user.id")
+    public void editPlan(Long planid, PlanReqDto planRequestDto, User user) {
+        Plan plan = planRepository.findById(planid).orElseThrow(IllegalArgumentException::new);
+
+        LocalDateTime editTime = planRequestDto.getPlanDate();
+
+        if(!Objects.equals(plan.getWriter(), user.getNickname())){
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
+        // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
+        if(LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(editTime)){
+            throw new IllegalArgumentException("만남 일정을 이미 지난 날짜로 수정하는 것은 불가능합니다.");
+        }
+        plan.update(planRequestDto,editTime);
     }
 
     // 일정 삭제
-    public void deletePlan(Long planId){
-        planRepository.deleteById(planId);
+    public void deletePlan(Long planId, User user){
+        Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
+        // 작성자만 삭제 가능
+        if(Objects.equals(plan.getWriter(), user.getNickname())){
+            planRepository.deleteById(planId);
+        } else { throw new IllegalArgumentException ("작성자만 삭제 가능합니다."); }
     }
 
 }

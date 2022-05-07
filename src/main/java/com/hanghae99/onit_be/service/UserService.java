@@ -3,9 +3,11 @@ package com.hanghae99.onit_be.service;
 import com.hanghae99.onit_be.dto.response.IdCheckResDto;
 import com.hanghae99.onit_be.dto.request.LoginReqDto;
 import com.hanghae99.onit_be.dto.request.SignupReqDto;
+import com.hanghae99.onit_be.dto.response.UserInfoResDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.entity.UserRoleEnum;
 import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,12 +62,12 @@ public class UserService {
     public IdCheckResDto vaildId(LoginReqDto requestDto) {
         String username = requestDto.getUsername();
         IdCheckResDto idCheckDto = new IdCheckResDto();
-        idCheckDto.setResult(!userRepository.existsByUsername(username));
+        idCheckDto.setResult(userRepository.existsByUsername(username));
         return idCheckDto;
     }
 
-
-//    public UserInfoDto getUserInfo(UserDetailsImpl userDetails) {
-//        return UserInfoDto;
+    //회원 정보
+//    public UserInfoResDto getUserInfo(User user) {
+//        return new UserInfoResDto(user.getId(),user.getNickname());
 //    }
 }
