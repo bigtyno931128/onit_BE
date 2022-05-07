@@ -40,7 +40,7 @@ public class PlanService {
     public void createPlan(PlanReqDto planReqDto, User user) {
 
         //과거 이면 등록 x
-        if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())){
+        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())){
             throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
         }
         // 이중 약속 유효성 검사
