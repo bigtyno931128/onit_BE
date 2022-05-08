@@ -1,6 +1,7 @@
 package com.hanghae99.onit_be.dto.response;
 
 import com.hanghae99.onit_be.entity.Location;
+import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,15 @@ public class PlanDetailResDto {
         this.locationDetail = plan.getLocation();
         this.penalty = plan.getPenalty();
         this.url = plan.getUrl();
+    }
+
+    public PlanDetailResDto(Participant participant) {
+        this.planId = participant.getPlan().getId();
+        this.planName = participant.getPlan().getPlanName();
+        this.planDate = participant.getPlan().getPlanDate();
+        this.writer = participant.getPlan().getWriter();
+        this.locationDetail = participant.getPlan().getLocation();
+        this.penalty = participant.getPlan().getPenalty();
+
     }
 }

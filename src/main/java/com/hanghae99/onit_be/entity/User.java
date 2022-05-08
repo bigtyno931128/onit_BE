@@ -38,18 +38,19 @@ public class User {
     //수정 한 부분 . 일반 회원 가입 시에는  USER 로 ROLE 등록
     @Enumerated(EnumType.STRING)
     private UserRoleEnum userRole;
-
+    
+    //알림확인 여부
     @Column(name = "isNoticeAllowed", nullable = false)
     private boolean isNoticeAllowed;
-
+    //fcm 토큰
     @Column
     private String token;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Plan> planList = new ArrayList<>();
+    private List<Plan> planList = new ArrayList<>();
 
 
-    User(Builder builder) {
+    public User(Builder builder) {
         this.username = builder.username;
         this.nickname = builder.nickname;
         this.password = builder.password;
@@ -72,11 +73,24 @@ public class User {
         this.profileImg = imageUrl;
     }
 
+    public User(String token) {
+        this.token = token;
+    }
+
     // 이미지 수정 메서드
     public void update(Long id, String imageKey) {
         this.id = id;
         this.profileImg = imageKey;
     }
+
+    public void updateToken(String token) {
+        this.token = token;
+    }
+
+    public void updatePlanList(Participant participant) {
+        this.planList = (List<Plan>) participant;
+    }
+
 
     public static class Builder {
         private String username;
@@ -108,19 +122,18 @@ public class User {
         }
     }
 
-    public void updateNicknameAndProfileImg(String nickname, String imgUrl) {
-        this.nickname = nickname;
-        this.profileImg = imgUrl;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
+    }
+
+    public void setNoticeAllowedTrue() {
+        this.isNoticeAllowed = true;
+    }
+
+    public void setNoticeAllowedFalse() {
+        this.isNoticeAllowed = false;
     }
 
 }

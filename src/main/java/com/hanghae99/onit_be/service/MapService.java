@@ -14,7 +14,6 @@ public class MapService {
 
     private final PlanRepository planRepository;
 
-
     public MapResDto getPlanInfo(String url) {
         Plan plan = planRepository.findPlanByUrl(url).
                 orElseThrow(() -> new IllegalArgumentException("님이 찾는 일정 없음"));

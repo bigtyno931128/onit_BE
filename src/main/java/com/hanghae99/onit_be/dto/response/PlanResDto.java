@@ -29,4 +29,10 @@ public class PlanResDto implements Serializable {
     this.writer = result;
     this.url = url;
     }
+
+    public PlanResDto(Long planId, String planName, LocalDateTime planDate) {
+        this.planId = planId;
+        this.planName = planName;
+        this.planDate = planDate;
+    }
 }

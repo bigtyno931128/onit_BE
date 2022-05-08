@@ -125,7 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public FormLoginSuccessHandler formLoginSuccessHandler() {
-        return new FormLoginSuccessHandler();
+        return new FormLoginSuccessHandler(userRepository);
     }
 
     @Bean

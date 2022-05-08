@@ -42,11 +42,20 @@ public class Plan extends TimeStamped implements Serializable {
     public Plan(PlanReqDto planReqDto, User user, String url) {
         this.planName = planReqDto.getPlanName();
         this.planDate = planReqDto.getPlanDate();
-        this.user = user;
         this.location = planReqDto.getLocation();
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
         this.url = url;
+    }
+
+    public Plan(Plan planNew, User user1) {
+        this.planName = planNew.getPlanName();
+        this.planDate = planNew.getPlanDate();
+        this.penalty = planNew.getPenalty();
+        this.url = planNew.getUrl();
+        this.writer = planNew.getWriter();
+        this.location = planNew.getLocation();
+        addPlan(user1);
     }
 
     public void update(PlanReqDto planReqDto, LocalDateTime editTime) {
@@ -57,4 +66,18 @@ public class Plan extends TimeStamped implements Serializable {
         this.penalty = planReqDto.getPenalty();
     }
 
+    public void addPlan(User user) {
+        this.user = user;
+        user.getPlanList().add(this);
+    }
+
+    public void updateSave(Plan plan) {
+        this.planName = plan.getPlanName();
+        this.planDate = plan.getPlanDate();
+        this.url =plan.getUrl();
+        this.user = plan.getUser();
+        this.writer = plan.getWriter();
+        this.penalty = plan.getPenalty();
+        this.location = plan.getLocation();
+    }
 }

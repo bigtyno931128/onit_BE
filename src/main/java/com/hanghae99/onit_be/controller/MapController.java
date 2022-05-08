@@ -20,4 +20,6 @@ public class MapController {
         MapResDto mapResDto = mapService.getPlanInfo(url);
         return ResponseEntity.ok().body(new ResultDto<>("링크 접속 성공!", mapResDto));
     }
+
+
 }
