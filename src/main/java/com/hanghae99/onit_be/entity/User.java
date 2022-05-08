@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -38,9 +40,8 @@ public class User {
     private UserRoleEnum userRole;
 
 
-//    @OneToMany(mappedBy = "user")
-//    @JoinColumn
-//    private List<Plan> planList = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Plan> planList = new ArrayList<>();
 
 
     User(Builder builder) {

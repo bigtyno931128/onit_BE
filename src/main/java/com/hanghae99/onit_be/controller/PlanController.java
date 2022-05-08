@@ -2,9 +2,7 @@ package com.hanghae99.onit_be.controller;
 
 import com.hanghae99.onit_be.aop.LogExecutionTime;
 import com.hanghae99.onit_be.dto.request.PlanReqDto;
-import com.hanghae99.onit_be.dto.response.ResultDto;
-import com.hanghae99.onit_be.dto.response.PlanDetailResDto;
-import com.hanghae99.onit_be.dto.response.PlanListResDto;
+import com.hanghae99.onit_be.dto.response.*;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.service.PlanService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +37,7 @@ public class PlanController {
         PlanListResDto planListResDto = new PlanListResDto(planService.getPlanList(userId, pageno-1, userDetails.getUser()));
         return ResponseEntity.ok().body(new ResultDto<>("일정 목록 조회 성공!", planListResDto));
     }
+
 
     // 일정 상세 조회
     @LogExecutionTime

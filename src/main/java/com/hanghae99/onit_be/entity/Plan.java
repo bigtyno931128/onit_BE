@@ -49,6 +49,16 @@ public class Plan extends TimeStamped implements Serializable {
         this.url = url;
     }
 
+    public Plan(Plan planNew, User user) {
+        this.planName = planNew.getPlanName();
+        this.planDate = planNew.getPlanDate();
+        this.user = user;
+        this.location = planNew.getLocation();
+        this.writer = planNew.getWriter();
+        this.penalty = planNew.getPenalty();
+        this.url = planNew.getUrl();
+    }
+
     public void update(PlanReqDto planReqDto, LocalDateTime editTime) {
         this.planName = planReqDto.getPlanName();
         this.planDate = editTime;

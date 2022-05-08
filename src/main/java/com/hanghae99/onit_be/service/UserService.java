@@ -39,10 +39,9 @@ public class UserService {
             throw new IllegalArgumentException("이미 사용중인 아이디 입니다!");
         }
 
-//        if (userRepository.existsByUserNickname(userNickname)){
-//            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다!");
-//
-//        }
+        if (userRepository.existsByNickname(nickname)){
+            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다!");
+        }
 
         if(!username.matches("^[a-z0-9-_]{3,10}$")){
             throw new IllegalArgumentException("아이디는 영어와 숫자로 3~9자리로 입력하셔야 합니다!");

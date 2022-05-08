@@ -8,9 +8,7 @@ import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
-import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +17,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -35,9 +31,16 @@ public class PlanService {
     // 일정 생성
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
+
+        // 약속 일정 유효성 검사 (과거 날짜를 선택했을 때)
+//        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())){
+//            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
+//        }
+
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회
-        List<Plan> planList = planRepository.findAllByWriter(user.getNickname());
+//        List<Plan> planList = planRepository.findAllByWriter(user.getNickname());
+        List<Plan> planList = planRepository.findAllByUserId(user.getId());
         LocalDateTime today = planReqDto.getPlanDate();
         for (Plan plans : planList) {
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
@@ -50,6 +53,7 @@ public class PlanService {
                     throw new IllegalArgumentException("오늘 일정은 이미 있습니다.");
             }
         }
+
         String url = UUID.randomUUID().toString();
         Plan plan = new Plan(planReqDto, user, url);
         planRepository.save(plan);
@@ -63,8 +67,11 @@ public class PlanService {
     }
 
     // 일정 목록 조회
-    public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user){
-        List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
+    public Page<PlanResDto> getPlanList(Long userId, int pageno, User user){
+        List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(userId).orElseThrow(IllegalArgumentException::new));
+        if(planList.isEmpty()){
+            throw new IllegalArgumentException("등록된 일정이 없습니다.");
+        }
         Pageable pageable = getPageable(pageno);
         List<PlanResDto> planResDtoList = new ArrayList<>();
         // 일정 시간 비교 메서드
@@ -76,6 +83,7 @@ public class PlanService {
         Page<PlanResDto> page = new PageImpl<>(planResDtoList.subList(start, end),pageable,planResDtoList.size());
         return page;
     }
+
 
     // 페이지 정렬 메서드
     private Pageable getPageable(int page) {
@@ -104,6 +112,8 @@ public class PlanService {
 
             Long planId = plan.getId();
             String planName = plan.getPlanName();
+            // 날짜 출력 형식 변경
+            String planDateCv = planDate.format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
             Location locationDetail = plan.getLocation();
             // 작성자 판별
             boolean result = true;
@@ -111,7 +121,7 @@ public class PlanService {
                 result = false;
             }
             String url = plan.getUrl();
-            PlanResDto planResDto = new PlanResDto(planId,planName,planDate,locationDetail,status,result,url);
+            PlanResDto planResDto = new PlanResDto(planId,planName,planDateCv,locationDetail,status,result,url);
             planResDtoList.add(planResDto);
         }
     }
