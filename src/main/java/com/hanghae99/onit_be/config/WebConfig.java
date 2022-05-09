@@ -43,6 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedOrigin("https://onit-a1529.firebaseapp.com/");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");

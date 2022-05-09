@@ -147,9 +147,9 @@ public class KakaoUserService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "972182102726f2cccd099d839c096d2d");
+        body.add("client_id", "e1c1e128ca3acab4cfdc6ac642e432d7"); // FE rest api key
         body.add("redirect_uri",
-                "http://localhost:8001/user/kakao/callback");
+                "https://imonint.shop/users/kakao/callback"); // FE
         body.add("code", code);
 
         // HTTP 요청 보내기

@@ -99,6 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("https://imonint.shop/ws").permitAll()
                 .antMatchers("ws/**").permitAll()
+                .antMatchers("/users/kakao/**").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -153,6 +154,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("POST,/api/logout");
+        skipPathList.add("GET,/users/kakao/callback");
 
         //게시글 조회
         skipPathList.add("GET,/api/post");
