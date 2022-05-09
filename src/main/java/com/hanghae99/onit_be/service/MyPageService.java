@@ -81,14 +81,27 @@ public class MyPageService {
         if(planList.isEmpty()){
             throw new IllegalArgumentException("지난 일정이 없습니다.");
         }
+        List<RecordResDto> recordResDtoList = new ArrayList<>();
+        for (Plan plan : planList) {
+            LocalDateTime planDate = plan.getPlanDate();
+
+            // 과거의 약속만 담아주기 (현재 서울 날짜의 시간이 planDate보다 이후일 때)
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(planDate)) {
+                Long planId = plan.getId();
+                String planName = plan.getPlanName();
+                String planDateCv = planDate.format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
+                String address = plan.getLocation().getAddress();
+                String penalty = plan.getPenalty();
+
+                RecordResDto recordResDto = new RecordResDto(planId, planName, planDateCv, address, penalty);
+                recordResDtoList.add(recordResDto);
+            }
+        }
 
         Pageable pageable = getPageable(pageno);
 
-        List<RecordResDto> recordResDtoList = new ArrayList<>();
-        forRecordList(planList, recordResDtoList, user);
-
         int start = pageno * 6;
-        int end = Math.min((start + 6), planList.size());
+        int end = Math.min((start + 6), recordResDtoList.size());
 
         Page<RecordResDto> page = new PageImpl<>(recordResDtoList.subList(start, end), pageable, recordResDtoList.size());
         return page;
@@ -101,25 +114,6 @@ public class MyPageService {
         return PageRequest.of(page, 6, sort);
     }
 
-    private void forRecordList(List<Plan> planList, List<RecordResDto> recordResDtoList, User user) {
-        for (Plan plan : planList) {
-            LocalDateTime planDate = plan.getPlanDate();
-
-            // 과거의 약속 (현재 서울 날짜의 시간이 planDate보다 이후일 때)
-            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(planDate)) {
-                Long planId = plan.getId();
-                String planName = plan.getPlanName();
-                String planDateCv = planDate.format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
-                String address = plan.getLocation().getAddress();
-                String penalty = plan.getPenalty();
-
-                RecordResDto recordResDto = new RecordResDto(planId, planName, planDateCv, address, penalty);
-                recordResDtoList.add(recordResDto);
-            }
-
-
-        }
-    }
 
     // 링크 공유를 통한 약속 저장
     public void savePlanInvitation(String url, User user){

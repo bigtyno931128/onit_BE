@@ -56,5 +56,4 @@ public class UserController {
     public KakaoUserInfoResDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoUserService.kakaoLogin(code, response);
     }
-
 }
