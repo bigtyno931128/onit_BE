@@ -16,5 +16,6 @@ public class SocketService {
         Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
         mapDto.setDestLat(String.valueOf(plan.getLocation().getLat()));
         mapDto.setDestLng(String.valueOf(plan.getLocation().getLng()));
+        //mapDto.setProfileImg(plan.getUser().getProfileImg());
     }
 }

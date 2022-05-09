@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class PlanController {
 
     private final PlanService planService;
-    private final MyPageService myPageService;
+
     //일정 만들기
     //와이어 프레임 상 클라이언트가 벌칙을 선택하고 서버에서 받아 그대로 저장 했다가 다시 보여주는 형식 같기에 plan 테이블에 패널티 컬럼이 추가 되어야 할꺼 같다 .
     //모모에서는 url 도 저장 하던데 이걸 어떻게 쓰는건지 ?
@@ -31,7 +31,7 @@ public class PlanController {
         return ResponseEntity.ok().body(new ResultDto<>("일정 등록 성공!"));
     }
 
-    // 일정 목록 조회 ( 내가 만든 )
+    // 일정 목록 조회 (내가 만든 )
     // 페이징 처리
     @LogExecutionTime
     @GetMapping("/member/list/{userId}/{pageno}")

@@ -1,6 +1,6 @@
 package com.hanghae99.onit_be.entity;
 
-import com.hanghae99.onit_be.dto.request.PlanReqDto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,10 +19,6 @@ public class Location implements Serializable {
     private double lat;
     //경도
     private double lng;
-
-//    private String categoryName;
-//
-//    private String categoryCode;
 
     private String address;
 }

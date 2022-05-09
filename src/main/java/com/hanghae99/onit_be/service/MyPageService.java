@@ -5,12 +5,14 @@ import com.hanghae99.onit_be.dto.response.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
+import com.hanghae99.onit_be.noti.event.PlanCreateEvent;
 import com.hanghae99.onit_be.repository.ParticipantRepository;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +24,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+import static com.hanghae99.onit_be.utils.Date.compareDay;
+
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
@@ -30,6 +34,7 @@ public class MyPageService {
     private final S3Uploader s3Uploader;
     private final PlanRepository planRepository;
     private final ParticipantRepository participantRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 프로필 이미지 수정
     @Transactional
@@ -93,14 +98,11 @@ public class MyPageService {
         }
         Participant participant = new Participant(planNew,user1);
         participantRepository.save(participant);
+        // 알림
+        eventPublisher.publishEvent(new PlanCreateEvent(participant));
     }
 
-    public static int compareDay (LocalDateTime date1, LocalDateTime date2) {
-        LocalDateTime dayDate1 = date1.truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime dayDate2 = date2.truncatedTo(ChronoUnit.DAYS);
-        return dayDate1.compareTo(dayDate2);
-    }
-
+    // 내가 참여한 일정 상세 가져오는 메서드 ( 현재 사용 x)
     public PlanDetailResDto getPlanInvitation(String url, User user) {
         Participant participant = participantRepository.findByUserAndPlan (
                 userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new),

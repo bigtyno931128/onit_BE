@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
     private CorsFilter corsFilter;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     private ObjectMapper objectMapper;
     private UserRepository userRepository;
@@ -77,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // httpBasic () 을 활성화 하면
         http.httpBasic().disable();
         http.cors();
         http.csrf().disable();

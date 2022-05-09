@@ -87,11 +87,6 @@ public class User {
         this.token = token;
     }
 
-    public void updatePlanList(Participant participant) {
-        this.planList = (List<Plan>) participant;
-    }
-
-
     public static class Builder {
         private String username;
         private String nickname;
@@ -128,10 +123,12 @@ public class User {
         this.nickname = nickname;
     }
 
+    // 알림 여부 확인 메서드 true
     public void setNoticeAllowedTrue() {
         this.isNoticeAllowed = true;
     }
 
+    // 알림 여부 확인 메서드 false
     public void setNoticeAllowedFalse() {
         this.isNoticeAllowed = false;
     }
