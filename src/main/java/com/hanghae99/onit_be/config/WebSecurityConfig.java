@@ -42,7 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private ObjectMapper objectMapper;
     private UserRepository userRepository;
-    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
 
     public WebSecurityConfig(
