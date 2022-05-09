@@ -90,7 +90,6 @@ public class UserService {
         List<Plan> planList = planRepository.findAllByUrl(url);
         List<PlanResDto> planResDtoList = new ArrayList<>();
 
-        //planResDtoList.add((PlanResDto) planList);
         for (Plan plan : planList){
             Long planId = plan.getId();
             String planName = plan.getPlanName();

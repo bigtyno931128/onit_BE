@@ -37,6 +37,7 @@ public class KakaoUserService {
 
     public KakaoUserInfoResDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
+        log.info(code);
         String accessToken = getAccessToken(code);
 
         // 2. 토큰으로 카카오 API 호출
@@ -104,6 +105,7 @@ public class KakaoUserService {
 
     private KakaoUserInfoResDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         // HTTP Header 생성
+        log.info(accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -121,6 +123,7 @@ public class KakaoUserService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+        log.info(String.valueOf(jsonNode.get("id").asLong()));
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
