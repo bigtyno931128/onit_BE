@@ -142,10 +142,12 @@ public class PlanService {
     }
 
     // 일정 삭제
+    @Transactional
     public void deletePlan(Long planId, User user) {
         Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
         // 작성자만 삭제 가능
         if (Objects.equals(plan.getWriter(), user.getNickname())) {
+            participantRepository.deleteByUserAndPlan(user,plan);
             planRepository.deleteById(planId);
         } else {
             throw new IllegalArgumentException("작성자만 삭제 가능합니다.");
