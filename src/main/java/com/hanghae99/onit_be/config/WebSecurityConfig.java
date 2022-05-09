@@ -3,6 +3,7 @@ package com.hanghae99.onit_be.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.security.CustomLogoutSuccessHandler;
 import com.hanghae99.onit_be.security.FilterSkipMatcher;
 import com.hanghae99.onit_be.security.FormLoginFailHandler;
 import com.hanghae99.onit_be.security.FormLoginSuccessHandler;
@@ -37,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
     private CorsFilter corsFilter;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     private ObjectMapper objectMapper;
     private UserRepository userRepository;
@@ -44,11 +46,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public WebSecurityConfig(
             JWTAuthProvider jwtAuthProvider,
             HeaderTokenExtractor headerTokenExtractor,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            CustomLogoutSuccessHandler customLogoutSuccessHandler) {
         this.jwtAuthProvider = jwtAuthProvider;
         this.headerTokenExtractor = headerTokenExtractor;
         this.objectMapper = objectMapper;
-
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
     }
 
     @Bean
@@ -73,6 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // httpBasic () 을 활성화 하면
         http.httpBasic().disable();
         http.cors();
         http.csrf().disable();
@@ -106,6 +110,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 // 로그아웃 요청 처리 URL
                 .logoutUrl("/api/logout")
+                .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
                 .and()
                 .exceptionHandling()

@@ -7,12 +7,14 @@ import com.hanghae99.onit_be.entity.Location;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
+import com.hanghae99.onit_be.noti.event.PlanCreateEvent;
 import com.hanghae99.onit_be.repository.ParticipantRepository;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,7 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
-    private final MyPageService myPageService;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     // 일정 생성
@@ -57,8 +59,7 @@ public class PlanService {
         //List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(user);
         LocalDateTime today = planReqDto.getPlanDate();
         for (Plan plans : planList) {
-            System.out.println(plans.getPlanDate());
-            System.out.println(planReqDto.getPlanDate());
+
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
             int comResult = compareDay(plans.getPlanDate(), today);
             if (comResult == 0) {
@@ -75,6 +76,7 @@ public class PlanService {
         plan.addPlan(user1);
         Participant participant = new Participant(plan, user1);
         participantRepository.save(participant);
+        //eventPublisher.publishEvent(new PlanCreateEvent(participant));
     }
 
     // 일정 목록 조회
@@ -82,7 +84,9 @@ public class PlanService {
 
         List<Participant> participantList = participantRepository.findAllByUser(
                 userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
+
         List<Plan> plans = new ArrayList<>();
+
         for(Participant participant : participantList){
             Plan plan = participant.getPlan();
             plans.add(plan);

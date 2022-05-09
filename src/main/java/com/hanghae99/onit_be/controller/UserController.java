@@ -1,6 +1,7 @@
 package com.hanghae99.onit_be.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hanghae99.onit_be.dto.request.DeviceTokenReqDto;
 import com.hanghae99.onit_be.dto.response.IdCheckResDto;
 import com.hanghae99.onit_be.dto.response.KakaoUserInfoResDto;
@@ -36,6 +37,7 @@ public class UserController {
     // 회원 가입 요청 처리
     @PostMapping("/user/signup")
     public ResponseEntity<ResultDto<Object>> registerUser(@RequestBody SignupReqDto requestDto) {
+
         User user = userService.registerUser(requestDto);
         return ResponseEntity.ok().body(new ResultDto<>("회원가입 성공!",user));
     }

@@ -1,5 +1,6 @@
 package com.hanghae99.onit_be.websocket;
 
+import com.hanghae99.onit_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -25,6 +26,7 @@ public class SocketController {
     private final SocketService socketService;
     private final RedisTemplate<String, Object> redisTemplate;
     private HashOperations<String, String, List<ChatDto>> hashOperations;
+    private final UserRepository userRepository;
 
     @PostConstruct
     private void init() {
@@ -34,8 +36,14 @@ public class SocketController {
 
     @MessageMapping("/enter") // maps/enter
     public void enter(@Payload EnterDto enterDto) {
-        MapDto mapDto = MapDto.from(enterDto);
+
+        // 참여자의 이미지 찾아오기 .
+        String profileImg = userRepository.findByNickname(enterDto.getSender()).orElseThrow(IllegalArgumentException::new).getProfileImg();
+
+        MapDto mapDto = MapDto.from(enterDto,profileImg);
+
         socketService.setDestination(enterDto.getPlanId(), mapDto);
+
         simpMessagingTemplate.convertAndSend("/topic/map/" + mapDto.getPlanId(), mapDto);
     }
 
