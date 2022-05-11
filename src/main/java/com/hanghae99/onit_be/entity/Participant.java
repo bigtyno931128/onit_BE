@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,8 +26,11 @@ public class Participant {
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
+    private LocalDateTime planDate;
+
     public Participant(Plan planNew, User user1) {
         this.plan = planNew;
         this.user = user1;
+        this.planDate = planNew.getPlanDate();
     }
 }
