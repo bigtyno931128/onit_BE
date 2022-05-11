@@ -19,8 +19,9 @@ public class PlanResDto {
     private int status;
     private boolean writer;
     private String url;
+    private String penalty;
 
-    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, int status, boolean result, String url) {
+    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, int status, boolean result, String url, String penalty) {
     this.planId = planId;
     this.planName = planName;
     this.planDate = planDate;
@@ -28,6 +29,7 @@ public class PlanResDto {
     this.status = status;
     this.writer = result;
     this.url = url;
+    this.penalty = penalty;
     }
 
     public PlanResDto(Long planId, String planName, LocalDateTime planDate) {

@@ -112,10 +112,11 @@ public class PlanService {
             Long planId = plan.getId();
             String planName = plan.getPlanName();
             Location locationDetail = plan.getLocation();
+            String penalty = plan.getPenalty();
             // 작성자 판별
             boolean result = Objects.equals(plan.getWriter(), user.getNickname());
             String url = plan.getUrl();
-            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, result, url);
+            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, result, url,penalty);
             planResDtoList.add(planResDto);
         }
     }
