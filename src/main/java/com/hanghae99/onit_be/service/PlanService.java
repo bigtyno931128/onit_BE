@@ -43,10 +43,10 @@ public class PlanService {
     // 일정 생성
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
+
         //과거 이면 등록 x
-        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())) {
-            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
-        }
+        checkPlanDate(planReqDto);
+
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회
@@ -56,10 +56,9 @@ public class PlanService {
             Plan plan = participant.getPlan();
             planList.add(plan);
         }
-        //List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(user);
+
         LocalDateTime today = planReqDto.getPlanDate();
         for (Plan plans : planList) {
-
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
             int comResult = compareDay(plans.getPlanDate(), today);
             if (comResult == 0) {
@@ -79,7 +78,9 @@ public class PlanService {
         //eventPublisher.publishEvent(new PlanCreateEvent(participant));
     }
 
-    // 일정 목록 조회
+
+
+    // 일정 목록 조회  (05 -10 문제 상황 약속 시간 기준으로 일정을 정렬해서 보내주지 못하는 상황)
     public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user) {
 
         List<Participant> participantList = participantRepository.findAllByUser(
@@ -91,6 +92,7 @@ public class PlanService {
             Plan plan = participant.getPlan();
             plans.add(plan);
         }
+
         Pageable pageable = getPageable(pageno);
         List<PlanResDto> planResDtoList = new ArrayList<>();
         // 일정 시간 비교 메서드
@@ -131,6 +133,7 @@ public class PlanService {
     public void editPlan(Long planid, PlanReqDto planRequestDto, User user) {
         Plan plan = planRepository.findById(planid).orElseThrow(IllegalArgumentException::new);
         LocalDateTime editTime = planRequestDto.getPlanDate();
+
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }

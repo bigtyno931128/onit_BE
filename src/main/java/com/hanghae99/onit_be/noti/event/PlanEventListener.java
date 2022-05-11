@@ -26,19 +26,10 @@ public class PlanEventListener {
 
     @EventListener
     public void handlePlanCreateEvent(PlanCreateEvent planCreateEvent) {
-
-        //List<Notification> notificationList = new ArrayList<>();
-
         // event 로 일정을 등록할때의 유저와 아이디 값은 가져옴 .
-        System.out.println(planCreateEvent.getPlan().getId());
-        System.out.println(planCreateEvent.getUser().getId());
         Plan plan = planCreateEvent.getPlan();
         User user = planCreateEvent.getUser();
-
         Notification notification = new Notification(plan,user);
-
         notificationRepository.save(notification);
-
-        throw new RuntimeException();
     }
 }

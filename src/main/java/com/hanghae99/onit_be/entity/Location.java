@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @Embeddable
-public class Location implements Serializable {
+public class Location {
 
     private String name;
     //위도

@@ -1,5 +1,6 @@
 package com.hanghae99.onit_be.service;
 
+import com.hanghae99.onit_be.dto.request.SignupReqDto;
 import com.hanghae99.onit_be.dto.response.PlanDetailResDto;
 import com.hanghae99.onit_be.dto.response.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;

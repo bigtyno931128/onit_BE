@@ -61,8 +61,6 @@ public class UserService {
         return user;
     }
 
-
-
     //아이디 중복검사
     public IdCheckResDto vaildId(LoginReqDto requestDto) {
         String username = requestDto.getUsername();

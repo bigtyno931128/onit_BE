@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private CorsFilter corsFilter;
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private UserRepository userRepository;
 
     public WebSecurityConfig(
@@ -146,7 +146,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthFilter jwtFilter() throws Exception {
         List<String> skipPathList = new ArrayList<>();
-
         // Static 정보 접근 허용
         skipPathList.add("GET,/images/**");
         skipPathList.add("GET,/css/**");
@@ -180,8 +179,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         JwtAuthFilter filter = new JwtAuthFilter(
                 matcher,
-                headerTokenExtractor
-        );
+                headerTokenExtractor,
+                objectMapper);
         filter.setAuthenticationManager(super.authenticationManagerBean());
 
         return filter;
@@ -193,24 +192,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // Cors
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("http://localhost:3000");
-//        configuration.addAllowedOrigin("https://localhost:3000");
-//        configuration.addAllowedOrigin("https://imonint.shop/");
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.addExposedHeader("*");
-//        configuration.setAllowedHeaders(Arrays.asList("authorization", "Authorization", "content-type"));
-//        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
-//                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
-//        configuration.setAllowCredentials(true);
-//        configuration.validateAllowCredentials();
-//        configuration.setMaxAge(3600L);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }

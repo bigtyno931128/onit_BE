@@ -9,9 +9,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class PlanListResDto implements Serializable {
-
-    private static final long serialVersionUID = 6494678977089006639L;
+public class PlanListResDto  {
 
     private List<PlanResDto> planList;
     private int totalPage;

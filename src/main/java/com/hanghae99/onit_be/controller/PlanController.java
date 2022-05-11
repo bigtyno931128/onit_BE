@@ -68,6 +68,5 @@ public class PlanController {
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }
 
-
 }
 

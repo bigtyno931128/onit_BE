@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class PlanResDto implements Serializable {
+public class PlanResDto {
 
     private Long planId;
     private String planName;

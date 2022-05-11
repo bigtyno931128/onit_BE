@@ -15,7 +15,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
+// 3번 . ( 로그인 성공 하면 )
 public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+
     public static final String AUTH_HEADER = "Authorization";
     public static final String TOKEN_TYPE = "BEARER";
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,13 +32,17 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response,
                                         final Authentication authentication) throws IOException {
+
         final UserDetailsImpl userDetails = ((UserDetailsImpl) authentication.getPrincipal());
+
+        // 4번 호출.
         // Token 생성
         final String token = JwtTokenUtils.generateJwtToken(userDetails);
 
 
         response.addHeader(AUTH_HEADER, TOKEN_TYPE + " " + token);
         response.setStatus(HttpServletResponse.SC_OK);
+
         Map<String,Object> data = new HashMap<>();
         data.put(
                 "id",

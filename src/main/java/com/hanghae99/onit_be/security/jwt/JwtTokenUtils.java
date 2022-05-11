@@ -7,6 +7,7 @@ import com.hanghae99.onit_be.security.UserDetailsImpl;
 
 import java.util.Date;
 
+// 4번 ( 로그인 성공 시)
 public final class JwtTokenUtils {
 
     private static final int SEC = 1;
@@ -28,7 +29,7 @@ public final class JwtTokenUtils {
         String token = null;
         try {
             token = JWT.create()
-                    .withIssuer("sparta")
+                    .withIssuer("Onit")
                     .withClaim(CLAIM_USER_NAME, userDetails.getUsername())
                     .withClaim(CLAIM_NICK_NAME, userDetails.getNickName())
                     // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)

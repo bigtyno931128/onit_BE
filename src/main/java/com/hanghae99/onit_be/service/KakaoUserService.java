@@ -75,7 +75,7 @@ public class KakaoUserService {
                 .orElse(null);
         if (kakaoUser == null) {
             // 회원가입
-            // username: kakao nickname
+//             username: kakao nickname
 //            String nickname = kakaoUserInfo.getNickname();
 
             // password: random UUID
@@ -125,9 +125,10 @@ public class KakaoUserService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         log.info(String.valueOf(jsonNode.get("id").asLong()));
         Long id = jsonNode.get("id").asLong();
+
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-
+        log.info("닉네임"+ nickname);
 //        //thmbnail test
 //        String thumbnailUrl = jsonNode.get("properties")
 //                .get("thumbnail_image").asText();

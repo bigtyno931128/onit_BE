@@ -40,5 +40,12 @@ public class Date {
         }
         return status;
     }
+
+    //과거에 대한 처리
+    public static void checkPlanDate(PlanReqDto planReqDto) {
+        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())) {
+            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
+        }
+    }
 }
 
