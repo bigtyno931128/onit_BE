@@ -84,6 +84,7 @@ public class FirebaseCloudMessageService {
                     .createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
 //                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
             googleCredentials.refreshAccessToken();
+            log.info("FCM access token 발급 성공");
             return googleCredentials.getAccessToken().getTokenValue();
         }
 }
