@@ -71,7 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/");
+
     }
 
     @Override
@@ -159,11 +161,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/api/logout");
 
         //게시글 조회
-        skipPathList.add("GET,/api/post");
-        skipPathList.add("GET,/api/post/{postId}");
 
         //skipPathList.add("GET,/home");
         skipPathList.add("GET,/basic.js");
+        //sse 메세지 test
+        skipPathList.add("GET,/index.html");
+        skipPathList.add("GET,/subscribe/**");
+        //skipPathList.add("POST/reviews");
 
         skipPathList.add("GET,/favicon.ico");
         skipPathList.add("POST,/api/idCheck");

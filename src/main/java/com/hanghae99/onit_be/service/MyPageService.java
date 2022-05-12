@@ -1,12 +1,11 @@
 package com.hanghae99.onit_be.service;
 
-import com.hanghae99.onit_be.dto.request.SignupReqDto;
 import com.hanghae99.onit_be.dto.response.PlanDetailResDto;
 import com.hanghae99.onit_be.dto.response.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.noti.event.PlanCreateEvent;
+import com.hanghae99.onit_be.noti.event.NotificationEvent;
 import com.hanghae99.onit_be.repository.ParticipantRepository;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
@@ -100,7 +99,7 @@ public class MyPageService {
         Participant participant = new Participant(planNew,user1);
         participantRepository.save(participant);
         // 알림
-        eventPublisher.publishEvent(new PlanCreateEvent(participant));
+        eventPublisher.publishEvent(new NotificationEvent(participant));
     }
 
     // 내가 참여한 일정 상세 가져오는 메서드 ( 현재 사용 x)

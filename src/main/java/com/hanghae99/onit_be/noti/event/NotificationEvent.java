@@ -7,12 +7,15 @@ import lombok.Getter;
 
 
 @Getter
-public class PlanCreateEvent {
+public class NotificationEvent {
+
     private final Plan plan;
     private final User user;
 
-    public PlanCreateEvent(Participant participant) {
+    //일정에 참여.
+    public NotificationEvent(Participant participant) {
         this.plan = participant.getPlan();
         this.user = participant.getUser();
     }
+
 }

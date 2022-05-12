@@ -6,14 +6,18 @@ import com.hanghae99.onit_be.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
 import static com.hanghae99.onit_be.noti.NotificationType.EVENT_PARTICIPANT;
 import static com.hanghae99.onit_be.noti.NotificationType.PLAN_CRATED;
 
+@Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(name = "tbl_Notification")
 public class Notification extends TimeStamped {
@@ -27,11 +31,14 @@ public class Notification extends TimeStamped {
 
     private String message;
 
-    private boolean checked;
+    @Column(nullable = false)
+    private boolean isRead;
 
     private String url;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     private String participantName;
@@ -39,14 +46,4 @@ public class Notification extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
 
-
-    public Notification(Plan plan, User user) {
-        this.title =plan.getPlanName();
-        this.message = (plan.getPlanDate()+ "일정에 참여 하여습니다!");
-        this.checked = false;
-        this.url = plan.getUrl();
-        this.user = user;
-        this.participantName = user.getNickname();
-        this.notificationType = EVENT_PARTICIPANT;
-    }
 }
