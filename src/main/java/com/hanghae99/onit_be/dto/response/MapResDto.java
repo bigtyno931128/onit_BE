@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MapResDto {
     private Long planId;
-    private String planName;
+    private String locationName;
 
-    public MapResDto(String planName, Long id) {
+
+    public MapResDto(String name, Long id) {
         this.planId = id;
-        this.planName = planName;
+        this.locationName = name;
     }
 }

@@ -20,7 +20,7 @@ public class MapService {
 
         if (isPlanEnd(plan)) throw new IllegalArgumentException("유효하지 않는 링크임다");
 
-        return new MapResDto(plan.getPlanName(), plan.getId());
+        return new MapResDto(plan.getLocation().getName(), plan.getId());
     }
 
     private boolean isPlanEnd(Plan plan) {
