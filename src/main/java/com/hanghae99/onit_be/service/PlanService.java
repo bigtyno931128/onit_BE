@@ -7,7 +7,10 @@ import com.hanghae99.onit_be.entity.Location;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.noti.event.PlanCreateEvent;
+
+import com.hanghae99.onit_be.noti.event.NotificationEvent;
+import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
+import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
 import com.hanghae99.onit_be.repository.ParticipantRepository;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
@@ -119,8 +122,8 @@ public class PlanService {
     }
 
     // 일정 상세 조회
-    public PlanDetailResDto getPlan(Long planId) {
-        Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
+    public PlanDetailResDto getPlan(String url) {
+        Plan plan = planRepository.findByUrl(url);
         return new PlanDetailResDto(plan);
     }
 
@@ -128,8 +131,8 @@ public class PlanService {
     //.작성자만 수정가능 , 약속 날짜는 과거 x ,
     @Transactional
     //@CachePut(value = CacheKey.PLAN, key ="#userDetails.user.id")
-    public void editPlan(Long planid, PlanReqDto planRequestDto, User user) {
-        Plan plan = planRepository.findById(planid).orElseThrow(IllegalArgumentException::new);
+    public void editPlan(String url, PlanReqDto planRequestDto, User user) {
+        Plan plan = planRepository.findByUrl(url);
         LocalDateTime editTime = planRequestDto.getPlanDate();
 
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
@@ -139,18 +142,19 @@ public class PlanService {
         if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(editTime)) {
             throw new IllegalArgumentException("만남 일정을 이미지난 날짜로 수정하는 것은 불가능합니다.");
         }
-
         plan.update(planRequestDto, editTime);
+        eventPublisher.publishEvent(new PlanUpdateEvent(plan, "일정을 수정했습니다.", user));
     }
 
     // 일정 삭제
     @Transactional
-    public void deletePlan(Long planId, User user) {
-        Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
+    public void deletePlan(String url, User user) {
+        Plan plan = planRepository.findByUrl(url);
         // 작성자만 삭제 가능
         if (Objects.equals(plan.getWriter(), user.getNickname())) {
             participantRepository.deleteByUserAndPlan(user,plan);
-            planRepository.deleteById(planId);
+            planRepository.deleteByUrl(url);
+            eventPublisher.publishEvent(new PlanDeleteEvent(plan, "일정을 삭제 했습니다.", user));
         } else {
             throw new IllegalArgumentException("작성자만 삭제 가능합니다.");
         }

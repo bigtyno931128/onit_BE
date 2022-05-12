@@ -45,26 +45,26 @@ public class PlanController {
 
     // 일정 상세 조회 (내가 만든)
     @LogExecutionTime
-    @GetMapping("/member/list/{planId}")
-    public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable Long planId){
-        PlanDetailResDto planDetailResDto = planService.getPlan(planId);
+    @GetMapping("/member/list/{randomUrl}")
+    public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url){
+        PlanDetailResDto planDetailResDto = planService.getPlan(url);
         return ResponseEntity.ok().body(new ResultDto<>("일정 상세 조회 성공!", planDetailResDto));
     }
 
     // 일정 수정
     @LogExecutionTime
-    @PutMapping("/member/list/{planId}")
-    public ResponseEntity<ResultDto> editPlan (@PathVariable Long planId, @RequestBody PlanReqDto planReqDto,
+    @PutMapping("/member/list/{randomUrl}")
+    public ResponseEntity<ResultDto> editPlan (@PathVariable("randomUrl") String url, @RequestBody PlanReqDto planReqDto,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        planService.editPlan(planId, planReqDto, userDetails.getUser());
+        planService.editPlan(url, planReqDto, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("일정 수정 성공!"));
     }
 
     // 일정 삭제
     @LogExecutionTime
-    @DeleteMapping("/member/list/{planId}")
-    public ResponseEntity<ResultDto> deletePlan (@PathVariable Long planId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        planService.deletePlan(planId, userDetails.getUser());
+    @DeleteMapping("/member/list/{randomUrl}")
+    public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        planService.deletePlan(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }
 

@@ -11,5 +11,8 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     List<Plan> findAllByUserOrderByPlanDateAsc(User user);
     Optional<Plan> findPlanByUrl(String url);
     List<Plan> findAllByUrl(String url);
+    Plan findByUrl(String url);
+    Plan findByUser(User user);
+    void deleteByUrl(String url);
     //Plan getByUser(User orElseThrow);
 }
