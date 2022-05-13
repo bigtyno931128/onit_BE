@@ -39,9 +39,9 @@ public class Participant {
         this.planDate = planNew.getPlanDate();
 
         if(planNew.getWriter().equals(user1.getNickname())){
-            this.isMember = true;
-        }else {
             this.isMember = false;
+        }else {
+            this.isMember = true;
         }
     }
 }
