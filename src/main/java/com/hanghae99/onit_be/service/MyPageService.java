@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,6 +80,14 @@ public class MyPageService {
     // 링크 공유를 통한 약속 저장
     @Transactional
     public void savePlanInvitation(String url, User user){
+
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
+        for (Participant participant : participantList){
+            if(participant.getUser().getId() == user.getId()){
+                throw new IllegalArgumentException("이미 일정에 참여중입니다.");
+            }
+        }
+
         // 사용자의 현재 일정 리스트 찾기
         List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
         // 공유받은 플랜 정보 찾기
@@ -101,6 +110,11 @@ public class MyPageService {
         // 알림
         eventPublisher.publishEvent(new NotificationEvent(participant));
     }
+
+
+
+
+
 
     // 내가 참여한 일정 상세 가져오는 메서드 ( 현재 사용 x)
     public PlanDetailResDto getPlanInvitation(String url, User user) {

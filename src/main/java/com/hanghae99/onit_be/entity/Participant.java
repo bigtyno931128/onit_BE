@@ -28,9 +28,20 @@ public class Participant {
 
     private LocalDateTime planDate;
 
+    private String writer;
+
+    private boolean isMember;
+
     public Participant(Plan planNew, User user1) {
         this.plan = planNew;
         this.user = user1;
+        this.writer = planNew.getWriter();
         this.planDate = planNew.getPlanDate();
+
+        if(planNew.getWriter().equals(user1.getNickname())){
+            this.isMember = true;
+        }else {
+            this.isMember = false;
+        }
     }
 }
