@@ -43,6 +43,7 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         response.addHeader(AUTH_HEADER, TOKEN_TYPE + " " + token);
         response.setStatus(HttpServletResponse.SC_OK);
 
+
         Map<String,Object> data = new HashMap<>();
         data.put(
                 "id",
@@ -50,6 +51,9 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         data.put(
                 "nickname",
                 userDetails.getNickName());
+        data.put(
+                "profileImg",
+                userDetails.getProfileImg());
         String str = new String(objectMapper.writeValueAsString(data).getBytes("UTF-8"), "ISO-8859-1");
         response.getOutputStream()
                 .println(str);

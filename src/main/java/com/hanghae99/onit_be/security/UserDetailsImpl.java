@@ -23,6 +23,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public String getNickName() { return user.getNickname();}
+
+    public String getProfileImg() { return user.getProfileImg();}
+
     @Override
     public String getPassword() {
         return user.getPassword();

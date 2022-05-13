@@ -70,11 +70,6 @@ public class UserService {
         return idCheckDto;
     }
 
-    // 로그인 시 유저 정보 조회
-    public UserInfoResDto showUserInfo(User user){
-        return new UserInfoResDto(user);
-    }
-
     // 클라이언트로 부터 devicetoken 을 받을시에 user 테이블에 devicetoken 저장, token이 존재하면 알림여부 true , 없다면 false
     @Transactional
     public void updateDeviceToken(String token, Long id) {

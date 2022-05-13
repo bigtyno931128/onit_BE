@@ -14,9 +14,4 @@ public class UserInfoResDto {
     private String nickname;
     private String profileImg;
 
-    public UserInfoResDto(User user) {
-        this.userId = user.getId();
-        this.nickname = user.getNickname();
-        this.profileImg = user.getProfileImg();
-    }
 }

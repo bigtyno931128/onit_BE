@@ -75,7 +75,6 @@ public class MyPageService {
         }
     }
 
-    //
     // 링크 공유를 통한 약속 저장
     @Transactional
     public void savePlanInvitation(String url, User user){

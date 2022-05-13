@@ -58,13 +58,6 @@ public class UserController {
         return kakaoUserService.kakaoLogin(code, response);
     }
 
-    // 로그인시 유저 정보 조회
-    @GetMapping("/user/login")
-    public ResponseEntity<ResultDto<UserInfoResDto>> showUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserInfoResDto userInfoResDto = userService.showUserInfo(userDetails.getUser());
-        return ResponseEntity.ok().body(new ResultDto<>("사용자 정보 조회 성공!", userInfoResDto));
-    }
-
     //device token 저장
     @PostMapping("/member/devices")
     public ResponseEntity<Object> updateDeviceToken(@RequestBody @Valid DeviceTokenReqDto requestDto,
