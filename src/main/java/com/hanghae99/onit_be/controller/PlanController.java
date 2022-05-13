@@ -46,8 +46,9 @@ public class PlanController {
     // 일정 상세 조회 (내가 만든)
     @LogExecutionTime
     @GetMapping("/member/list/{randomUrl}")
-    public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url){
-        PlanDetailResDto planDetailResDto = planService.getPlan(url);
+    public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url,
+                                                                @AuthenticationPrincipal UserDetailsImpl userDetails){
+        PlanDetailResDto planDetailResDto = planService.getPlan(url,userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto<>("일정 상세 조회 성공!", planDetailResDto));
     }
 

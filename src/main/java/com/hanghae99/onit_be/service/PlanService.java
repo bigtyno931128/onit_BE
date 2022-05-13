@@ -99,9 +99,7 @@ public class PlanService {
     }
     // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
     private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user) {
-
         for (Plan plan : planList) {
-
             int status = 0;
             LocalDateTime planDate = plan.getPlanDate();
             status = getStatus(status, planDate);
@@ -123,10 +121,12 @@ public class PlanService {
     }
 
     // 일정 상세 조회
-    public PlanDetailResDto getPlan(String url) {
-        Plan plan = planRepository.findByUrl(url);
+    public PlanDetailResDto getPlan(String url,User user) {
 
-        return new PlanDetailResDto(plan);
+        Participant participant = participantRepository.findByUserAndPlan(user,planRepository.findByUrl(url));
+        Plan plan = participant.getPlan();
+        boolean isMember = participant.isMember();
+        return new PlanDetailResDto(plan,isMember);
     }
 
     //일정 수정.
