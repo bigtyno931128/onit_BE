@@ -27,4 +27,11 @@ public class FcmMessage {
         private String body;
         private String image;
     }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class FcmData {
+        private String url;
+    }
 }

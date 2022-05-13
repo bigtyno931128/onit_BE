@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://localhost:3000","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://onit-a1529.firebaseapp.com/","https://imonint.shop/ws","https://imonint.shop/details/**","https://onit-a1529.firebaseapp.com/")
+                .allowedOrigins("http://localhost:3000","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://onit-a1529.firebaseapp.com/","https://imonint.shop/ws","https://imonint.shop/details/**","https://onit-a1529.firebaseapp.com/","https://imonint.shop/api/fcm")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization");
@@ -45,6 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedOrigin("https://onit-a1529.firebaseapp.com/");
+//        configuration.addAllowedOrigin("https://imonint.shop/api/fcm");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("*");
