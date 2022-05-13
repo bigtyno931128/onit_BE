@@ -3,12 +3,9 @@ package com.hanghae99.onit_be.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.hanghae99.onit_be.dto.request.DeviceTokenReqDto;
-import com.hanghae99.onit_be.dto.response.IdCheckResDto;
-import com.hanghae99.onit_be.dto.response.KakaoUserInfoResDto;
+import com.hanghae99.onit_be.dto.response.*;
 import com.hanghae99.onit_be.dto.request.LoginReqDto;
 import com.hanghae99.onit_be.dto.request.SignupReqDto;
-import com.hanghae99.onit_be.dto.response.ResultDto;
-import com.hanghae99.onit_be.dto.response.UserPlanResDto;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.service.KakaoUserService;
@@ -59,6 +56,13 @@ public class UserController {
     @GetMapping("/users/kakao/callback")
     public KakaoUserInfoResDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoUserService.kakaoLogin(code, response);
+    }
+
+    // 로그인시 유저 정보 조회
+    @GetMapping("/user/login")
+    public ResponseEntity<ResultDto<UserInfoResDto>> showUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UserInfoResDto userInfoResDto = userService.showUserInfo(userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto<>("사용자 정보 조회 성공!", userInfoResDto));
     }
 
     //device token 저장

@@ -4,6 +4,7 @@ import com.hanghae99.onit_be.dto.response.IdCheckResDto;
 import com.hanghae99.onit_be.dto.request.LoginReqDto;
 import com.hanghae99.onit_be.dto.request.SignupReqDto;
 import com.hanghae99.onit_be.dto.response.PlanResDto;
+import com.hanghae99.onit_be.dto.response.UserInfoResDto;
 import com.hanghae99.onit_be.dto.response.UserPlanResDto;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
@@ -67,6 +68,11 @@ public class UserService {
         IdCheckResDto idCheckDto = new IdCheckResDto();
         idCheckDto.setResult(userRepository.existsByUsername(username));
         return idCheckDto;
+    }
+
+    // 로그인 시 유저 정보 조회
+    public UserInfoResDto showUserInfo(User user){
+        return new UserInfoResDto(user);
     }
 
     // 클라이언트로 부터 devicetoken 을 받을시에 user 테이블에 devicetoken 저장, token이 존재하면 알림여부 true , 없다면 false
