@@ -16,6 +16,7 @@ import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
@@ -33,6 +34,7 @@ import static com.hanghae99.onit_be.utils.Date.*;
 import static com.hanghae99.onit_be.utils.Page.getPageable;
 import static com.hanghae99.onit_be.utils.Valid.validWriter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PlanService {
@@ -113,10 +115,11 @@ public class PlanService {
             String planName = plan.getPlanName();
             Location locationDetail = plan.getLocation();
             String penalty = plan.getPenalty();
+            String writer = plan.getWriter();
             // 작성자 판별
             boolean result = Objects.equals(plan.getWriter(), user.getNickname());
             String url = plan.getUrl();
-            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, result, url,penalty);
+            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, result, url,penalty,writer);
             planResDtoList.add(planResDto);
         }
     }
@@ -124,6 +127,16 @@ public class PlanService {
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url) {
         Plan plan = planRepository.findByUrl(url);
+
+        //test 사용자의 도착 지점 계산
+        String tarket = "미도착";
+
+        double x;
+        double y;
+
+        log.info(String.valueOf(plan.getLocation().getLat()));
+        log.info(String.valueOf(plan.getLocation().getLng()));
+
         return new PlanDetailResDto(plan);
     }
 

@@ -18,6 +18,8 @@ public class PlanDetailResDto {
     private Location locationDetail;
     private String penalty;
     private String url;
+    private boolean isJoin;
+
 
     public PlanDetailResDto(Plan plan) {
         // planId는 url을 위해 필요?

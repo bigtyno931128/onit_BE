@@ -68,7 +68,7 @@ public class Plan extends TimeStamped {
 
     public void addPlan(User user) {
         this.user = user;
-        user.getPlanList().add(this);
+        //user.getPlanList().add(this);
     }
 
     public void updateSave(Plan plan) {
