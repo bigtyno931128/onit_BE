@@ -8,31 +8,24 @@ import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 
-import com.hanghae99.onit_be.noti.event.NotificationEvent;
 import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
 import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
 import com.hanghae99.onit_be.repository.ParticipantRepository;
 import com.hanghae99.onit_be.repository.PlanRepository;
 import com.hanghae99.onit_be.repository.UserRepository;
-import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.chrono.ChronoLocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.hanghae99.onit_be.utils.Date.*;
 import static com.hanghae99.onit_be.utils.Page.getPageable;
-import static com.hanghae99.onit_be.utils.Valid.validWriter;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +54,6 @@ public class PlanService {
             Plan plan = participant.getPlan();
             planList.add(plan);
         }
-
         LocalDateTime today = planReqDto.getPlanDate();
         for (Plan plans : planList) {
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
@@ -87,16 +79,16 @@ public class PlanService {
 
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(
                 userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
-
         List<Plan> plans = new ArrayList<>();
-
-        for(Participant participant : participantList){
+        for(Participant participant : participantList) {
             Plan plan = participant.getPlan();
             plans.add(plan);
+
         }
 
         Pageable pageable = getPageable(pageno);
         List<PlanResDto> planResDtoList = new ArrayList<>();
+
         // 일정 시간 비교 메서드
         forPlanList(plans, planResDtoList, user);
         int start = pageno * 5;
@@ -106,8 +98,10 @@ public class PlanService {
 
     }
     // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
-    private void forPlanList(List<Plan> plans, List<PlanResDto> planResDtoList, User user) {
-        for (Plan plan : plans) {
+    private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user) {
+
+        for (Plan plan : planList) {
+
             int status = 0;
             LocalDateTime planDate = plan.getPlanDate();
             status = getStatus(status, planDate);
@@ -117,9 +111,13 @@ public class PlanService {
             String penalty = plan.getPenalty();
             String writer = plan.getWriter();
             // 작성자 판별
-            boolean result = Objects.equals(plan.getWriter(), user.getNickname());
+            boolean isMember = false;
+            for (Participant participant : plan.getParticipantList()) {
+                isMember = participant.isMember();
+            }
+
             String url = plan.getUrl();
-            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, result, url,penalty,writer);
+            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, url, penalty, writer, isMember);
             planResDtoList.add(planResDto);
         }
     }
@@ -127,15 +125,6 @@ public class PlanService {
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url) {
         Plan plan = planRepository.findByUrl(url);
-
-        //test 사용자의 도착 지점 계산
-        String tarket = "미도착";
-
-        double x;
-        double y;
-
-        log.info(String.valueOf(plan.getLocation().getLat()));
-        log.info(String.valueOf(plan.getLocation().getLng()));
 
         return new PlanDetailResDto(plan);
     }

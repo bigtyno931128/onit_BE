@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,6 +40,11 @@ public class Plan extends TimeStamped {
 
     private String url;
 
+    private boolean isMember;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Participant> participantList = new ArrayList<>();
+
 
     public Plan(PlanReqDto planReqDto, User user, String url) {
         this.planName = planReqDto.getPlanName();
@@ -46,6 +53,7 @@ public class Plan extends TimeStamped {
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
         this.url = url;
+
     }
 
     public Plan(Plan planNew, User user1) {
@@ -68,7 +76,7 @@ public class Plan extends TimeStamped {
 
     public void addPlan(User user) {
         this.user = user;
-        //user.getPlanList().add(this);
+        user.getPlanList().add(this);
     }
 
     public void updateSave(Plan plan) {
