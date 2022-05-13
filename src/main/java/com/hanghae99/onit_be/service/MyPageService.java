@@ -81,6 +81,7 @@ public class MyPageService {
     public void savePlanInvitation(String url, User user){
 
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
+
         for (Participant participant : participantList){
             if(participant.getUser().getId() == user.getId()){
                 throw new IllegalArgumentException("이미 일정에 참여중입니다.");

@@ -18,7 +18,7 @@ public class PlanDetailResDto {
     private Location locationDetail;
     private String penalty;
     private String url;
-    private boolean isJoin;
+    private boolean isMember;
 
 
     public PlanDetailResDto(Plan plan) {
@@ -40,5 +40,16 @@ public class PlanDetailResDto {
         this.locationDetail = participant.getPlan().getLocation();
         this.penalty = participant.getPlan().getPenalty();
 
+    }
+
+    public PlanDetailResDto(Plan plan, boolean isMember) {
+        this.planId = plan.getId();
+        this.planName = plan.getPlanName();
+        this.planDate = plan.getPlanDate();
+        this.writer = plan.getWriter();
+        this.locationDetail = plan.getLocation();
+        this.penalty = plan.getPenalty();
+        this.url = plan.getUrl();
+        this.isMember = isMember;
     }
 }
