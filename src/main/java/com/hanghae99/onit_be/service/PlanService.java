@@ -87,7 +87,7 @@ public class PlanService {
 
         List<Plan> plans = new ArrayList<>();
 
-        for(Participant participant : participantList){
+        for(Participant participant : participantList) {
             Plan plan = participant.getPlan();
             plans.add(plan);
         }
@@ -108,6 +108,7 @@ public class PlanService {
             int status = 0;
             LocalDateTime planDate = plan.getPlanDate();
             status = getStatus(status, planDate);
+
             Long planId = plan.getId();
             String planName = plan.getPlanName();
             Location locationDetail = plan.getLocation();
