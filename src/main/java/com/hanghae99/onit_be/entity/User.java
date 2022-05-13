@@ -29,6 +29,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Lob
     @Column(nullable = false)
     private String profileImg;
 
@@ -76,6 +77,15 @@ public class User {
 
     public User(String token) {
         this.token = token;
+    }
+
+    public User(Long kakaoId, String nickName, String encodedPassword) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickName;
+        this.password = encodedPassword;
+        this.profileImg = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+        this.userRole = UserRoleEnum.USER;
+        this.isNoticeAllowed = false;
     }
 
     // 이미지 수정 메서드
