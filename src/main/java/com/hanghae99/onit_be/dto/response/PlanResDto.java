@@ -17,17 +17,19 @@ public class PlanResDto {
     private LocalDateTime planDate;
     private Location locationDetail;
     private int status;
-    private boolean writer;
+    private boolean isMember;
     private String url;
     private String penalty;
+    private String writer;
 
-    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, int status, boolean result, String url, String penalty) {
+    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, int status, boolean result, String url, String penalty, String writer) {
     this.planId = planId;
     this.planName = planName;
     this.planDate = planDate;
     this.locationDetail = locationDetail;
     this.status = status;
-    this.writer = result;
+    this.writer = writer;
+    this.isMember = result;
     this.url = url;
     this.penalty = penalty;
     }

@@ -12,6 +12,7 @@ import com.hanghae99.onit_be.security.filter.JwtAuthFilter;
 import com.hanghae99.onit_be.security.jwt.HeaderTokenExtractor;
 import com.hanghae99.onit_be.security.provider.FormLoginAuthProvider;
 import com.hanghae99.onit_be.security.provider.JWTAuthProvider;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -72,14 +73,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers("/h2-console/**")
-                .antMatchers("/");
-
+                .antMatchers("/")
+                .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // httpBasic () 을 활성화 하면
-        http.httpBasic().disable();
+        //http.httpBasic().disable();
         http.cors();
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
@@ -103,6 +105,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+//                .antMatchers("/swagger-ui/**").permitAll()
+//                .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("https://imonint.shop/ws").permitAll()
                 .antMatchers("ws/**").permitAll()
                 .anyRequest()
@@ -174,7 +178,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/map/**");
         skipPathList.add("GET,/ws/**");
         skipPathList.add("GET,/ws/**/**");
-//        skipPathList.add("GET, https://onit-a1529.firebaseapp.com/detail/1");
+
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

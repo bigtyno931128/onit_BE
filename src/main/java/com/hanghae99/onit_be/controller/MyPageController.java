@@ -39,6 +39,6 @@ public class MyPageController {
     public ResponseEntity<ResultDto<PlanDetailResDto>> getPlanInvitation(@PathVariable("randomUrl") String url,
                                                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         PlanDetailResDto planDetailResDto = mypageService.getPlanInvitation(url, userDetails.getUser());
-        return ResponseEntity.ok().body(new ResultDto<>("내가 참여한 일정 불러오기 성공!",planDetailResDto));
+        return ResponseEntity.ok().body(new ResultDto<>("내가 참여한 일정 불러오기 성공!", planDetailResDto));
     }
 }
