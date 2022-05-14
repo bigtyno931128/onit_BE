@@ -40,6 +40,7 @@ public class MyPageService {
     // 프로필 이미지 수정
     @Transactional
     public ProfileResDto updateProfile(MultipartFile multipartFile, UserDetailsImpl userDetails){
+
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
         );

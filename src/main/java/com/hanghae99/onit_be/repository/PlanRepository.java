@@ -14,5 +14,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     Plan findByUrl(String url);
     Plan findByUser(User user);
     void deleteByUrl(String url);
+
     //Plan getByUser(User orElseThrow);
 }
