@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
-
+// 어플리케이션이 시작될 때 Firebase 프로젝트에 앱을 등록해줘야 한다.
+// 두번 등록 되면 에러가 나므로 시작할 때 초기화 필요
 @Component
 public class FcmInitialize {
 

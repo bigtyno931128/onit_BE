@@ -71,9 +71,12 @@ public class FirebaseCloudMessageService {
     public void noticeScheduler() throws InterruptedException {
         log.info(new Date() + "스케쥴러 실행");
         // 오늘의 날짜 구하기
-        LocalDate today = LocalDate.now();
-        LocalDateTime todayTime = today.atStartOfDay();
-        LocalDateTime tommorrowTime = todayTime.plusDays(1);
+        LocalDate today = LocalDate.now(); // 2022-05-14
+        log.info(today.toString());
+        LocalDateTime todayTime = today.atStartOfDay(); // 2022-05-14 00:00
+        log.info(todayTime.toString());
+        LocalDateTime tommorrowTime = todayTime.plusDays(1); // 2022-05-15 00:00
+        log.info(tommorrowTime.toString());
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         // 현 시각 기준으로 오늘의 plan List를 조회 - isAllowed true & 일정이 오늘인 약속들만
@@ -95,6 +98,7 @@ public class FirebaseCloudMessageService {
     }
 
     public Runnable task(String token, String url, Long l) {
+        log.info(token);
         return () -> {
             try {
                 String body = String.format("약속 시간 1시간 전입니다!\n%s",l, url);
@@ -136,16 +140,27 @@ public class FirebaseCloudMessageService {
 //        return googleCredentials.getAccessToken().getTokenValue();
 //    }
 
-        private static String getAccessToken() throws IOException {
-            GoogleCredentials googleCredentials = GoogleCredentials
-//                    .fromStream(new FileInputStream("onit-a1529-firebase-adminsdk-dw4dd-f48876342a.json"))
-                    .fromStream(new FileInputStream("serviceAccount.json"))
-                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
-//                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
-            googleCredentials.refreshAccessToken();
-            log.info("FCM access token 발급 성공");
-            return googleCredentials.getAccessToken().getTokenValue();
-        }
+//        private static String getAccessToken() throws IOException {
+//            GoogleCredentials googleCredentials = GoogleCredentials
+////                    .fromStream(new FileInputStream("onit-a1529-firebase-adminsdk-dw4dd-f48876342a.json"))
+//                    .fromStream(new FileInputStream("serviceAccount.json"))
+//                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
+////                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+//            googleCredentials.refreshAccessToken();
+//            log.info("FCM access token 발급 성공");
+//            return googleCredentials.getAccessToken().getTokenValue();
+//        }
+
+    private String getAccessToken() throws IOException {
+        String firebaseConfigPath = "firebase/serviceAccount.json";
+
+        GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath)
+                .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+
+        googleCredential.refreshIfExpired();
+        log.info("FCM access token 발급 성공");
+        return googleCredential.getAccessToken().getTokenValue();
+    }
 
     public FcmResDto manualPush(Long planId, Long userId) {
         Plan plan = planRepository.findById(planId).orElseThrow(
