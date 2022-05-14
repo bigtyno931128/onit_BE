@@ -1,12 +1,11 @@
 package com.hanghae99.onit_be.entity;
 
-import com.hanghae99.onit_be.dto.request.PlanReqDto;
+import com.hanghae99.onit_be.plan.dto.PlanReqDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

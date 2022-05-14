@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.hanghae99.onit_be.entity.Plan;
-import com.hanghae99.onit_be.repository.PlanRepository;
+import com.hanghae99.onit_be.plan.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

@@ -1,13 +1,11 @@
 package com.hanghae99.onit_be.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.jwt.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -2,7 +2,7 @@ package com.hanghae99.onit_be.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.CustomLogoutSuccessHandler;
 import com.hanghae99.onit_be.security.FilterSkipMatcher;
 import com.hanghae99.onit_be.security.FormLoginFailHandler;
@@ -115,7 +115,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // [로그아웃 기능]
                 .logout()
                 // 로그아웃 요청 처리 URL
-                .logoutUrl("/api/logout")
+                .logoutUrl("/user/logout")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
                 .and()

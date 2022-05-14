@@ -1,7 +1,8 @@
 package com.hanghae99.onit_be.websocket;
 
 import com.hanghae99.onit_be.entity.Plan;
-import com.hanghae99.onit_be.repository.PlanRepository;
+import com.hanghae99.onit_be.plan.PlanRepository;
+import com.hanghae99.onit_be.websocket.dto.MapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
