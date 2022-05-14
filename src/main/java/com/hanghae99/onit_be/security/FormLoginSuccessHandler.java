@@ -50,6 +50,8 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         data.put(
                 "nickname",
                 userDetails.getNickName());
+
+
         String str = new String(objectMapper.writeValueAsString(data).getBytes("UTF-8"), "ISO-8859-1");
         response.getOutputStream()
                 .println(str);

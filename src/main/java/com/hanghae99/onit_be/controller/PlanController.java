@@ -26,7 +26,7 @@ public class PlanController {
     @LogExecutionTime
     @PostMapping("/member/plan")
     public ResponseEntity<ResultDto> createPlan (@RequestBody PlanReqDto planReqDto,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.createPlan(planReqDto, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto<>("일정 등록 성공!"));
     }
