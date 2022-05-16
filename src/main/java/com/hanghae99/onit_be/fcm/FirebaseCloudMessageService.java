@@ -42,7 +42,7 @@ public class FirebaseCloudMessageService {
     private final PlanRepository planRepository;
 
     // 메세지 전송
-    public void sendMessageTo(String targetToken, String title, String body, String url) throws IOException {
+    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         log.info(targetToken, title, body);
 
         String message = makeMessage(targetToken, title, body);
@@ -67,7 +67,7 @@ public class FirebaseCloudMessageService {
 
     @Transactional
     // 스케줄러 실행 - 10분 마다 // 자정
-    @Scheduled(cron = "0 0/10 * * * *")
+    @Scheduled(cron = "0 0/3 * * * *")
     public void noticeScheduler() throws InterruptedException {
         log.info(new Date() + "스케쥴러 실행");
         // 오늘의 날짜 구하기
@@ -77,6 +77,7 @@ public class FirebaseCloudMessageService {
         log.info(todayTime.toString());
         LocalDateTime tommorrowTime = todayTime.plusDays(1); // 2022-05-15 00:00
         log.info(tommorrowTime.toString());
+
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         // 현 시각 기준으로 오늘의 plan List를 조회 - isAllowed true & 일정이 오늘인 약속들만
@@ -84,25 +85,29 @@ public class FirebaseCloudMessageService {
         log.info("DB 조회 완료");
         System.out.println(planList.size());
 
-        // 현재 시간 구하기
-        LocalDateTime now = LocalDateTime.now();
+
         // 조회한 plan List 반복문 실행
         for (Plan plan : planList){
-        // 각 plan의 planDate와 현재 시간의 차이가 1(시간)이라면
-            long alarmHour = ChronoUnit.HOURS.between(now, plan.getPlanDate());
-            if (alarmHour == 1) {
-                // 조건에 맞는 plan의 user.token과 url, 1을 알림 전송 메소드(task)로 보내기
-                executorService.execute(task(plan.getUser().getToken(), plan.getUrl(), 1L));
-            }
+            executorService.execute(task(plan.getUser().getToken()));
+            log.info(plan.getUser().getToken());
+        // 현재시간 기준 1시간 후 = alarmHours
+//            LocalDateTime alarmHour = LocalDateTime.now().plusHours(1);
+//            log.info(String.valueOf(alarmHour));
+//            // 한시간 뒤 시간으로 PlanDate가 있다면
+//            if (alarmHour == plan.getPlanDate()) {
+//                // 조건에 맞는 plan의 user.token과 1을 알림 전송 메소드(task)로 보내기
+//                executorService.execute(task(plan.getUser().getToken(), 1L));
+//            }
         }
     }
 
-    public Runnable task(String token, String url, Long l) {
+    public Runnable task(String token) {
         log.info(token);
         return () -> {
             try {
-                String body = String.format("약속 시간 1시간 전입니다!\n%s",l, url);
-                sendMessageTo(token, "온잇(Onit)", body, url);
+//                String body = String.format("약속 시간 1시간 전입니다!\n%s",l);
+                String body = "약속 시간 1시간 전입니다!";
+                sendMessageTo(token, "온잇(Onit)", body);
                 log.info("push message 전송 요쳥");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -142,34 +147,35 @@ public class FirebaseCloudMessageService {
 
 //        private static String getAccessToken() throws IOException {
 //            GoogleCredentials googleCredentials = GoogleCredentials
-////                    .fromStream(new FileInputStream("onit-a1529-firebase-adminsdk-dw4dd-f48876342a.json"))
 //                    .fromStream(new FileInputStream("serviceAccount.json"))
 //                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
-////                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
 //            googleCredentials.refreshAccessToken();
 //            log.info("FCM access token 발급 성공");
+//            log.info(googleCredentials.getAccessToken().getTokenValue());
 //            return googleCredentials.getAccessToken().getTokenValue();
 //        }
 
     private String getAccessToken() throws IOException {
         String firebaseConfigPath = "firebase/serviceAccount.json";
+        log.info(firebaseConfigPath);
 
         GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath)
-                .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+                .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
 
         googleCredential.refreshIfExpired();
         log.info("FCM access token 발급 성공");
+        log.info(googleCredential.getAccessToken().getTokenValue());
         return googleCredential.getAccessToken().getTokenValue();
     }
 
-    public FcmResDto manualPush(Long planId, Long userId) {
-        Plan plan = planRepository.findById(planId).orElseThrow(
-                () -> new IllegalArgumentException("해당 일정이 없습니다.")
-        );
-        if (userId.equals(plan.getUser().getId())) {
-            return FcmResDto.of(plan);
-        }
-        log.info("Account 정보가 일치하지 않습니다");
-        throw new IllegalArgumentException("유저 정보가 없습니다.");
-    }
+//    public FcmResDto manualPush(Long planId, Long userId) {
+//        Plan plan = planRepository.findById(planId).orElseThrow(
+//                () -> new IllegalArgumentException("해당 일정이 없습니다.")
+//        );
+//        if (userId.equals(plan.getUser().getId())) {
+//            return FcmResDto.of(plan);
+//        }
+//        log.info("Account 정보가 일치하지 않습니다");
+//        throw new IllegalArgumentException("유저 정보가 없습니다.");
+//    }
 }
