@@ -42,9 +42,9 @@ public class PlanService {
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
         //과거 이면 등록 x
-        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())) {
-            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
-        }
+//        if (!LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(planReqDto.getPlanDate())) {
+//            throw new IllegalArgumentException("이미 지난 날짜로는 일정등록이 불가능합니다!");
+//        }
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회

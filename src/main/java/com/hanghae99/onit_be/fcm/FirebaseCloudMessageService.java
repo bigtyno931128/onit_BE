@@ -16,18 +16,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static com.hanghae99.onit_be.utils.Date.getHours;
 
 @Slf4j
 @EnableScheduling
@@ -38,6 +34,8 @@ public class FirebaseCloudMessageService {
     // 메세지 전송을 위해 요청하는 주소
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/onit-a1529/messages:send";
 //    private final String API_URL = "https://fcm.googleapis.com/fcm/send";
+    public static final String apiKey = "AAAAq97pb68:APA91bGZQJDZ58egw_deeq1qvG3eDiblvlgLQ_pOXLycCkUuqfIBXIE9dzvVix4Tec3svNDWuuJzpHSGUXXqeqJ_gs_WP98MNwXeFgRn95C7B3gFyWTZmgt4I4SzM8ef-swGy3rMjBZh";
+    public static final String senderId = "738179248047";
     private final ObjectMapper objectMapper;
     private final PlanRepository planRepository;
 
@@ -49,15 +47,23 @@ public class FirebaseCloudMessageService {
         log.info(message);
 
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(message,
-                MediaType.get("application/json; charset=utf-8"));
+        okhttp3.RequestBody requestBody = new FormBody.Builder()
+                .add("to", targetToken)
+                .add("project_id",senderId)
+                .add("notification","")
+                .add("data","제발 성공하자!")
+                .build();
+//        RequestBody requestBody = RequestBody.create(message,
+//                MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .url(API_URL)
                 .post(requestBody)
-                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer" + getAccessToken())
+//                .post(requestBody)
+                .addHeader(HttpHeaders.AUTHORIZATION, "key=" + apiKey)
+//                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer" + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
-
+        log.info("헤더 토큰 확인"+getAccessToken());
         Response response = client.newCall(request).execute();
 
         log.info(response.toString());
@@ -87,10 +93,10 @@ public class FirebaseCloudMessageService {
 
 
         // 조회한 plan List 반복문 실행
-        for (Plan plan : planList){
+        for (Plan plan : planList) {
             executorService.execute(task(plan.getUser().getToken()));
             log.info(plan.getUser().getToken());
-        // 현재시간 기준 1시간 후 = alarmHours
+            // 현재시간 기준 1시간 후 = alarmHours
 //            LocalDateTime alarmHour = LocalDateTime.now().plusHours(1);
 //            log.info(String.valueOf(alarmHour));
 //            // 한시간 뒤 시간으로 PlanDate가 있다면
@@ -156,26 +162,44 @@ public class FirebaseCloudMessageService {
 //        }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/serviceAccount.json";
-        log.info(firebaseConfigPath);
+//        String firebaseConfigPath = "/Users/zisoon/Desktop/hanghae99/Onit_BE/src/main/resources/firebase/serviceAccount.json";
+//        log.info(firebaseConfigPath);
 
-        GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath)
+        GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource("/firebase/onit-a1529-firebase-adminsdk-dw4dd-9a45434228.json")
                 .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
 
         googleCredential.refreshIfExpired();
+//        googleCredential.refreshAccessToken();
         log.info("FCM access token 발급 성공");
-        log.info(googleCredential.getAccessToken().getTokenValue());
+        log.info("헤더 토큰"+googleCredential.getAccessToken().getTokenValue());
         return googleCredential.getAccessToken().getTokenValue();
     }
 
-//    public FcmResDto manualPush(Long planId, Long userId) {
-//        Plan plan = planRepository.findById(planId).orElseThrow(
-//                () -> new IllegalArgumentException("해당 일정이 없습니다.")
+
+//    private String getAccessToken() throws IOException {
+//// Load the service account key JSON file
+////        FileInputStream serviceAccount = new FileInputStream("onit-a1529-firebase-adminsdk-dw4dd-b029d9c07e");
+//
+//// Authenticate a Google credential with the service account
+////        GoogleCredentials googleCred = GoogleCredentials.fromStream(serviceAccount);
+//        GoogleCredentials googleCred = GoogleCredentials.fromStream(new ClassPathResource("/firebase/onit-a1529-firebase-adminsdk-dw4dd-b029d9c07e.json")
+//                .getInputStream());
+//
+//// Add the required scopes to the Google credential
+//        GoogleCredentials scoped = googleCred.createScoped(
+//                Arrays.asList(
+//                        "https://www.googleapis.com/auth/firebase.database",
+//                        "https://www.googleapis.com/auth/userinfo.email"
+//                )
 //        );
-//        if (userId.equals(plan.getUser().getId())) {
-//            return FcmResDto.of(plan);
-//        }
-//        log.info("Account 정보가 일치하지 않습니다");
-//        throw new IllegalArgumentException("유저 정보가 없습니다.");
+//
+//// Use the Google credential to generate an access token
+//        scoped.refreshIfExpired();
+//        String token = scoped.getAccessToken().getTokenValue();
+//        return token;
+//
+//// See the "Using the access token" section below for information
+//// on how to use the access token to send authenticated requests to the
+//// Realtime Database REST API.
 //    }
 }

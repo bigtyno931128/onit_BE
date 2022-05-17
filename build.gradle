@@ -56,6 +56,10 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
 }
 
+jar {
+    enabled = false
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
