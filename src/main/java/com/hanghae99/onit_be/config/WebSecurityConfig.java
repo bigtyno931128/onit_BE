@@ -2,7 +2,7 @@ package com.hanghae99.onit_be.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.CustomLogoutSuccessHandler;
 import com.hanghae99.onit_be.security.FilterSkipMatcher;
 import com.hanghae99.onit_be.security.FormLoginFailHandler;
@@ -176,6 +176,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/map/**");
         skipPathList.add("GET,/ws/**");
         skipPathList.add("GET,/ws/**/**");
+//        skipPathList.add("GET,/member/list/**");
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(

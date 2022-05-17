@@ -4,19 +4,15 @@ import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.noti.Notification;
 import com.hanghae99.onit_be.noti.NotificationType;
-import com.hanghae99.onit_be.repository.NotificationRepository;
-import com.hanghae99.onit_be.repository.ParticipantRepository;
-import com.hanghae99.onit_be.repository.PlanRepository;
+import com.hanghae99.onit_be.noti.NotificationRepository;
+import com.hanghae99.onit_be.mypage.ParticipantRepository;
+import com.hanghae99.onit_be.plan.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Async

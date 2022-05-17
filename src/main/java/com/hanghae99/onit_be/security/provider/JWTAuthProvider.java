@@ -1,7 +1,7 @@
 package com.hanghae99.onit_be.security.provider;
 
 import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.security.jwt.JwtDecoder;
 import com.hanghae99.onit_be.security.jwt.JwtPreProcessingToken;

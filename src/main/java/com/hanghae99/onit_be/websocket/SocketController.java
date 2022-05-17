@@ -1,18 +1,19 @@
 package com.hanghae99.onit_be.websocket;
 
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
+import com.hanghae99.onit_be.websocket.dto.ChatDto;
+import com.hanghae99.onit_be.websocket.dto.EnterDto;
+import com.hanghae99.onit_be.websocket.dto.MapDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller

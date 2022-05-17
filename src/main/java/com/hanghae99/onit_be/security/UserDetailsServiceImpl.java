@@ -1,7 +1,7 @@
 package com.hanghae99.onit_be.security;
 
 import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.repository.UserRepository;
+import com.hanghae99.onit_be.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
