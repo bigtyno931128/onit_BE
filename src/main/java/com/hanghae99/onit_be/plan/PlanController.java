@@ -51,7 +51,7 @@ public class PlanController {
 
     // 일정 상세 조회 (내가 만든)
     @LogExecutionTime
-    @GetMapping("/member/list/{randomUrl}")
+    @GetMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url,
                                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         PlanDetailResDto planDetailResDto = planService.getPlan(url,userDetails.getUser());
@@ -60,7 +60,7 @@ public class PlanController {
 
     // 일정 수정
     @LogExecutionTime
-    @PutMapping("/member/list/{randomUrl}")
+    @PutMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto> editPlan (@PathVariable("randomUrl") String url, @RequestBody PlanReqDto planReqDto,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.editPlan(url, planReqDto, userDetails.getUser());
@@ -69,7 +69,7 @@ public class PlanController {
 
     // 일정 삭제
     @LogExecutionTime
-    @DeleteMapping("/member/list/{randomUrl}")
+    @DeleteMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.deletePlan(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
