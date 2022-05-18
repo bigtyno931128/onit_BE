@@ -159,19 +159,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 허용
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
+
         // 회원 관리 API 허용
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("POST,/api/logout");
 
-        //게시글 조회
-
-        //skipPathList.add("GET,/home");
         skipPathList.add("GET,/basic.js");
+
         //sse 메세지 test
         skipPathList.add("GET,/index.html");
         skipPathList.add("GET,/subscribe/**");
-        //skipPathList.add("POST/reviews");
 
         skipPathList.add("GET,/favicon.ico");
         skipPathList.add("POST,/api/idCheck");

@@ -9,6 +9,9 @@ import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
 import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
 import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.user.UserRepository;
+import com.hanghae99.onit_be.weather.Weather;
+import com.hanghae99.onit_be.weather.WeatherCreateEvent;
+import com.hanghae99.onit_be.weather.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +23,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
 import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 import static com.hanghae99.onit_be.common.utils.Date.*;
@@ -35,7 +40,7 @@ public class PlanService {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher eventPublisher;
-
+    private final WeatherRepository weatherRepository;
 
     // 일정 생성
     @Transactional
@@ -71,6 +76,7 @@ public class PlanService {
         plan.addPlan(user1);
         Participant participant = new Participant(plan, user1);
         participantRepository.save(participant);
+        eventPublisher.publishEvent(new WeatherCreateEvent(plan));
     }
 
     // 일정 목록 조회  (05 -10 문제 상황 약속 시간 기준으로 일정을 정렬해서 보내주지 못하는 상황)
@@ -106,6 +112,15 @@ public class PlanService {
         List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
 
         for(Participant participant : participantList) {
+
+            Plan plan = participant.getPlan();
+            plans.add(plan);
+        }
+        Pageable pageable = getPageable(pageno);
+        List<PlanResDto> planResDtoList = new ArrayList<>();
+        // 일정 시간 비교 메서드
+        forPlanList(plans, planResDtoList, user);
+
             Long planId = participant.getPlan().getId();
             String planName = participant.getPlan().getPlanName();
             String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
@@ -127,6 +142,7 @@ public class PlanService {
         // 리스트 각각 다른 페이지 조회할때는 어떻게?
 //        int pageno = 1;
         Pageable pageable = getPageable(pageno);
+
         int start = pageno * 5;
         // myPlanList
         int end = Math.min((start + 5), myPlanList.size());
@@ -171,8 +187,23 @@ public class PlanService {
 
         Participant participant = participantRepository.findByUserAndPlan(user,planRepository.findByUrl(url));
         Plan plan = participant.getPlan();
+        List<Weather> weatherList = weatherRepository.findAllByPlanId(plan.getId());
+        String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
+        int temp = 0;
+        String icon = "서비스 제공  x";
+        for (Weather weather :weatherList) {
+            int comResult = compareDay( weather.getWeatherDate(), plan.getPlanDate());
+            if(comResult == 0){
+                log.info(String.valueOf(weather.getTemp()));
+                log.info(weather.getDescription());
+                description = weather.getDescription();
+                temp = weather.getTemp();
+                icon =weather.getIcon();
+            }
+        }
+
         boolean isMember = participant.isMember();
-        return new PlanDetailResDto(plan,isMember);
+        return new PlanDetailResDto(plan,isMember,description,temp,icon);
     }
 
     //일정 수정.
