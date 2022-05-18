@@ -9,4 +9,6 @@ public interface WeatherRepository extends JpaRepository<Weather, Long> {
 
     //Weather findByPlanDateAndPlanId(LocalDateTime planDate,Long planId);
     List<Weather> findAllByPlanId(Long planId);
+
+    void deleteAllByPlanId(Long id);
 }

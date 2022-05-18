@@ -81,6 +81,7 @@ public class User {
 
     public User(Long kakaoId, String nickName, String encodedPassword) {
         this.kakaoId = kakaoId;
+        this.username = nickName;
         this.nickname = nickName;
         this.password = encodedPassword;
         this.profileImg = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";

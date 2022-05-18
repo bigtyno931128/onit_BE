@@ -164,7 +164,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("POST,/api/logout");
-
+        skipPathList.add("GET,/users/kakao/callback");
         skipPathList.add("GET,/basic.js");
 
         //sse 메세지 test
