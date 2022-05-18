@@ -26,6 +26,7 @@ import java.time.ZoneId;
 
 import java.time.format.DateTimeFormatter;
 
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.hanghae99.onit_be.common.utils.Date.*;
@@ -120,7 +121,27 @@ public class PlanService {
             int status = 0;
             status = getStatus(status, participant.getPlanDate());
 
-            PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status);
+            List<Weather> weatherList = weatherRepository.findAllByPlanId(planId);
+            String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
+
+            // 개선방향 --> 1. for문을 돌리지 않으려면 , 날씨 테이블에서 처음부터 오늘 날짜에 해당하는 레코드만 불러올 수 있도록 생각 해야 할듯 ??
+            //  2. (현재 ) 참여하려는 일정 중에 오늘일정이 있으면 날씨 정보를 제공 하고 있는데 , 만약 프론트에서 홈 화면에 보여줄 때  오늘 일정이 없으면 ? 어떻게 보여주는지
+            //  3. 알아야 할 것 같다 .
+
+            for (Weather weather :weatherList) {
+                // 일정 날짜가 오늘 일 때 만 날씨 정보를 제공 ?
+                log.info("일정 날짜=={}", participant.getPlan().getPlanDate().truncatedTo(ChronoUnit.DAYS));
+                log.info("날씨데이터 날짜=={}", weather.getWeatherDate().truncatedTo(ChronoUnit.DAYS));
+                int comResult = compareDay( weather.getWeatherDate(), LocalDateTime.now());
+                int comResult1 = compareDay( participant.getPlan().getPlanDate(), LocalDateTime.now());
+                if(comResult1 == 0) {
+                    if(comResult == 0 ) {
+                        description = weather.getDescription();
+                    }
+                }
+            }
+
+            PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status,description);
 
             // 작성자가 사용자이면 myPlanListDto에 담아주기
             if(participant.getWriter() == user.getNickname()){
