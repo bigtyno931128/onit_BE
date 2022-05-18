@@ -112,15 +112,6 @@ public class PlanService {
         List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
 
         for(Participant participant : participantList) {
-
-            Plan plan = participant.getPlan();
-            plans.add(plan);
-        }
-        Pageable pageable = getPageable(pageno);
-        List<PlanResDto> planResDtoList = new ArrayList<>();
-        // 일정 시간 비교 메서드
-        forPlanList(plans, planResDtoList, user);
-
             Long planId = participant.getPlan().getId();
             String planName = participant.getPlan().getPlanName();
             String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
@@ -138,9 +129,7 @@ public class PlanService {
                 invitedPlanList.add(myPlanDto);
             }
         }
-//        return new TwoPlanResDto(myPlanList,invitedPlanList);
-        // 리스트 각각 다른 페이지 조회할때는 어떻게?
-//        int pageno = 1;
+
         Pageable pageable = getPageable(pageno);
 
         int start = pageno * 5;
