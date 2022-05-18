@@ -1,23 +1,17 @@
 package com.hanghae99.onit_be.weather;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanghae99.onit_be.entity.Plan;
-
-import com.hanghae99.onit_be.mypage.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -25,13 +19,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.hanghae99.onit_be.common.utils.Date.compareDay;
 
