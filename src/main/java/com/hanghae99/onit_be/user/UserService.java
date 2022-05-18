@@ -28,7 +28,7 @@ public class UserService {
     }
 
     //회원가입 수정 .
-    public User registerUser(SignupReqDto requestDto) {
+    public void registerUser(SignupReqDto requestDto) {
 
         Valid.validUser(requestDto);
 
@@ -49,7 +49,6 @@ public class UserService {
         User user = new User(username, password,nickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png");
         //return userRepository.save(user);
         userRepository.save(user);
-        return user;
     }
 
     //아이디 중복검사

@@ -1,10 +1,11 @@
 package com.hanghae99.onit_be.plan;
 
 import com.hanghae99.onit_be.aop.LogExecutionTime;
-import com.hanghae99.onit_be.plan.dto.PlanReqDto;
 import com.hanghae99.onit_be.common.ResultDto;
 import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
 import com.hanghae99.onit_be.plan.dto.PlanListResDto;
+import com.hanghae99.onit_be.plan.dto.PlanReqDto;
+import com.hanghae99.onit_be.plan.dto.TwoPlanResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,19 +31,27 @@ public class PlanController {
 
     // 일정 목록 조회 (내가 만든 )
     // 페이징 처리
-    @LogExecutionTime
-    @GetMapping("/member/list/{userId}/{pageno}")
-    public ResponseEntity<ResultDto<PlanListResDto>> getPlanList (@PathVariable Long userId,
-                                                                  @PathVariable int pageno,
-                                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//    @LogExecutionTime
+//    @GetMapping("/member/list/{userId}/{pageno}")
+//    public ResponseEntity<ResultDto<PlanListResDto>> getPlanList (@PathVariable Long userId,
+//                                                                  @PathVariable int pageno,
+//                                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        PlanListResDto planListResDto = new PlanListResDto(planService.getPlanList(userId, pageno-1, userDetails.getUser()));
+//        return ResponseEntity.ok().body(new ResultDto<>("일정 목록 조회 성공!", planListResDto));
+//    }
 
-        PlanListResDto planListResDto = new PlanListResDto(planService.getPlanList(userId, pageno-1, userDetails.getUser()));
-        return ResponseEntity.ok().body(new ResultDto<>("일정 목록 조회 성공!", planListResDto));
+    // 일정 목록 조회 (내가 만든 일정/초대된 일정)
+    @LogExecutionTime
+    @GetMapping("/member/plans/{pageno}")
+    public TwoPlanResDto getPlansList (@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @PathVariable int pageno) {
+        return planService.getPlansList(userDetails.getUser(),pageno-1);
     }
 
     // 일정 상세 조회 (내가 만든)
     @LogExecutionTime
-    @GetMapping("/member/list/{randomUrl}")
+    @GetMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url,
                                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
         PlanDetailResDto planDetailResDto = planService.getPlan(url,userDetails.getUser());
@@ -51,7 +60,7 @@ public class PlanController {
 
     // 일정 수정
     @LogExecutionTime
-    @PutMapping("/member/list/{randomUrl}")
+    @PutMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto> editPlan (@PathVariable("randomUrl") String url, @RequestBody PlanReqDto planReqDto,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.editPlan(url, planReqDto, userDetails.getUser());
@@ -60,7 +69,7 @@ public class PlanController {
 
     // 일정 삭제
     @LogExecutionTime
-    @DeleteMapping("/member/list/{randomUrl}")
+    @DeleteMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         planService.deletePlan(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));

@@ -29,8 +29,8 @@ public class UserController {
     // 회원 가입 요청 처리
     @PostMapping("/user/signup")
     public ResponseEntity<ResultDto<Object>> registerUser(@RequestBody SignupReqDto requestDto) {
-        User user = userService.registerUser(requestDto);
-        return ResponseEntity.ok().body(new ResultDto<>("회원가입 성공!",user));
+        userService.registerUser(requestDto);
+        return ResponseEntity.ok().body(new ResultDto<>("회원가입 성공!"));
     }
 
     //아이디 중복 검사

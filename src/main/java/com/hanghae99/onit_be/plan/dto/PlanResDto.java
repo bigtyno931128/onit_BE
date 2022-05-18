@@ -2,6 +2,8 @@ package com.hanghae99.onit_be.plan.dto;
 
 import com.hanghae99.onit_be.entity.Location;
 import com.hanghae99.onit_be.entity.Plan;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -51,4 +53,39 @@ public class PlanResDto {
         this.url = url;
         this.penalty = penalty;
     }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class MyPlanDto {
+        private Long planId;
+        private String planName;
+        private String planDate;
+        private String address;
+        private String url;
+        private String penalty;
+        private int status;
+
+        public MyPlanDto(Long planId, String planName, String planDateCv, String address, String url, int status) {
+            this.planId = planId;
+            this.planName = planName;
+            this.planDate = planDateCv;
+            this.address = address;
+            this.url = url;
+            this.status = status;
+        }
+    }
+
+//    @Builder
+//    @AllArgsConstructor
+//    @Getter
+//    public static class InvitedPlan {
+//        private Long planId;
+//        private String planName;
+//        private String planDate;
+//        private String address;
+//        private String url;
+//        private String penalty;
+//        private int status;
+//    }
 }

@@ -4,12 +4,10 @@ import com.hanghae99.onit_be.entity.Location;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
+import com.hanghae99.onit_be.mypage.ParticipantRepository;
 import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
 import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
-import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
-import com.hanghae99.onit_be.plan.dto.PlanReqDto;
-import com.hanghae99.onit_be.plan.dto.PlanResDto;
-import com.hanghae99.onit_be.mypage.ParticipantRepository;
+import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.weather.Weather;
 import com.hanghae99.onit_be.weather.WeatherCreateEvent;
@@ -25,6 +23,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
+import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 import static com.hanghae99.onit_be.common.utils.Date.*;
@@ -79,12 +80,39 @@ public class PlanService {
     }
 
     // 일정 목록 조회  (05 -10 문제 상황 약속 시간 기준으로 일정을 정렬해서 보내주지 못하는 상황)
-    public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user) {
+//    public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user) {
+//
+//        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(
+//                userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
+//        List<Plan> plans = new ArrayList<>();
+//        for(Participant participant : participantList) {
+//            Plan plan = participant.getPlan();
+//            plans.add(plan);
+//        }
+//
+//        Pageable pageable = getPageable(pageno);
+//        List<PlanResDto> planResDtoList = new ArrayList<>();
+//
+//        // 일정 시간 비교 메서드
+//        forPlanList(plans, planResDtoList, user);
+//        int start = pageno * 5;
+//        int end = Math.min((start + 5), plans.size());
+//        Page<PlanResDto> page = new PageImpl<>(planResDtoList.subList(start, end), pageable, planResDtoList.size());
+//        return page;
+//    }
 
-        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(
-                userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
-        List<Plan> plans = new ArrayList<>();
+    // 일정 목록 조회 (내가 만든 일정 목록과 초대받은 일정 목록)
+    // 400 예외 처리 필요
+    public TwoPlanResDto getPlansList(User user, int pageno){
+        // 사용자 정보로 참여하는 일정 리스트 불러오기
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
+        // 내가 만든 일정 리스트 초기화
+        List<PlanResDto.MyPlanDto> myPlanList = new ArrayList<>();
+        // 공유 받은 일정 리스트 초기화
+        List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
+
         for(Participant participant : participantList) {
+
             Plan plan = participant.getPlan();
             plans.add(plan);
         }
@@ -92,12 +120,45 @@ public class PlanService {
         List<PlanResDto> planResDtoList = new ArrayList<>();
         // 일정 시간 비교 메서드
         forPlanList(plans, planResDtoList, user);
-        int start = pageno * 5;
-        int end = Math.min((start + 5), plans.size());
-        Page<PlanResDto> page = new PageImpl<>(planResDtoList.subList(start, end), pageable, planResDtoList.size());
-        return page;
 
+            Long planId = participant.getPlan().getId();
+            String planName = participant.getPlan().getPlanName();
+            String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
+            String address = participant.getPlan().getLocation().getAddress();
+            String url = participant.getPlan().getUrl();
+            int status = 0;
+            status = getStatus(status, participant.getPlanDate());
+
+            PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status);
+
+            // 작성자가 사용자이면 myPlanListDto에 담아주기
+            if(participant.getWriter() == user.getNickname()){
+                myPlanList.add(myPlanDto);
+            } else {
+                invitedPlanList.add(myPlanDto);
+            }
+        }
+//        return new TwoPlanResDto(myPlanList,invitedPlanList);
+        // 리스트 각각 다른 페이지 조회할때는 어떻게?
+//        int pageno = 1;
+        Pageable pageable = getPageable(pageno);
+
+        int start = pageno * 5;
+        // myPlanList
+        int end = Math.min((start + 5), myPlanList.size());
+        // invitedPlanList
+        int end2 = Math.min((start + 5), invitedPlanList.size());
+
+        Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
+        Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
+
+        PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
+        PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
+
+        return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto);
     }
+
+
     // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
     private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user) {
         for (Plan plan : planList) {
