@@ -19,7 +19,9 @@ public class PlanDetailResDto {
     private String penalty;
     private String url;
     private boolean isMember;
-
+    private String description;
+    private int temp;
+    private String icon;
 
     public PlanDetailResDto(Plan plan) {
         // planId는 url을 위해 필요?
@@ -42,7 +44,7 @@ public class PlanDetailResDto {
 
     }
 
-    public PlanDetailResDto(Plan plan, boolean isMember) {
+    public PlanDetailResDto(Plan plan, boolean isMember,String description , int temp, String icon) {
         this.planId = plan.getId();
         this.planName = plan.getPlanName();
         this.planDate = plan.getPlanDate();
@@ -51,5 +53,8 @@ public class PlanDetailResDto {
         this.penalty = plan.getPenalty();
         this.url = plan.getUrl();
         this.isMember = isMember;
+        this.description= description;
+        this.temp = temp;
+        this.icon = icon;
     }
 }
