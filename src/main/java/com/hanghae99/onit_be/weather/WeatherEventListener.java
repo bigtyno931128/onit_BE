@@ -10,8 +10,7 @@ import com.hanghae99.onit_be.mypage.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
