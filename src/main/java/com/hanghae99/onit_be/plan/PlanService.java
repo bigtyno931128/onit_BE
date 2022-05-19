@@ -48,7 +48,7 @@ public class PlanService {
     public void createPlan(PlanReqDto planReqDto, User user) {
 
         //과거 이면 등록 x
-//        checkPlanDate(planReqDto);
+        checkPlanDate(planReqDto);
 
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
