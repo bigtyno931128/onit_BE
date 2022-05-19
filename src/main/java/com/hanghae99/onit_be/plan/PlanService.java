@@ -229,6 +229,7 @@ public class PlanService {
         // 작성자만 삭제 가능
         if (Objects.equals(plan.getWriter(), user.getNickname())) {
             participantRepository.deleteByUserAndPlan(user, plan);
+            weatherRepository.deleteAllByPlanId(plan.getId());
             planRepository.deleteByUrl(url);
             eventPublisher.publishEvent(new PlanDeleteEvent(plan, "일정을 삭제 했습니다.", user));
         } else {

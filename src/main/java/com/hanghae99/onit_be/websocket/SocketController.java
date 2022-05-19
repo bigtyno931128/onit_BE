@@ -46,11 +46,16 @@ public class SocketController {
         socketService.setDestination(enterDto.getPlanId(), mapDto);
 
         simpMessagingTemplate.convertAndSend("/topic/map/" + mapDto.getPlanId(), mapDto);
+
     }
 
     @MessageMapping("/map.send") // maps/map.send
     public void sendMap(@Payload MapDto mapDto) {
+
+        socketService.setDistance(mapDto);
+
         simpMessagingTemplate.convertAndSend("/topic/map/" + mapDto.getPlanId(), mapDto);
+
     }
 
 
