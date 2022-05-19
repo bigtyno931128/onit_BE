@@ -44,7 +44,7 @@ public class PlanDetailResDto {
 
     }
 
-    public PlanDetailResDto(Plan plan, boolean isMember,String description , int temp, String icon) {
+    public PlanDetailResDto(Plan plan, boolean isMember) {
         this.planId = plan.getId();
         this.planName = plan.getPlanName();
         this.planDate = plan.getPlanDate();
@@ -53,8 +53,5 @@ public class PlanDetailResDto {
         this.penalty = plan.getPenalty();
         this.url = plan.getUrl();
         this.isMember = isMember;
-        this.description= description;
-        this.temp = temp;
-        this.icon = icon;
     }
 }

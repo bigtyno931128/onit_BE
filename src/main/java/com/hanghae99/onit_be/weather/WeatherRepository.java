@@ -2,7 +2,11 @@ package com.hanghae99.onit_be.weather;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
@@ -11,4 +15,8 @@ public interface WeatherRepository extends JpaRepository<Weather, Long> {
     List<Weather> findAllByPlanId(Long planId);
 
     void deleteAllByPlanId(Long id);
+
+
+    Optional<Weather> findByWeatherDate(LocalDate weatherDate);
+    Weather findByWeatherDateAndPlanId(LocalDate weatherDate,Long planId);
 }

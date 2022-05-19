@@ -114,7 +114,7 @@ public class WeatherEventListener {
             int realTime = (int) time;
             String krTime = getTimestampToDate(String.valueOf(realTime));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime weatherTime = LocalDateTime.parse(krTime, formatter);
+            LocalDate weatherTime = LocalDate.from(LocalDateTime.parse(krTime, formatter));
 
             log.info("가져오는 날짜  ={}", String.valueOf(weatherTime));
             log.info("생성당시에 약속잡기로 한 날짜 ={}", String.valueOf(dayDate1));
@@ -207,51 +207,56 @@ public class WeatherEventListener {
 
     //갱신 어떻게 할까 ,, ? 테스트  . --> (오류) 마지막 날짜  현재 날짜 + 8  에 해당하는 데이터 정보로 모든 정보가 업데이트 .
     // 매일 기상 테이블을 초기화 하면서 일정 리스트의 좌표들로 새롭게 갱신 .
-    @Scheduled(cron = "0 0/1 * * * *")
-    //@Scheduled(cron = "0 0 06 * * ?")
+    //@Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0 06 * * ?")
     public void updateAndDeleteWeatherData() {
 
         log.info("날씨 업데이트 스케쥴러 실행");
         List<Plan> planList = planRepository.findAll();
 
-        for (Plan plan : planList) {
+//        if (!planList.isEmpty()) {
+//            throw new NullPointerException("업데이트 할 일정이 없습니다.");
+//        }
 
-            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(plan.getPlanDate())) {
+            for (Plan plan : planList) {
 
-                weatherRepository.deleteAllByPlanId(plan.getId());
+                if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(plan.getPlanDate())) {
 
-                String API_KEY = "384994b16fb4098a5312b226bd2d76e5";
-                String PART = "current,minutely,hourly,alerts";
-                String LANG = "kr";
+                    weatherRepository.deleteAllByPlanId(plan.getId());
 
-                String address = plan.getLocation().getAddress();
-                LocalDateTime dayDate1 = plan.getPlanDate().truncatedTo(ChronoUnit.DAYS);
+                    String API_KEY = "384994b16fb4098a5312b226bd2d76e5";
+                    String PART = "current,minutely,hourly,alerts";
+                    String LANG = "kr";
+
+                    String address = plan.getLocation().getAddress();
+                    LocalDateTime dayDate1 = plan.getPlanDate().truncatedTo(ChronoUnit.DAYS);
 
 
-                try {
-                    Thread.sleep(80000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        Thread.sleep(80000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                String urlString = "https://api.openweathermap.org/data/2.5/onecall?lat="
-                        + plan.getLocation().getLat() +
-                        "&lon=" + plan.getLocation().getLng() +
-                        "&exclude=" + PART +
-                        "&lang=" + LANG +
-                        "&appid=" + API_KEY;
+                    String urlString = "https://api.openweathermap.org/data/2.5/onecall?lat="
+                            + plan.getLocation().getLat() +
+                            "&lon=" + plan.getLocation().getLng() +
+                            "&exclude=" + PART +
+                            "&lang=" + LANG +
+                            "&appid=" + API_KEY;
 
-                try {
+                    try {
 
-                    String result = getApiResult(urlString);
-                    Gson gson = new Gson();
-                    Map<String, Object> jsonObject = creteJsonMap(result, gson);
-                    List<Map<String, Object>> jsonList = (List) jsonObject.get("daily");
-                    getWeatherData(plan, address, dayDate1, gson, jsonList);
+                        String result = getApiResult(urlString);
+                        Gson gson = new Gson();
+                        Map<String, Object> jsonObject = creteJsonMap(result, gson);
+                        List<Map<String, Object>> jsonList = (List) jsonObject.get("daily");
+                        getWeatherData(plan, address, dayDate1, gson, jsonList);
 
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+
             }
         }
     }
@@ -262,8 +267,8 @@ public class WeatherEventListener {
     public void deleteWeather() {
         List<Weather> weatherList = weatherRepository.findAll();
         for (Weather weather : weatherList) {
-            int comResult = compareDay(weather.getWeatherDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-            log.info(String.valueOf(comResult));
+
+            int comResult = compareDay(LocalDateTime.from(weather.getWeatherDate()), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
             if (comResult == -1 || LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(weather.getPlanDate())) {
                 weatherRepository.deleteById(weather.getId());

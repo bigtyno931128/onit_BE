@@ -17,6 +17,7 @@ public class SocketService {
     private final PlanRepository planRepository;
 
     public void setDestination(Long planId, MapDto mapDto) {
+
         Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
         mapDto.setDestLat(String.valueOf(plan.getLocation().getLat()));
         mapDto.setDestLng(String.valueOf(plan.getLocation().getLng()));
