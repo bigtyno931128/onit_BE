@@ -21,8 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://localhost:3000","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://d23ogomajvao50.cloudfront.net","https://imonint.shop/ws","https://imonint.shop/details/**","https://imonint.shop/detail/**")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedOrigins("http://localhost:3000","https://imonit.co.kr","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://d23ogomajvao50.cloudfront.net","https://imonint.shop/ws","https://imonint.shop/details/**","https://imonint.shop/detail/**")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization");
     }
@@ -30,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://d23ogomajvao50.cloudfront.net");
+        configuration.addAllowedOrigin("https://imonint.shop");
+        configuration.addAllowedOrigin("https://imonit.co.kr");
         configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");

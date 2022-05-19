@@ -51,7 +51,10 @@ public class PlanService {
     public void createPlan(PlanReqDto planReqDto, User user) {
 
         //과거 이면 등록 x
-//        checkPlanDate(planReqDto);
+
+        checkPlanDate(planReqDto);
+
+
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회
@@ -82,27 +85,6 @@ public class PlanService {
         eventPublisher.publishEvent(new WeatherCreateEvent(plan));
     }
 
-    // 일정 목록 조회  (05 -10 문제 상황 약속 시간 기준으로 일정을 정렬해서 보내주지 못하는 상황)
-//    public Page<PlanResDto> getPlanList(Long user_id, int pageno, User user) {
-//
-//        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(
-//                userRepository.findById(user_id).orElseThrow(IllegalArgumentException::new));
-//        List<Plan> plans = new ArrayList<>();
-//        for(Participant participant : participantList) {
-//            Plan plan = participant.getPlan();
-//            plans.add(plan);
-//        }
-//
-//        Pageable pageable = getPageable(pageno);
-//        List<PlanResDto> planResDtoList = new ArrayList<>();
-//
-//        // 일정 시간 비교 메서드
-//        forPlanList(plans, planResDtoList, user);
-//        int start = pageno * 5;
-//        int end = Math.min((start + 5), plans.size());
-//        Page<PlanResDto> page = new PageImpl<>(planResDtoList.subList(start, end), pageable, planResDtoList.size());
-//        return page;
-//    }
 
     // 일정 목록 조회 (내가 만든 일정 목록과 초대받은 일정 목록)
     // 400 예외 처리 필요
