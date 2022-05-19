@@ -128,7 +128,7 @@ public class KakaoUserService {
         body.add("grant_type", "authorization_code");
         body.add("client_id", "972182102726f2cccd099d839c096d2d");
         body.add("redirect_uri",
-                "http://localhost:8001/user/kakao/callback");
+                "http://localhost:8080/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기

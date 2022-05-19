@@ -2,10 +2,7 @@ package com.hanghae99.onit_be.plan;
 
 import com.hanghae99.onit_be.aop.LogExecutionTime;
 import com.hanghae99.onit_be.common.ResultDto;
-import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
-import com.hanghae99.onit_be.plan.dto.PlanListResDto;
-import com.hanghae99.onit_be.plan.dto.PlanReqDto;
-import com.hanghae99.onit_be.plan.dto.TwoPlanResDto;
+import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -75,5 +72,19 @@ public class PlanController {
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }
 
+
+    // 일정 목록 조회 (내가 만든 일정/초대된 일정) test 1
+    @LogExecutionTime
+    @GetMapping("/test/{pageno}")
+    public TwoPlanResDto getTest (@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @PathVariable int pageno) {
+        return planService.getTest(userDetails.getUser(),pageno-1);
+    }
+
+    //날짜 계산
+    @PostMapping("/test/{planId}")
+    public void getDistance(@RequestBody TestDto testDto, @PathVariable Long planId) {
+        planService.getDistance(testDto,planId);
+    }
 }
 

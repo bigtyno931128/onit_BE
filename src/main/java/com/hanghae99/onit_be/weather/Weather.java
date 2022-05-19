@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,7 @@ public class Weather {
     private LocalDateTime planDate;
 
     @Column
-    private LocalDateTime weatherDate;
+    private LocalDate weatherDate;
 
     @Column
     private String address;
@@ -42,7 +43,7 @@ public class Weather {
 
     private String icon;
 
-    public Weather(String address, String main, String id2, int temp, LocalDateTime planDate, LocalDateTime weatherTime,Long planId, String icon) {
+    public Weather(String address, String main, String id2, int temp, LocalDateTime planDate, LocalDate weatherTime, Long planId, String icon) {
         this.planId = planId;
         this.address = address;
         this.main = main;

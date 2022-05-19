@@ -16,9 +16,10 @@ public class MapDto {
     private MessageType type;
     private String destLat;
     private String destLng;
+    private String distance;
 
     @Builder
-    public MapDto(Long planId, String sender, String lat, String lng, String destLat, String destLng, MessageType type, String profileImg) {
+    public MapDto(Long planId, String sender, String lat, String lng, String destLat, String destLng, MessageType type, String profileImg, String distance) {
         this.planId = planId;
         this.sender = sender;
         this.lat = lat;
@@ -27,6 +28,7 @@ public class MapDto {
         this.destLng = destLng;
         this.type = type;
         this.profileImg = profileImg;
+        this.distance = distance;
     }
 
 

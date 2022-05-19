@@ -65,16 +65,23 @@ public class SocketController {
         log.info("map2====="+mapDto.getDestLat());
 
         simpMessagingTemplate.convertAndSend("/topic/map/" + mapDto.getPlanId(), mapDto);
+
         // 플랜 Id와 채팅 내역이 담긴 chatDto 보내기
 //        simpMessagingTemplate.convertAndSend("/topic/chat/" + chatDto.getPlanId(), chatDto);
+
 
     }
 
     @MessageMapping("/map.send") // maps/map.send
     public void sendMap(@Payload MapDto mapDto) {
+
+        socketService.setDistance(mapDto);
+
         log.info("map.send====="+mapDto.getDestLat());
 
+
         simpMessagingTemplate.convertAndSend("/topic/map/" + mapDto.getPlanId(), mapDto);
+
     }
 
 
