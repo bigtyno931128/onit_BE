@@ -51,6 +51,7 @@ public class PlanController {
     @GetMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto<PlanDetailResDto>> getPlan (@PathVariable("randomUrl") String url,
                                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
+        System.out.println("id=?" + userDetails.getUser().getId());
         PlanDetailResDto planDetailResDto = planService.getPlan(url,userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto<>("일정 상세 조회 성공!", planDetailResDto));
     }
@@ -68,6 +69,8 @@ public class PlanController {
     @LogExecutionTime
     @DeleteMapping("/member/plan/{randomUrl}")
     public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+
         planService.deletePlan(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }

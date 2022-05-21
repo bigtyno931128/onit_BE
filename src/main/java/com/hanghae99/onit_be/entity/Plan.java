@@ -92,4 +92,8 @@ public class Plan extends TimeStamped {
         this.penalty = plan.getPenalty();
         this.location = plan.getLocation();
     }
+
+    public void updateJoin() {
+        this.isMember = true;
+    }
 }

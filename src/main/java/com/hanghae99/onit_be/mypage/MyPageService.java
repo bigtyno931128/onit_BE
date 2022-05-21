@@ -26,10 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 import static com.hanghae99.onit_be.common.utils.Date.checkPlan;
 import static com.hanghae99.onit_be.common.utils.Date.compareDay;
@@ -104,15 +101,16 @@ public class MyPageService {
         }
         Participant participant = new Participant(planNew, user1);
         participantRepository.save(participant);
+        planNew.updateJoin();
         // 알림
-        eventPublisher.publishEvent(new NotificationEvent(participant));
+        //eventPublisher.publishEvent(new NotificationEvent(participant));
     }
 
     // 중복 참여 불가 x
     private void checkPlanList(User user) {
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
         for (Participant participant : participantList) {
-            if (participant.getUser().getId() == user.getId()) {
+            if (Objects.equals(participant.getUser().getId(), user.getId())) {
                 throw new IllegalArgumentException("이미 일정에 참여중입니다.");
             }
         }

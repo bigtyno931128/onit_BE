@@ -88,9 +88,10 @@ public class PlanService {
         List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
 
         for (Participant participant : participantList) {
+
             Long planId = participant.getPlan().getId();
             String planName = participant.getPlan().getPlanName();
-            String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
+            String planDateCv = participant.getPlan().getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
             String address = participant.getPlan().getLocation().getAddress();
             String url = participant.getPlan().getUrl();
             int status = 0;
@@ -130,12 +131,15 @@ public class PlanService {
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
 
-        Participant participant = participantRepository.findByUserAndPlan(user, planRepository.findByUrl(url));
-        Plan plan = participant.getPlan();
+        Plan plan = planRepository.findByUrl(url);
 
-        boolean isMember = participant.isMember();
-        return new PlanDetailResDto(plan, isMember);
+        return new PlanDetailResDto(plan);
+
     }
+
+
+
+
 
     //일정 수정.
     //.작성자만 수정가능 , 약속 날짜는 과거 x ,
