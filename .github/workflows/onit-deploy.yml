@@ -5,6 +5,9 @@ name: onit-deploy
 # Controls when the workflow will run
 # workflow가 언제 실행되는지 지정
 on:
+#   pull_request:
+# 	    - branches:
+# 	    - develop
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ developer ]
@@ -13,7 +16,7 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   # 수동으로 workflow 실행
-  workflow_dispatch:
+#   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
