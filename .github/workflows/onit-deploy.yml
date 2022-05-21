@@ -17,7 +17,7 @@ on:
 # 현재 스크립트에서 사용할 환결변수를 정의하여 사용
 env:
   S3_BUCKET_NAME: onit-bucket
-#   PROJECT_NAME: onit
+  PROJECT_NAME: onit-deploy
 
 
 jobs:
@@ -58,6 +58,6 @@ jobs:
           
       # S3에 파일 업로드
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./onit-deploy.zip s3://$S3_BUCKET_NAME/onit-deploy.zip
+        run: aws s3 cp --region ap-northeast-2 ./onit-deploy.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/onit-deploy.zip
 
 
