@@ -178,11 +178,8 @@ public class PlanService {
 
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
-
-        Participant participant = participantRepository.findByUserAndPlan(user, planRepository.findByUrl(url));
-        Plan plan = participant.getPlan();
-
-        boolean isMember = participant.isMember();
+        Plan plan = planRepository.findByUrl(url);
+        boolean isMember = plan.isMember();
         return new PlanDetailResDto(plan, isMember);
     }
 
