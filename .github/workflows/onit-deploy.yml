@@ -6,10 +6,10 @@ name: onit-deploy
 # workflow가 언제 실행되는지 지정
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
+  push:
+    branches: [ developer ]
+  pull_request:
+    branches: [ developer ]
 
   # Allows you to run this workflow manually from the Actions tab
   # 수동으로 workflow 실행
