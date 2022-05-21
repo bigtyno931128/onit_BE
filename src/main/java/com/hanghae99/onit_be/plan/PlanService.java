@@ -237,7 +237,7 @@ public class PlanService {
 
                 Long planId = participant.getPlan().getId();
                 String planName = participant.getPlan().getPlanName();
-                LocalDateTime planDate = participant.getPlanDate();
+                LocalDateTime planDate = participant.getPlan().getPlanDate();
 //                String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
                 String locationName = participant.getPlan().getLocation().getName();
                 String url = participant.getPlan().getUrl();
