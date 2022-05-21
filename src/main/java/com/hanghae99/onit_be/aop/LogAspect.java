@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import java.util.Arrays;
+
 @Component
 @Aspect
 public class LogAspect {
@@ -27,6 +29,24 @@ public class LogAspect {
         logger.info(stopWatch.prettyPrint());
 
         return proceed; // 결과 리턴
+    }
+
+    // 클라이언트에서 보내주는 값 로깅
+    @Around("@annotation(Logging)")
+    public Object logPrint(ProceedingJoinPoint proceedingJoinPoint) throws  Throwable {
+
+        logger.info("-------------------------------------");
+
+        long start = System.currentTimeMillis();
+
+        Object result = proceedingJoinPoint.proceed();
+
+        long end = System.currentTimeMillis();
+
+        logger.info("Parameter   :" + Arrays.toString(Arrays.stream(proceedingJoinPoint.getArgs()).toArray()));
+        logger.info("Running Time :" + (end-start));
+        logger.info("-------------------------------------");
+        return result;
     }
 }
 

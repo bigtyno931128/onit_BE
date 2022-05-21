@@ -50,10 +50,8 @@ public class PlanService {
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
 
-        //과거 이면 등록 x
-
+        // 지난 날짜로 등록 x
         checkPlanDate(planReqDto);
-
 
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
@@ -64,17 +62,14 @@ public class PlanService {
             Plan plan = participant.getPlan();
             planList.add(plan);
         }
+
         LocalDateTime today = planReqDto.getPlanDate();
         for (Plan plans : planList) {
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
             int comResult = compareDay(plans.getPlanDate(), today);
-            if (comResult == 0) {
-                // 3. 약속 시간 기준 +-2에 해당하는 약속은 정할 수 없게 처리
-                // ex) 6시에 일정이 있으면 > 4시부터 8시 사이에는 일정을 잡지 못함
-                long remainHours = getHours(planReqDto, plans);
-                if (!(remainHours >= 2 || remainHours <= -2))
-                    throw new IllegalArgumentException("오늘 일정은 이미 있습니다.");
-            }
+            long remainHours = getHours(planReqDto, plans);
+            checkPlan(comResult,remainHours);
+
         }
         String url = UUID.randomUUID().toString();
         Plan plan = new Plan(planReqDto, user, url);
@@ -178,7 +173,7 @@ public class PlanService {
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
         Plan plan = planRepository.findByUrl(url);
-        if (Objects.equals(plan.getWriter(), user.getNickname())) {
+        if (!Objects.equals(plan.getWriter(), user.getNickname())) {
             plan.updateJoin2();
             boolean isMember = plan.isMember();
             return new PlanDetailResDto(plan,isMember);
@@ -194,7 +189,6 @@ public class PlanService {
     //@CachePut(value = CacheKey.PLAN, key ="#userDetails.user.id")
     public void editPlan(String url, PlanReqDto planRequestDto, User user) {
         Plan plan = planRepository.findByUrl(url);
-
 
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
@@ -302,7 +296,6 @@ public class PlanService {
             distnace = "도착";
             log.info(distnace);
         }
-
     }
 
 }

@@ -84,7 +84,6 @@ public class MyPageService {
     // 링크 공유를 통한 약속 저장
     @Transactional
     public void savePlanInvitation(String url, User user) {
-
         // 참여중인 plan list 체크
         checkPlanList(user);
         // 사용자의 현재 일정 리스트 찾기
@@ -109,9 +108,11 @@ public class MyPageService {
     // 중복 참여 불가 x
     private void checkPlanList(User user) {
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
-        for (Participant participant : participantList) {
-            if (Objects.equals(participant.getUser().getId(), user.getId())) {
-                throw new IllegalArgumentException("이미 일정에 참여중입니다.");
+        if(!participantList.isEmpty()) {
+            for (Participant participant : participantList) {
+                if (Objects.equals(participant.getUser().getId(), user.getId())) {
+                    throw new IllegalArgumentException("이미 일정에 참여중입니다.");
+                }
             }
         }
     }
