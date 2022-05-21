@@ -179,8 +179,14 @@ public class PlanService {
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
         Plan plan = planRepository.findByUrl(url);
-        boolean isMember = plan.isMember();
-        return new PlanDetailResDto(plan, isMember);
+        if (Objects.equals(plan.getWriter(), user.getNickname())) {
+            plan.updateJoin2();
+            boolean isMember = plan.isMember();
+            return new PlanDetailResDto(plan,isMember);
+        } else {
+            boolean isMember = plan.isMember();
+            return new PlanDetailResDto(plan, isMember);
+        }
     }
 
     //일정 수정.

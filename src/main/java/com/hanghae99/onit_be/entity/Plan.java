@@ -96,4 +96,8 @@ public class Plan extends TimeStamped {
     public void updateJoin() {
         this.isMember = true;
     }
+
+    public void updateJoin2() {
+        this.isMember = false;
+    }
 }
