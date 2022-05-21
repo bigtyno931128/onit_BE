@@ -109,6 +109,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("https://imonint.shop/ws").permitAll()
                 .antMatchers("ws/**").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -176,7 +177,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/map/**");
         skipPathList.add("GET,/ws/**");
         skipPathList.add("GET,/ws/**/**");
-
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(

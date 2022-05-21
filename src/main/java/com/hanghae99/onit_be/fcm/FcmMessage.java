@@ -17,6 +17,7 @@ public class FcmMessage {
     public static class Message {
         private Notification notification;
         private String token;
+//        private String topic;
         private FcmData data;
     }
 
