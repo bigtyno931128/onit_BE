@@ -16,8 +16,8 @@ on:
 
 # 현재 스크립트에서 사용할 환결변수를 정의하여 사용
 env:
-  S3_BUCKET_NAME: onit-deploy
-  PROJECT_NAME: onit
+  S3_BUCKET_NAME: onit-bucket
+#   PROJECT_NAME: onit
 
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
       # S3
       # 파일 압축
       - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
+        run: zip -r ./onit-deploy.zip .
         shell: bash
         
       # AWS credentials 설정
@@ -58,6 +58,6 @@ jobs:
           
       # S3에 파일 업로드
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/onit-deploy.zip
 
 
