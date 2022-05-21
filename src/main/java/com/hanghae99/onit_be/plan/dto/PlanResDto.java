@@ -50,21 +50,22 @@ public class PlanResDto {
     public static class MyPlanDto {
         private Long planId;
         private String planName;
-        private String planDate;
-        private String address;
+        private LocalDateTime planDate;
+        private String locationName;
         private String url;
         private String penalty;
         private int status;
         private String description;
 
-        public MyPlanDto(Long planId, String planName, String planDateCv, String address, String url, int status, String description) {
+        public MyPlanDto(Long planId, String planName, LocalDateTime planDate, String locationName, String url, int status, String description, String penalty) {
             this.planId = planId;
             this.planName = planName;
-            this.planDate = planDateCv;
-            this.address = address;
+            this.planDate = planDate;
+            this.locationName = locationName;
             this.url = url;
             this.status = status;
             this.description = description;
+            this.penalty = penalty;
         }
     }
 }

@@ -48,7 +48,7 @@ public class UserController {
 
 
     // 카카오 로그인
-    @GetMapping("/user/kakao/callback")
+    @GetMapping("/users/kakao/callback")
     public KakaoUserInfoResDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoUserService.kakaoLogin(code, response);
     }

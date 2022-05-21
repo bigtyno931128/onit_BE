@@ -1,6 +1,5 @@
 package com.hanghae99.onit_be.weather;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.database.annotations.Nullable;
@@ -106,87 +105,8 @@ public class WeatherEventListener {
             Map<String, Object> jsonObject2 = gson.fromJson(test.get("temp").toString(), new TypeToken<Map<String, Object>>() {
             }.getType());
 
-
             double ktemp = (double) jsonObject2.get("day");
             int temp = (int) (ktemp - 273.15);
-
-            List<Map<String, Object>> jsonList = (List) jsonObject.get("daily");
-            //log.info(jsonList.toString());
-            for (Map<String, Object> test : jsonList) {
-                log.info(test.toString());
-
-                String main1 = (test.get("weather").toString().split(",")[1]);
-                String icon1 = (test.get("weather").toString().split(",")[3]);
-                String icon2 = icon1.split("=")[1];
-                String icon = icon2.split("}")[0];
-
-                log.info(icon);
-                String id = (test.get("weather").toString().split(",")[0]);
-                String main = main1.split("=")[1];
-                String id1 = id.split("=")[1];
-                String id2 = id1.split("\\.")[0];
-
-                if (id2.equals("800")) {
-                    id2 = "맑음";
-                }
-                if (id2.equals("200") || id2.equals("201") || id2.equals("202") || id2.equals("210") || id2.equals("211")
-                        || id2.equals("212") || id2.equals("221") || id2.equals("230") || id2.equals("231") || id2.equals("232")
-                ) {
-                    id2 = "천둥";
-                }
-                if (id2.equals("300") || id2.equals("301") || id2.equals("302") || id2.equals("310") || id2.equals("311") || id2.equals("312")
-                        || id2.equals("313") || id2.equals("314") || id2.equals("321")
-                ) {
-                    id2 ="소나기";
-                }
-                if (id2.equals("500") || id2.equals("501") || id2.equals("502") || id2.equals("503") || id2.equals("504") || id2.equals("511")
-                        || id2.equals("520") || id2.equals("521") || id2.equals("522") || id2.equals("530")
-                ) {
-                    id2 ="비";
-                }
-                if (id2.equals("600") || id2.equals("601") || id2.equals("602") || id2.equals("611") || id2.equals("612") || id2.equals("613")
-                        || id2.equals("615") || id2.equals("616") || id2.equals("620") || id2.equals("621") || id2.equals("622")
-                ) {
-                    id2 = "눈";
-                }
-                if (id2.equals("701") || id2.equals("711") || id2.equals("721") || id2.equals("731") || id2.equals("741") || id2.equals("751") ||
-                        id2.equals("761") || id2.equals("762")
-                ) {
-                    id2 = "안개";
-                }
-                if (id2.equals("771")|| id2.equals("781")
-                ) {
-                    id2 = "태풍";
-                }
-                if (id2.equals("801") || id2.equals("802") || id2.equals("803") || id2.equals("804")
-                ) {
-                    id2 = "구름";
-                }
-
-                log.info(id2);
-
-                double time = Double.parseDouble(test.get("dt").toString());
-                Map<String, Object> jsonObject2 = gson.fromJson(test.get("temp").toString(), new TypeToken<Map<String, Object>>() {
-                }.getType());
-
-                double ktemp = (double) jsonObject2.get("day");
-                int temp = (int) (ktemp - 273.15);
-
-                log.info("오늘의 평균 온도={}", temp);
-
-                int realTime= (int) time;
-                String krTime = getTimestampToDate(String.valueOf(realTime));
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                LocalDateTime weatherTime = LocalDateTime.parse(krTime , formatter);
-
-                log.info("가져오는 날짜  ={}", String.valueOf(weatherTime));
-                log.info("생성당시에 약속잡기로 한 날짜 ={}", String.valueOf(dayDate1));
-
-                Long planId= plan.getId();
-                LocalDateTime planDate = plan.getPlanDate();
-                Weather weather = new Weather(address,main,id2,temp,planDate,weatherTime,planId,icon);
-                weatherRepository.save(weather);
-
 
             log.info("오늘의 평균 온도={}", temp);
 
@@ -297,44 +217,44 @@ public class WeatherEventListener {
 //            throw new NullPointerException("업데이트 할 일정이 없습니다.");
 //        }
 
-            for (Plan plan : planList) {
+        for (Plan plan : planList) {
 
-                if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(plan.getPlanDate())) {
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(plan.getPlanDate())) {
 
-                    weatherRepository.deleteAllByPlanId(plan.getId());
+                weatherRepository.deleteAllByPlanId(plan.getId());
 
-                    String API_KEY = "384994b16fb4098a5312b226bd2d76e5";
-                    String PART = "current,minutely,hourly,alerts";
-                    String LANG = "kr";
+                String API_KEY = "384994b16fb4098a5312b226bd2d76e5";
+                String PART = "current,minutely,hourly,alerts";
+                String LANG = "kr";
 
-                    String address = plan.getLocation().getAddress();
-                    LocalDateTime dayDate1 = plan.getPlanDate().truncatedTo(ChronoUnit.DAYS);
+                String address = plan.getLocation().getAddress();
+                LocalDateTime dayDate1 = plan.getPlanDate().truncatedTo(ChronoUnit.DAYS);
 
 
-                    try {
-                        Thread.sleep(80000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Thread.sleep(80000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                    String urlString = "https://api.openweathermap.org/data/2.5/onecall?lat="
-                            + plan.getLocation().getLat() +
-                            "&lon=" + plan.getLocation().getLng() +
-                            "&exclude=" + PART +
-                            "&lang=" + LANG +
-                            "&appid=" + API_KEY;
+                String urlString = "https://api.openweathermap.org/data/2.5/onecall?lat="
+                        + plan.getLocation().getLat() +
+                        "&lon=" + plan.getLocation().getLng() +
+                        "&exclude=" + PART +
+                        "&lang=" + LANG +
+                        "&appid=" + API_KEY;
 
-                    try {
+                try {
 
-                        String result = getApiResult(urlString);
-                        Gson gson = new Gson();
-                        Map<String, Object> jsonObject = creteJsonMap(result, gson);
-                        List<Map<String, Object>> jsonList = (List) jsonObject.get("daily");
-                        getWeatherData(plan, address, dayDate1, gson, jsonList);
+                    String result = getApiResult(urlString);
+                    Gson gson = new Gson();
+                    Map<String, Object> jsonObject = creteJsonMap(result, gson);
+                    List<Map<String, Object>> jsonList = (List) jsonObject.get("daily");
+                    getWeatherData(plan, address, dayDate1, gson, jsonList);
 
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
 
             }
         }
@@ -390,4 +310,13 @@ public class WeatherEventListener {
     }
 
 }
+
+
+
+
+
+
+
+
+
 

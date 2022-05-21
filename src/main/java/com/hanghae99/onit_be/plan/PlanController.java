@@ -74,12 +74,12 @@ public class PlanController {
 
 
     // 일정 목록 조회 (내가 만든 일정/초대된 일정) test 1
-    @LogExecutionTime
-    @GetMapping("/test/{pageno}")
-    public TwoPlanResDto getTest (@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       @PathVariable int pageno) {
-        return planService.getTest(userDetails.getUser(),pageno-1);
-    }
+//    @LogExecutionTime
+//    @GetMapping("/test/{pageno}")
+//    public TwoPlanResDto getTest (@AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                       @PathVariable int pageno) {
+//        return planService.getTest(userDetails.getUser(),pageno-1);
+//    }
 
     //날짜 계산
     @PostMapping("/test/{planId}")

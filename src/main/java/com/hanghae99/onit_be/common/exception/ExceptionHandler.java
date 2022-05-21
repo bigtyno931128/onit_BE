@@ -19,7 +19,7 @@ public class ExceptionHandler {
 
         return new ResponseEntity(
                 exception,
-                HttpStatus.BAD_REQUEST
+                HttpStatus.OK
         );
     }
 
@@ -31,7 +31,7 @@ public class ExceptionHandler {
 
         return new ResponseEntity(
                 exception,
-                HttpStatus.BAD_REQUEST
+                HttpStatus.OK
         );
     }
 }

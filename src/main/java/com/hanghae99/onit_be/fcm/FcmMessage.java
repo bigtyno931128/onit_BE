@@ -1,8 +1,12 @@
 package com.hanghae99.onit_be.fcm;
 
+import com.hanghae99.onit_be.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -16,8 +20,10 @@ public class FcmMessage {
     @Getter
     public static class Message {
         private Notification notification;
-        private String token;
-//        private String topic;
+        private String topic;
+//        private String token;
+//        private List<String> registratixon_ids;
+//        private List<String> token;
         private FcmData data;
     }
 
