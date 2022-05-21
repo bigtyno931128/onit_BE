@@ -70,9 +70,9 @@ public class Plan extends TimeStamped {
         addPlan(user1);
     }
 
-    public void update(PlanReqDto planReqDto, LocalDateTime editTime) {
+    public void update(PlanReqDto planReqDto) {
         this.planName = planReqDto.getPlanName();
-        this.planDate = editTime;
+        this.planDate = planReqDto.getPlanDate();
         this.location = planReqDto.getLocation();
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
@@ -91,5 +91,9 @@ public class Plan extends TimeStamped {
         this.writer = plan.getWriter();
         this.penalty = plan.getPenalty();
         this.location = plan.getLocation();
+    }
+
+    public void updateJoin() {
+        this.isMember = true;
     }
 }

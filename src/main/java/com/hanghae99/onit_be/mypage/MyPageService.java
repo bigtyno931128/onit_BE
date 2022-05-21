@@ -26,11 +26,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
+import static com.hanghae99.onit_be.common.utils.Date.checkPlan;
 import static com.hanghae99.onit_be.common.utils.Date.compareDay;
 import static com.hanghae99.onit_be.common.utils.Page.getPageable;
 
@@ -87,14 +85,8 @@ public class MyPageService {
     @Transactional
     public void savePlanInvitation(String url, User user) {
 
-        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
-
-        for (Participant participant : participantList) {
-            if (participant.getUser().getId() == user.getId()) {
-                throw new IllegalArgumentException("이미 일정에 참여중입니다.");
-            }
-        }
-
+        // 참여중인 plan list 체크
+        checkPlanList(user);
         // 사용자의 현재 일정 리스트 찾기
         List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
         // 공유받은 플랜 정보 찾기
@@ -104,18 +96,24 @@ public class MyPageService {
         for (Plan plans : planList) {
             // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
             int comResult = compareDay(plans.getPlanDate(), planDateNew);
-            if (comResult == 0) {
-                // 3. 약속 시간 기준 +-2에 해당하는 약속은 정할 수 없게 처리
-                // ex) 6시에 일정이 있으면 > 4시부터 8시 사이에는 일정을 잡지 못함
-                long remainHours = ChronoUnit.HOURS.between(plans.getPlanDate().toLocalTime(), planDateNew.toLocalTime());
-                if (!(remainHours > 2 || remainHours < -2))
-                    throw new IllegalArgumentException("오늘 일정은 이미 있습니다.");
-            }
+            long remainHours = ChronoUnit.HOURS.between(plans.getPlanDate().toLocalTime(), planDateNew.toLocalTime());
+            checkPlan(comResult,remainHours);
         }
         Participant participant = new Participant(planNew, user1);
         participantRepository.save(participant);
+        planNew.updateJoin();
         // 알림
-        eventPublisher.publishEvent(new NotificationEvent(participant));
+        //eventPublisher.publishEvent(new NotificationEvent(participant));
+    }
+
+    // 중복 참여 불가 x
+    private void checkPlanList(User user) {
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
+        for (Participant participant : participantList) {
+            if (Objects.equals(participant.getUser().getId(), user.getId())) {
+                throw new IllegalArgumentException("이미 일정에 참여중입니다.");
+            }
+        }
     }
 
 

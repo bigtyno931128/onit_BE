@@ -192,16 +192,14 @@ public class PlanService {
     //@CachePut(value = CacheKey.PLAN, key ="#userDetails.user.id")
     public void editPlan(String url, PlanReqDto planRequestDto, User user) {
         Plan plan = planRepository.findByUrl(url);
-        LocalDateTime editTime = planRequestDto.getPlanDate();
+
 
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
         // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
-        if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(editTime)) {
-            throw new IllegalArgumentException("만남 일정을 이미지난 날짜로 수정하는 것은 불가능합니다.");
-        }
-        plan.update(planRequestDto, editTime);
+        checkPlanDate(planRequestDto);
+        plan.update(planRequestDto);
         eventPublisher.publishEvent(new PlanUpdateEvent(plan, "일정을 수정했습니다.", user));
     }
 

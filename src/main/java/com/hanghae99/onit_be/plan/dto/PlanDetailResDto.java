@@ -32,6 +32,7 @@ public class PlanDetailResDto {
         this.locationDetail = plan.getLocation();
         this.penalty = plan.getPenalty();
         this.url = plan.getUrl();
+        this.isMember = plan.isMember();
     }
 
     public PlanDetailResDto(Participant participant) {
