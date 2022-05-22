@@ -46,7 +46,7 @@ public class UserService {
         //사용자 ROLE 을 생성 하는 부분 추가 .
         UserRoleEnum role = UserRoleEnum.USER;
         //사용자 profileImg 기본 이미지 부여
-        User user = new User(username, password,nickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png");
+        User user = new User(username, password,nickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profile_default.png");
         //return userRepository.save(user);
         userRepository.save(user);
     }

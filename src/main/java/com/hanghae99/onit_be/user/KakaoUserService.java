@@ -114,7 +114,7 @@ public class KakaoUserService {
                 .get("nickname").asText();
         log.info("닉네임"+ nickname);
         log.info("카카오 사용자 정보 id: {},{}",id,nickname);
-        return new KakaoUserInfoResDto(id, nickname);
+        return new KakaoUserInfoResDto(id, nickname,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profile_default.png");
 
     }
 
@@ -126,9 +126,9 @@ public class KakaoUserService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "972182102726f2cccd099d839c096d2d");
+        body.add("client_id", "3b9abf3ba78dbe030d6f9e62b0269ddb");
         body.add("redirect_uri",
-                "http://localhost:8080/user/kakao/callback");
+                "https://imonit.co.kr/oauth/callback/kakao");
         body.add("code", code);
 
         // HTTP 요청 보내기

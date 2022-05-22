@@ -10,5 +10,6 @@ import lombok.Setter;
 public class KakaoUserInfoResDto {
     private Long id;
     private String nickname;
+    private String profileImg;
 
 }

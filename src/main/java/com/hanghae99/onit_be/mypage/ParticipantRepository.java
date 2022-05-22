@@ -18,6 +18,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
     void deleteByUserAndPlan(User user, Plan plan);
 
+
     // 참가자 list
     List<Participant> findAllByPlan(Plan plan);
+
+    List<Participant> findAllById(Long planId);
+
 }
