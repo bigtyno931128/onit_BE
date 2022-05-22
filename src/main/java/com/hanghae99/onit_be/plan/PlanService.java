@@ -12,6 +12,7 @@ import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.weather.Weather;
 import com.hanghae99.onit_be.weather.WeatherCreateEvent;
 import com.hanghae99.onit_be.weather.WeatherRepository;
+import com.hanghae99.onit_be.weather.WeatherUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -154,7 +155,6 @@ public class PlanService {
         // 참가자  , 작성자의 planDetail
         Plan plan = planRepository.findByUrl(url);
 
-
         List<Participant> participantList = participantRepository.findAllByPlan(plan);
         List<ParticipantDto> participantDtoList = new ArrayList<>();
 
@@ -168,7 +168,6 @@ public class PlanService {
             ParticipantDto participantDto = new ParticipantDto(participant);
             participantDtoList.add(participantDto);
         }
-
 
         return new PlanDetailResDto(plan,isMember,participantDtoList);
     }
@@ -188,7 +187,7 @@ public class PlanService {
         // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
         checkPlanDate(planRequestDto);
         plan.update(planRequestDto);
-        eventPublisher.publishEvent(new PlanUpdateEvent(plan, "일정을 수정했습니다.", user));
+        eventPublisher.publishEvent(new WeatherUpdateEvent(plan));
     }
 
     // 일정 삭제

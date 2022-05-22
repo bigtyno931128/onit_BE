@@ -99,7 +99,7 @@ public class MyPageService {
                     int comResult = compareDay(planDate, newPlanDate);
                     long remainHours = ChronoUnit.HOURS.between(planDate.toLocalTime(), newPlanDate.toLocalTime());
                     if (comResult == 0 && !(remainHours >= 2 || remainHours <= -2)){
-                        throw new IllegalArgumentException(user1.getNickname()+ "님" + "참여중인 일정이 너무많아염 ㅠㅠ");
+                        throw new IllegalArgumentException(user1.getNickname()+ "님" + "참여중인 일정이 너무많아염 ㅠㅠ 다 참여하기하기에는 좀..");
                     }
                 }
             }
