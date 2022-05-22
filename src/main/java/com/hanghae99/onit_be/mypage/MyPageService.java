@@ -88,15 +88,19 @@ public class MyPageService {
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         Plan planNew = planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new);
         LocalDateTime newPlanDate = planNew.getPlanDate();
-        List <Participant> participantList = participantRepository.findAll();
-        List <Plan> planList = new ArrayList<>();
-
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user1);
         if (!participantList.isEmpty()) {
-
-            for (Participant participant : participantList ) {
-
+            for (Participant participant : participantList) {
                 if (Objects.equals(participant.getUser().getId(), user1.getId())) {
                     throw new IllegalArgumentException("이미 일정에 참여 중입니다");
+                } else {
+                    // 저장 되기 전에 시간체크 (중복 약속 불가 , 4 시에 약속있으면 2 시부터 6시 까지는 약속 참가 불가 )
+                    LocalDateTime planDate = participant.getPlan().getPlanDate();
+                    int comResult = compareDay(planDate, newPlanDate);
+                    long remainHours = ChronoUnit.HOURS.between(planDate.toLocalTime(), newPlanDate.toLocalTime());
+                    if (comResult == 0 && !(remainHours >= 2 || remainHours <= -2)){
+                        throw new IllegalArgumentException(user1.getNickname()+ "님" + "참여중인 일정이 너무많아염 ㅠㅠ 다 참여하기하기에는 좀..");
+                    }
                 }
             }
         }

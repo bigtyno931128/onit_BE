@@ -40,8 +40,6 @@ public class Plan extends TimeStamped {
 
     private String url;
 
-    private boolean isMember;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn
     private final List<Weather> weatherList = new ArrayList<>();
@@ -57,7 +55,6 @@ public class Plan extends TimeStamped {
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
         this.url = url;
-
     }
 
     public Plan(Plan planNew, User user1) {
@@ -91,13 +88,5 @@ public class Plan extends TimeStamped {
         this.writer = plan.getWriter();
         this.penalty = plan.getPenalty();
         this.location = plan.getLocation();
-    }
-
-    public void updateJoin() {
-        this.isMember = true;
-    }
-
-    public void updateJoin2() {
-        this.isMember = false;
     }
 }

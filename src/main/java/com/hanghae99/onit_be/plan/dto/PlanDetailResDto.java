@@ -29,18 +29,6 @@ public class PlanDetailResDto {
     private List<ParticipantDto> participantList;
 
 
-    public PlanDetailResDto(Plan plan) {
-        // planId는 url을 위해 필요?
-        this.planId = plan.getId();
-        this.planName = plan.getPlanName();
-        this.planDate = plan.getPlanDate();
-        this.writer = plan.getWriter();
-        this.locationDetail = plan.getLocation();
-        this.penalty = plan.getPenalty();
-        this.url = plan.getUrl();
-        this.isMember = plan.isMember();
-    }
-
     public PlanDetailResDto(Participant participant) {
         this.planId = participant.getPlan().getId();
         this.planName = participant.getPlan().getPlanName();
@@ -48,18 +36,6 @@ public class PlanDetailResDto {
         this.writer = participant.getPlan().getWriter();
         this.locationDetail = participant.getPlan().getLocation();
         this.penalty = participant.getPlan().getPenalty();
-
-    }
-
-    public PlanDetailResDto(Plan plan, boolean isMember) {
-        this.planId = plan.getId();
-        this.planName = plan.getPlanName();
-        this.planDate = plan.getPlanDate();
-        this.writer = plan.getWriter();
-        this.locationDetail = plan.getLocation();
-        this.penalty = plan.getPenalty();
-        this.url = plan.getUrl();
-        this.isMember = isMember;
     }
 
     public PlanDetailResDto(Plan plan, boolean isMember, List<ParticipantDto> participantDtoList) {
@@ -72,6 +48,5 @@ public class PlanDetailResDto {
         this.url = plan.getUrl();
         this.isMember = isMember;
         this.participantList = participantDtoList;
-
     }
 }
