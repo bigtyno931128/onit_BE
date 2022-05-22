@@ -54,6 +54,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:8.1.0'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
 
+    // jasypt
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+
     //swagger
 //    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 

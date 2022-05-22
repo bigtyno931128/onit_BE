@@ -10,3 +10,17 @@ permissions:
     pattern: "**"
     owner: ubuntu
     group: ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: scripts/start.sh
+      timeout: 180
+      runas: ubuntu
+
+    - location: scripts/health_check.sh
+      timeout: 180
+      runas: ubuntu
+
+    - location: scripts/switch.sh
+      timeout: 180
+      runas: ubuntu
