@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://localhost:3000","https://imonit.co.kr","https://imonint.shop/","https://localhost:3000","http://localhost:8080","https://d23ogomajvao50.cloudfront.net","https://imonint.shop/ws","https://imonint.shop/details/**","https://imonint.shop/detail/**")
+                .allowedOrigins("http://localhost:3000","https://imonit.co.kr","https://imonint.shop/**","https://localhost:3000","http://localhost:8080","https://imonint.shop/member/**","https://imonint.shop/ws","https://imonint.shop/details/**","https://imonint.shop/detail/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization");

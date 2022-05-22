@@ -1,6 +1,5 @@
 package com.hanghae99.onit_be.weather;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.database.annotations.Nullable;
@@ -311,4 +310,13 @@ public class WeatherEventListener {
     }
 
 }
+
+
+
+
+
+
+
+
+
 

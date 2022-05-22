@@ -83,68 +83,69 @@ public class PlanService {
 
     // 일정 목록 조회 (내가 만든 일정 목록과 초대받은 일정 목록)
     // 400 예외 처리 필요
-    public TwoPlanResDto getPlansList(User user, int pageno) {
-        // 사용자 정보로 참여하는 일정 리스트 불러오기
-        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
-        // 내가 만든 일정 리스트 초기화
-        List<PlanResDto.MyPlanDto> myPlanList = new ArrayList<>();
-        // 공유 받은 일정 리스트 초기화
-        List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
-
-        for (Participant participant : participantList) {
-            Long planId = participant.getPlan().getId();
-            String planName = participant.getPlan().getPlanName();
-            String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
-            String address = participant.getPlan().getLocation().getAddress();
-            String url = participant.getPlan().getUrl();
-            int status = 0;
-            status = getStatus(status, participant.getPlanDate());
-
-            List<Weather> weatherList = weatherRepository.findAllByPlanId(planId);
-            String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
-
-            // 개선방향 --> 1. for문을 돌리지 않으려면 , 날씨 테이블에서 처음부터 오늘 날짜에 해당하는 레코드만 불러올 수 있도록 생각 해야 할듯 ??
-            //  2. (현재 ) 참여하려는 일정 중에 오늘일정이 있으면 날씨 정보를 제공 하고 있는데 , 만약 프론트에서 홈 화면에 보여줄 때  오늘 일정이 없으면 ? 어떻게 보여주는지
-            //  3. 알아야 할 것 같다 .
-
-//            for (Weather weather : weatherList) {
-//                // 일정 날짜가 오늘 일 때 만 날씨 정보를 제공 ?
-//                log.info("일정 날짜=={}", participant.getPlan().getPlanDate().truncatedTo(ChronoUnit.DAYS));
-//                log.info("날씨데이터 날짜=={}", weather.getWeatherDate().truncatedTo(ChronoUnit.DAYS));
-//                int comResult = compareDay(weather.getWeatherDate(), participant.getPlanDate());
-//                int comResult1 = compareDay(participant.getPlan().getPlanDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-//                if (comResult1 == 0 && comResult == 0) {
-//                    description = weather.getDescription();
-//                }
+//    public TwoPlanResDto getPlansList(User user, int pageno) {
+//        // 사용자 정보로 참여하는 일정 리스트 불러오기
+//        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
+//        // 내가 만든 일정 리스트 초기화
+//        List<PlanResDto.MyPlanDto> myPlanList = new ArrayList<>();
+//        // 공유 받은 일정 리스트 초기화
+//        List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
+//
+//        for (Participant participant : participantList) {
+//            Long planId = participant.getPlan().getId();
+//            String planName = participant.getPlan().getPlanName();
+//            String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
+//            String address = participant.getPlan().getLocation().getAddress();
+//            String url = participant.getPlan().getUrl();
+//            String penalty = participant.getPlan().getPenalty();
+//            int status = 0;
+//            status = getStatus(status, participant.getPlanDate());
+//
+//            List<Weather> weatherList = weatherRepository.findAllByPlanId(planId);
+//            String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
+//
+//            // 개선방향 --> 1. for문을 돌리지 않으려면 , 날씨 테이블에서 처음부터 오늘 날짜에 해당하는 레코드만 불러올 수 있도록 생각 해야 할듯 ??
+//            //  2. (현재 ) 참여하려는 일정 중에 오늘일정이 있으면 날씨 정보를 제공 하고 있는데 , 만약 프론트에서 홈 화면에 보여줄 때  오늘 일정이 없으면 ? 어떻게 보여주는지
+//            //  3. 알아야 할 것 같다 .
+//
+////            for (Weather weather : weatherList) {
+////                // 일정 날짜가 오늘 일 때 만 날씨 정보를 제공 ?
+////                log.info("일정 날짜=={}", participant.getPlan().getPlanDate().truncatedTo(ChronoUnit.DAYS));
+////                log.info("날씨데이터 날짜=={}", weather.getWeatherDate().truncatedTo(ChronoUnit.DAYS));
+////                int comResult = compareDay(weather.getWeatherDate(), participant.getPlanDate());
+////                int comResult1 = compareDay(participant.getPlan().getPlanDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+////                if (comResult1 == 0 && comResult == 0) {
+////                    description = weather.getDescription();
+////                }
+////            }
+//
+//            PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status, description, penalty);
+//
+//            // 작성자가 사용자이면 myPlanListDto에 담아주기
+//            if (Objects.equals(participant.getWriter(), user.getNickname())) {
+////                log.info("????");
+//                myPlanList.add(myPlanDto);
+//            } else {
+//                invitedPlanList.add(myPlanDto);
 //            }
-
-            PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status, description);
-
-            // 작성자가 사용자이면 myPlanListDto에 담아주기
-            if (Objects.equals(participant.getWriter(), user.getNickname())) {
-                log.info("????");
-                myPlanList.add(myPlanDto);
-            } else {
-                invitedPlanList.add(myPlanDto);
-            }
-        }
-
-        Pageable pageable = getPageable(pageno);
-
-        int start = pageno * 5;
-        // myPlanList
-        int end = Math.min((start + 5), myPlanList.size());
-        // invitedPlanList
-        int end2 = Math.min((start + 5), invitedPlanList.size());
-
-        Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
-        Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
-
-        PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
-        PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
-
-        return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto);
-    }
+//        }
+//
+//        Pageable pageable = getPageable(pageno);
+//
+//        int start = pageno * 5;
+//        // myPlanList
+//        int end = Math.min((start + 5), myPlanList.size());
+//        // invitedPlanList
+//        int end2 = Math.min((start + 5), invitedPlanList.size());
+//
+//        Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
+//        Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
+//
+//        PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
+//        PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
+//
+//        return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto);
+//    }
 
 
     // 일정 상세 조회
@@ -222,7 +223,7 @@ public class PlanService {
 
     // 일정 목록 조회 / 과거를 제외 하고
     // 400 예외 처리 필요
-    public TwoPlanResDto getTest(User user, int pageno) {
+    public TwoPlanResDto getPlansList(User user, int pageno) {
         // 사용자 정보로 참여하는 일정 리스트 불러오기
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
         // 내가 만든 일정 리스트 초기화
@@ -236,9 +237,11 @@ public class PlanService {
 
                 Long planId = participant.getPlan().getId();
                 String planName = participant.getPlan().getPlanName();
-                String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
-                String address = participant.getPlan().getLocation().getAddress();
+                LocalDateTime planDate = participant.getPlan().getPlanDate();
+//                String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
+                String locationName = participant.getPlan().getLocation().getName();
                 String url = participant.getPlan().getUrl();
+                String penalty = participant.getPlan().getPenalty();
 
                 int status = 0;
                 status = getStatus(status, participant.getPlanDate());
@@ -251,7 +254,7 @@ public class PlanService {
                     description = weather.getDescription();
                 }
 
-                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDateCv, address, url, status, description);
+                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, status, description, penalty);
 
                 // 작성자가 사용자이면 myPlanListDto에 담아주기
                 if (Objects.equals(participant.getWriter(), user.getNickname())) {

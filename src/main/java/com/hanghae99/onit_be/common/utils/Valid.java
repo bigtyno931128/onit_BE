@@ -29,7 +29,7 @@ public class Valid {
             throw new IllegalArgumentException("아이디는 영어와 숫자로 3~9자리로 입력하셔야 합니다!");
         }
         if(!requestDto.getPassword().matches("^[a-z0-9-_]{4,10}$")){
-            throw new IllegalArgumentException("비빌번호는 영어와 숫자로 4~12 자리로 입력하셔야 합니다!");
+            throw new IllegalArgumentException("비밀번호는 영어와 숫자로 4~12자리로 입력하셔야 합니다!");
         }
     }
 
