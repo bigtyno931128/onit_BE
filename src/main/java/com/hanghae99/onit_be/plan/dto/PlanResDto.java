@@ -68,4 +68,55 @@ public class PlanResDto {
             this.penalty = penalty;
         }
     }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class MyFirstPlanDto {
+        private Long planId;
+        private String planName;
+        private LocalDateTime planDate;
+        private String locationName;
+        private String url;
+        private String penalty;
+        private int status;
+        private String description;
+
+        public MyFirstPlanDto(MyPlanDto myPlanDto) {
+            this.planId = myPlanDto.getPlanId();
+            this.planName = myPlanDto.planName;
+            this.planDate = myPlanDto.planDate;
+            this.description =myPlanDto.description;
+            this.url = myPlanDto.url;
+            this.penalty = myPlanDto.penalty;
+            this.status = myPlanDto.status;
+            this.locationName = myPlanDto.locationName;
+        }
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class MyFirstInvitedPlanDto {
+        private Long planId;
+        private String planName;
+        private LocalDateTime planDate;
+        private String locationName;
+        private String url;
+        private String penalty;
+        private int status;
+        private String description;
+
+        public MyFirstInvitedPlanDto(MyPlanDto myPlanDto) {
+
+            this.planId = myPlanDto.getPlanId();
+            this.planName = myPlanDto.planName;
+            this.planDate = myPlanDto.planDate;
+            this.description =myPlanDto.description;
+            this.url = myPlanDto.url;
+            this.penalty = myPlanDto.penalty;
+            this.status = myPlanDto.status;
+            this.locationName = myPlanDto.locationName;
+        }
+    }
 }

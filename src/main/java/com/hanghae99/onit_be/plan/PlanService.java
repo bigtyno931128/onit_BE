@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.time.temporal.ChronoUnit;
@@ -251,6 +252,19 @@ public class PlanService {
                 }
             }
         }
+        PlanResDto.MyFirstPlanDto myFirstPlanDto = null;
+        PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto = null;
+
+        if (!myPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(myPlanList.get(0).getPlanDate()))) {
+
+            myFirstPlanDto = new PlanResDto.MyFirstPlanDto(myPlanList.get(0));
+            myPlanList.remove(0);
+        }
+        if (!invitedPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(invitedPlanList.get(0).getPlanDate()))) {
+            myFirstInvitedPlanDto = new PlanResDto.MyFirstInvitedPlanDto(invitedPlanList.get(0));
+            invitedPlanList.remove(0);
+        }
+
 
         Pageable pageable = getPageable(pageno);
 
@@ -266,7 +280,7 @@ public class PlanService {
         PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
         PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
 
-        return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto);
+        return new TwoPlanResDto(myFirstPlanDto, myPlanListsResDto, invitedPlanListsResDto,myFirstInvitedPlanDto);
     }
 
     // 거리사 1키로 안쪽 일 때 도착신호 .

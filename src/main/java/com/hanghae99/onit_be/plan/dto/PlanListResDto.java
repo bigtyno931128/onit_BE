@@ -1,16 +1,15 @@
 package com.hanghae99.onit_be.plan.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+@Setter
 @Getter
 @NoArgsConstructor
 public class PlanListResDto {
+
 
     private List<PlanResDto> planList;
     private int totalPage;
@@ -26,6 +25,7 @@ public class PlanListResDto {
     @AllArgsConstructor
     @Getter
     public static class PlanListsResDto {
+
         private List<PlanResDto.MyPlanDto> planLists;
         private int totalPage;
         private int currentPage;
@@ -35,5 +35,6 @@ public class PlanListResDto {
             this.totalPage = myPlanPage.getTotalPages();;
             this.currentPage = myPlanPage.getNumber();
         }
+
     }
 }
