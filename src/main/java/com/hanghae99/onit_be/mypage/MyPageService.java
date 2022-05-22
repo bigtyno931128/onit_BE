@@ -8,6 +8,7 @@ import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.noti.event.NotificationEvent;
 import com.hanghae99.onit_be.plan.PlanRepository;
+import com.hanghae99.onit_be.plan.dto.PlanReqDto;
 import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.common.utils.S3Uploader;
@@ -28,8 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static com.hanghae99.onit_be.common.utils.Date.checkPlan;
-import static com.hanghae99.onit_be.common.utils.Date.compareDay;
+import static com.hanghae99.onit_be.common.utils.Date.*;
 import static com.hanghae99.onit_be.common.utils.Page.getPageable;
 
 @Service
@@ -84,39 +84,29 @@ public class MyPageService {
     // 링크 공유를 통한 약속 저장
     @Transactional
     public void savePlanInvitation(String url, User user) {
-        // 참여중인 plan list 체크
-        checkPlanList(user);
-        // 사용자의 현재 일정 리스트 찾기
-        List<Plan> planList = planRepository.findAllByUserOrderByPlanDateAsc(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
-        // 공유받은 플랜 정보 찾기
+
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         Plan planNew = planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new);
-        LocalDateTime planDateNew = planNew.getPlanDate();
-        for (Plan plans : planList) {
-            // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
-            int comResult = compareDay(plans.getPlanDate(), planDateNew);
-            long remainHours = ChronoUnit.HOURS.between(plans.getPlanDate().toLocalTime(), planDateNew.toLocalTime());
-            checkPlan(comResult,remainHours);
-        }
-        Participant participant = new Participant(planNew, user1);
-        participantRepository.save(participant);
-        planNew.updateJoin();
-        // 알림
-        //eventPublisher.publishEvent(new NotificationEvent(participant));
-    }
+        LocalDateTime newPlanDate = planNew.getPlanDate();
+        List <Participant> participantList = participantRepository.findAll();
+        List <Plan> planList = new ArrayList<>();
 
-    // 중복 참여 불가 x
-    private void checkPlanList(User user) {
-        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
-        if(!participantList.isEmpty()) {
-            for (Participant participant : participantList) {
-                if (Objects.equals(participant.getUser().getId(), user.getId())) {
-                    throw new IllegalArgumentException("이미 일정에 참여중입니다.");
+        if (!participantList.isEmpty()) {
+
+            for (Participant participant : participantList ) {
+
+                if (Objects.equals(participant.getUser().getId(), user1.getId())) {
+                    throw new IllegalArgumentException("이미 일정에 참여 중입니다");
                 }
             }
         }
-    }
 
+        Participant participant = new Participant(planNew, user1);
+        participantRepository.save(participant);
+
+        // 알림
+        //eventPublisher.publishEvent(new NotificationEvent(participant));
+    }
 
     // 내가 참여한 일정 상세 가져오는 메서드 ( 현재 사용 x)
     public PlanDetailResDto getPlanInvitation(String url, User user) {

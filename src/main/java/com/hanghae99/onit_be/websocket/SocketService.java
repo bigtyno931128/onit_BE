@@ -51,9 +51,15 @@ public class SocketService {
         }
         mapDto.setDistance(distnace);
 
+
+        double distances = geoDistance(a,b,c,d);
+
+        log.info("목적지 까지의 거리 =={}", distances);
+
         double distance2 = geoDistance(a,b,c,d);
 
         log.info("목적지 까지의 거리 =={}", distance2);
+
 
         //여기서 부터 거리에 따른 메세지 전달 .
         String status = "";
