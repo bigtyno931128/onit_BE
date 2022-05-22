@@ -147,41 +147,46 @@ public class PlanService {
     }
 
 
-    // 일정 리스트 만드는 메서드 > status를 통해 과거,현재,미래에 대한 일정 구분
-    private void forPlanList(List<Plan> planList, List<PlanResDto> planResDtoList, User user) {
-        for (Plan plan : planList) {
-            int status = 0;
-            LocalDateTime planDate = plan.getPlanDate();
-            status = getStatus(status, planDate);
-            Long planId = plan.getId();
-            String planName = plan.getPlanName();
-            Location locationDetail = plan.getLocation();
-            String penalty = plan.getPenalty();
-            String writer = plan.getWriter();
-            // 작성자 판별
-            boolean isMember = false;
-            for (Participant participant : plan.getParticipantList()) {
-                isMember = participant.isMember();
-            }
-
-            String url = plan.getUrl();
-            PlanResDto planResDto = new PlanResDto(planId, planName, planDate, locationDetail, status, url, penalty, writer, isMember);
-            planResDtoList.add(planResDto);
-        }
-    }
+    // 일정 상세 조회
+//    public PlanDetailResDto getPlan2(String url, User user) {
+//        Plan plan = planRepository.findByUrl(url);
+//        if (!Objects.equals(plan.getWriter(), user.getNickname())) {
+//            plan.updateJoin2();
+//            boolean isMember = plan.isMember();
+//            return new PlanDetailResDto(plan,isMember);
+//        } else {
+//            boolean isMember = plan.isMember();
+//            return new PlanDetailResDto(plan, isMember);
+//        }
+//    }
 
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
+
+        // 참가자  , 작성자의 planDetail
         Plan plan = planRepository.findByUrl(url);
-        if (!Objects.equals(plan.getWriter(), user.getNickname())) {
-            plan.updateJoin2();
-            boolean isMember = plan.isMember();
-            return new PlanDetailResDto(plan,isMember);
-        } else {
-            boolean isMember = plan.isMember();
-            return new PlanDetailResDto(plan, isMember);
+        System.out.println("plan" +plan.getPlanName());
+
+        List<Participant> participantList = participantRepository.findAllByPlan(plan);
+        List<ParticipantDto> participantDtoList = new ArrayList<>();
+
+        boolean isMember = false;
+
+        for (Participant participant : participantList) {
+            System.out.println(participant.getUser().toString());
+
+            if (participant.getUser().getId() == user.getId()) {
+                isMember = true;
+            }
+            ParticipantDto participantDto = new ParticipantDto(participant);
+            participantDtoList.add(participantDto);
         }
+
+
+        return new PlanDetailResDto(plan,isMember,participantDtoList);
     }
+
+
 
     //일정 수정.
     //.작성자만 수정가능 , 약속 날짜는 과거 x ,

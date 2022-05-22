@@ -162,12 +162,12 @@ public class WeatherEventListener {
         if (id2.equals("200") || id2.equals("201") || id2.equals("202") || id2.equals("210") || id2.equals("211")
                 || id2.equals("212") || id2.equals("221") || id2.equals("230") || id2.equals("231") || id2.equals("232")
         ) {
-            id2 = "천둥";
+            id2 = "비";
         }
         if (id2.equals("300") || id2.equals("301") || id2.equals("302") || id2.equals("310") || id2.equals("311") || id2.equals("312")
                 || id2.equals("313") || id2.equals("314") || id2.equals("321")
         ) {
-            id2 = "소나기";
+            id2 = "비";
         }
         if (id2.equals("500") || id2.equals("501") || id2.equals("502") || id2.equals("503") || id2.equals("504") || id2.equals("511")
                 || id2.equals("520") || id2.equals("521") || id2.equals("522") || id2.equals("530")
@@ -182,15 +182,15 @@ public class WeatherEventListener {
         if (id2.equals("701") || id2.equals("711") || id2.equals("721") || id2.equals("731") || id2.equals("741") || id2.equals("751") ||
                 id2.equals("761") || id2.equals("762")
         ) {
-            id2 = "안개";
+            id2 = "흐림";
         }
         if (id2.equals("771") || id2.equals("781")
         ) {
-            id2 = "태풍";
+            id2 = "흐림";
         }
         if (id2.equals("801") || id2.equals("802") || id2.equals("803") || id2.equals("804")
         ) {
-            id2 = "구름";
+            id2 = "흐림";
         }
         return id2;
     }

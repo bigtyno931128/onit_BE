@@ -16,7 +16,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     // 일정 시간에 따른 조회. (일정 가까운 순으로 정렬되어 있다.)
     List<Participant> findAllByUserOrderByPlanDate(User user);
 
-    Optional<Participant> findByUser(User user);
-
     void deleteByUserAndPlan(User user, Plan plan);
+
+    // 참가자 list
+    List<Participant> findAllByPlan(Plan plan);
 }
