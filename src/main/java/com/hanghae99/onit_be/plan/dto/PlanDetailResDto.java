@@ -72,5 +72,6 @@ public class PlanDetailResDto {
         this.url = plan.getUrl();
         this.isMember = isMember;
         this.participantList = participantDtoList;
+
     }
 }
