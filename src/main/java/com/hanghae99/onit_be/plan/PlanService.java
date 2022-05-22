@@ -148,24 +148,11 @@ public class PlanService {
 
 
     // 일정 상세 조회
-//    public PlanDetailResDto getPlan2(String url, User user) {
-//        Plan plan = planRepository.findByUrl(url);
-//        if (!Objects.equals(plan.getWriter(), user.getNickname())) {
-//            plan.updateJoin2();
-//            boolean isMember = plan.isMember();
-//            return new PlanDetailResDto(plan,isMember);
-//        } else {
-//            boolean isMember = plan.isMember();
-//            return new PlanDetailResDto(plan, isMember);
-//        }
-//    }
-
-    // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
 
         // 참가자  , 작성자의 planDetail
         Plan plan = planRepository.findByUrl(url);
-        System.out.println("plan" +plan.getPlanName());
+
 
         List<Participant> participantList = participantRepository.findAllByPlan(plan);
         List<ParticipantDto> participantDtoList = new ArrayList<>();
@@ -173,9 +160,8 @@ public class PlanService {
         boolean isMember = false;
 
         for (Participant participant : participantList) {
-            System.out.println(participant.getUser().toString());
 
-            if (participant.getUser().getId() == user.getId()) {
+            if (Objects.equals(participant.getUser().getId(), user.getId())) {
                 isMember = true;
             }
             ParticipantDto participantDto = new ParticipantDto(participant);

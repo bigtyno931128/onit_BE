@@ -88,14 +88,17 @@ public class MyPageService {
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         Plan planNew = planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new);
         LocalDateTime newPlanDate = planNew.getPlanDate();
-        List <Participant> participantList = participantRepository.findAll();
-        List <Plan> planList = new ArrayList<>();
+        List<Participant> participantList = participantRepository.findAll();
+        List<Plan> planList = new ArrayList<>();
 
         if (!participantList.isEmpty()) {
-
-            for (Participant participant : participantList ) {
-
+            for (Participant participant : participantList) {
                 if (Objects.equals(participant.getUser().getId(), user1.getId())) {
+                    if (!Objects.equals(participant.getPlan().getId(), planNew.getId())) {
+                        int comResult = compareDay(participant.getPlan().getPlanDate(), newPlanDate);
+                        long remainHours = ChronoUnit.HOURS.between(participant.getPlan().getPlanDate().toLocalTime(), newPlanDate.toLocalTime());
+                        checkPlan(comResult, remainHours);
+                    }
                     throw new IllegalArgumentException("이미 일정에 참여 중입니다");
                 }
             }
