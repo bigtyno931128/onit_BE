@@ -155,6 +155,8 @@ public class PlanService {
         // 참가자  , 작성자의 planDetail
         Plan plan = planRepository.findByUrl(url);
 
+        // 참여자들 조회 . plan 에 참여한
+
         List<Participant> participantList = participantRepository.findAllByPlan(plan);
         List<ParticipantDto> participantDtoList = new ArrayList<>();
 
@@ -218,7 +220,7 @@ public class PlanService {
 
         for (Participant participant : participantList) {
 
-            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(participant.getPlanDate())) {
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(participant.getPlan().getPlanDate())) {
 
                 Long planId = participant.getPlan().getId();
                 String planName = participant.getPlan().getPlanName();
@@ -229,7 +231,7 @@ public class PlanService {
                 String penalty = participant.getPlan().getPenalty();
 
                 int status = 0;
-                status = getStatus(status, participant.getPlanDate());
+                status = getStatus(status, participant.getPlan().getPlanDate());
                 LocalDate weatherDate = LocalDate.from(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
 
                 Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
@@ -242,7 +244,7 @@ public class PlanService {
                 PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, status, description, penalty);
 
                 // 작성자가 사용자이면 myPlanListDto에 담아주기
-                if (Objects.equals(participant.getWriter(), user.getNickname())) {
+                if (Objects.equals(participant.getPlan().getWriter(), user.getNickname())) {
                     myPlanList.add(myPlanDto);
                 } else {
                     invitedPlanList.add(myPlanDto);
