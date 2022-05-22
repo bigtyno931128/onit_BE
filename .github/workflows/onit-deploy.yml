@@ -17,7 +17,7 @@ on:
 # 현재 스크립트에서 사용할 환결변수를 정의하여 사용
 env:
   S3_BUCKET_NAME: onit-bucket
-  PROJECT_NAME: onit-deploy
+  PROJECT_NAME: onit
 
 
 jobs:
@@ -62,4 +62,4 @@ jobs:
 
       # CodeDeploy 연결
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name onit-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name develop --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
+        run: aws deploy create-deployment --application-name onit --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name develop --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
