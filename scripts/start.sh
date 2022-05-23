@@ -21,6 +21,6 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/onit-deploy/build/libs/Onit_BE-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
+sudo nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/onit-deploy/build/libs/Onit_BE-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
