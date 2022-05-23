@@ -152,12 +152,9 @@ public class PlanService {
 
     // 일정 상세 조회
     public PlanDetailResDto getPlan(String url, User user) {
-
         // 참가자  , 작성자의 planDetail
         Plan plan = planRepository.findByUrl(url);
-
         // 참여자들 조회 . plan 에 참여한
-
         List<Participant> participantList = participantRepository.findAllByPlan(plan);
         List<ParticipantDto> participantDtoList = new ArrayList<>();
 
@@ -168,6 +165,7 @@ public class PlanService {
             if (Objects.equals(participant.getUser().getId(), user.getId())) {
                 isMember = true;
             }
+
             ParticipantDto participantDto = new ParticipantDto(participant);
             participantDtoList.add(participantDto);
         }
@@ -226,7 +224,6 @@ public class PlanService {
                 Long planId = participant.getPlan().getId();
                 String planName = participant.getPlan().getPlanName();
                 LocalDateTime planDate = participant.getPlan().getPlanDate();
-//                String planDateCv = participant.getPlanDate().format(DateTimeFormatter.ofPattern("M월 d일 E요일 HH:mm").withLocale(Locale.forLanguageTag("ko")));
                 String locationName = participant.getPlan().getLocation().getName();
                 String url = participant.getPlan().getUrl();
                 String penalty = participant.getPlan().getPenalty();
@@ -236,6 +233,7 @@ public class PlanService {
                 LocalDate weatherDate = LocalDate.from(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
 
                 Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
+
                 String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
                 int comResult = compareDay(participant.getPlan().getPlanDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
                 if (comResult == 0) {
@@ -252,14 +250,15 @@ public class PlanService {
                 }
             }
         }
+
         PlanResDto.MyFirstPlanDto myFirstPlanDto = null;
         PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto = null;
 
         if (!myPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(myPlanList.get(0).getPlanDate()))) {
-
             myFirstPlanDto = new PlanResDto.MyFirstPlanDto(myPlanList.get(0));
             myPlanList.remove(0);
         }
+
         if (!invitedPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(invitedPlanList.get(0).getPlanDate()))) {
             myFirstInvitedPlanDto = new PlanResDto.MyFirstInvitedPlanDto(invitedPlanList.get(0));
             invitedPlanList.remove(0);

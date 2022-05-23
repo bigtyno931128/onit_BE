@@ -9,9 +9,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TwoPlanResDto {
+
     private PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto;
+
     private PlanResDto.MyFirstPlanDto myFirstPlanDto;
+
     private PlanListResDto.PlanListsResDto myPlanList;
+
     private PlanListResDto.PlanListsResDto invitedPlanList;
 
 

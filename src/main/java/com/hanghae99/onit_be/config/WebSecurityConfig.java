@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
-    private CorsFilter corsFilter;
+
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     private final ObjectMapper objectMapper;
@@ -69,14 +69,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         web
                 .ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/")
-                .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**")
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .antMatchers("/h2-console/**","/v3/api-docs","/favicon.ico",
+                        "/swagger-resources/**", "/swagger-ui/", "/webjars/**", "/swagger/**","/swagger-ui/**");
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -84,13 +82,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //http.httpBasic().disable();
         http.cors();
         http.csrf().disable();
+        // h2-console 을 위한 설정을 추가
         http.headers().frameOptions().sameOrigin();
 
         // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
         http
-//                .httpBasic().disable()//rest api 만을 고려하여 기본 설정은 해제하겠습니다.
-//                .exceptionHandling()
-//                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//토크 기반이라 세션 사용 해제.
         /*
@@ -99,17 +95,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          * FormLoginFilter : 로그인 인증을 실시합니다.
          * JwtFilter       : 서버에 접근시 JWT 확인 후 인증을 실시합니다.
          */
-        http
-                .addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .antMatchers("/swagger-ui/**").permitAll()
-//                .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("https://imonint.shop/ws").permitAll()
                 .antMatchers("ws/**").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -119,10 +108,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/user/logout")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
+//                .and()
+//                .exceptionHandling()
+//                // "접근 불가" 페이지 URL 설정
+//                .accessDeniedPage("/forbidden.html")
                 .and()
-                .exceptionHandling()
-                // "접근 불가" 페이지 URL 설정
-                .accessDeniedPage("/forbidden.html");
+                .addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -157,22 +149,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/images/**");
         skipPathList.add("GET,/css/**");
 
-        // h2-console 허용
-        skipPathList.add("GET,/h2-console/**");
-        skipPathList.add("POST,/h2-console/**");
-
         // 회원 관리 API 허용
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("POST,/api/logout");
         skipPathList.add("GET,/users/kakao/callback");
         skipPathList.add("GET,/basic.js");
-
+        skipPathList.add("GET,/");
         //sse 메세지 test
         skipPathList.add("GET,/index.html");
         skipPathList.add("GET,/subscribe/**");
 
-        skipPathList.add("GET,/favicon.ico");
+        //skipPathList.add("GET,/favicon.ico");
         skipPathList.add("POST,/api/idCheck");
         skipPathList.add("GET,/map/**");
         skipPathList.add("GET,/ws/**");

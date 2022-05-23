@@ -87,7 +87,9 @@ public class MyPageService {
     @Transactional
     public void savePlanInvitation(String url, User user) {
 
+
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
+
         Plan planNew = planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new);
 
         List<Participant> participantList = participantRepository.findAllByPlan(planNew);

@@ -89,5 +89,6 @@ public class PlanController {
     public void getDistance(@RequestBody TestDto testDto, @PathVariable Long planId) {
         planService.getDistance(testDto,planId);
     }
+
 }
 

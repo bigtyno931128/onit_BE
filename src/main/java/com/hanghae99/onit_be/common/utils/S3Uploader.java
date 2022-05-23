@@ -26,7 +26,8 @@ public class S3Uploader {
     public String bucket;  // S3 버킷 이름
 
     // 글 수정 시 기존 s3에 있는 이미지 삭제
-    public String updateFile(MultipartFile multipartFile, String currentFilePath, String fileName){
+    public String updateFile(MultipartFile multipartFile, String currentFilePath, String fileName) {
+
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
