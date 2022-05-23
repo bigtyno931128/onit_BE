@@ -62,4 +62,4 @@ jobs:
 
       # CodeDeploy 연결
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name onit --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name develop --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
+        run: aws deploy create-deployment --application-name onit-cicd --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dev --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
