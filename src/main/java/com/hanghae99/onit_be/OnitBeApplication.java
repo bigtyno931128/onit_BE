@@ -19,8 +19,8 @@ public class OnitBeApplication{
 
     // S3
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
-            + "classpath:application.properties,"
-            + "classpath:aws.yml";
+            + "classpath:application.properties";
+//            + "classpath:aws.yml";
     // S3
     // application.yml과 aws.yml 두개의 파일 모두를 설정 파일로 읽어서 사용
     public static void main(String[] args) {
