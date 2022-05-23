@@ -12,7 +12,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableCaching
 @EnableRedisHttpSession
-@EnableEncryptableProperties
 public class OnitBeApplication{
 
 //    public static void main(String[] args) {
