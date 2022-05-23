@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/onit-deploy
+    destination: /home/ubuntu/onit
     overwrite: yes
 
 permissions:
@@ -11,16 +11,16 @@ permissions:
     owner: ubuntu
     group: ubuntu
 
-hooks:
-  ApplicationStart:
-    - location: scripts/start.sh
-      timeout: 180
-      runas: ubuntu
-
-    - location: scripts/health_check.sh
-      timeout: 180
-      runas: ubuntu
-
-    - location: scripts/switch.sh
-      timeout: 180
-      runas: ubuntu
+#hooks:
+#  ApplicationStart:
+#    - location: scripts/start.sh
+#      timeout: 180
+#      runas: ubuntu
+#
+#    - location: scripts/health_check.sh
+#      timeout: 180
+#      runas: ubuntu
+#
+#    - location: scripts/switch.sh
+#      timeout: 180
+#      runas: ubuntu
