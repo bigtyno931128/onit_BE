@@ -1,65 +1,65 @@
 
-# workflow 이름 지정
-name: onit-deploy
+# # workflow 이름 지정
+# name: onit-deploy
 
 
-# workflow가 언제 실행되는지 지정
-on:
-  push:
-    branches: [ developer ]
-  pull_request:
-    branches: [ developer ]
+# # workflow가 언제 실행되는지 지정
+# on:
+#   push:
+#     branches: [ developer ]
+#   pull_request:
+#     branches: [ developer ]
 
 
-  # 수동으로 workflow 실행
-  # workflow_dispatch:
+#   # 수동으로 workflow 실행
+#   # workflow_dispatch:
 
-# 현재 스크립트에서 사용할 환결변수를 정의하여 사용
-env:
-  S3_BUCKET_NAME: onit-bucket
-  PROJECT_NAME: onit
+# # 현재 스크립트에서 사용할 환결변수를 정의하여 사용
+# env:
+#   S3_BUCKET_NAME: onit-bucket
+#   PROJECT_NAME: onit
 
 
-jobs:
-  build:
-    # workflow를 실행할 환경
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     # workflow를 실행할 환경
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
       
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with: 
-         java-version: 1.8
+#       - name: Set up JDK 1.8
+#         uses: actions/setup-java@v1
+#         with: 
+#          java-version: 1.8
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-        shell: bash
+#       - name: Grant execute permission for gradlew
+#         run: chmod +x gradlew
+#         shell: bash
 
-      - name: Build with Gradle
-        run: ./gradlew build
-        shell: bash
+#       - name: Build with Gradle
+#         run: ./gradlew build
+#         shell: bash
         
-      # S3
-      # 파일 압축
-      - name: Make zip file
-        run: zip -r ./onit-deploy.zip .
-        shell: bash
+#       # S3
+#       # 파일 압축
+#       - name: Make zip file
+#         run: zip -r ./onit-deploy.zip .
+#         shell: bash
         
-      # AWS credentials 설정
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+#       # AWS credentials 설정
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ secrets.AWS_REGION }}
           
-      # S3에 파일 업로드
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./onit-deploy.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/onit-deploy.zip
+#       # S3에 파일 업로드
+#       - name: Upload to S3
+#         run: aws s3 cp --region ap-northeast-2 ./onit-deploy.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/onit-deploy.zip
 
-      # CodeDeploy 연결
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name onit-system-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name onitdev --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
+#       # CodeDeploy 연결
+#       - name: Code Deploy
+#         run: aws deploy create-deployment --application-name onit-system-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name onitdev --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/onit-deploy.zip
