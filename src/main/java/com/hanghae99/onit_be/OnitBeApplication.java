@@ -1,5 +1,6 @@
 package com.hanghae99.onit_be;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
@@ -11,6 +12,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableCaching
 @EnableRedisHttpSession
+@EnableEncryptableProperties
 public class OnitBeApplication{
 
 //    public static void main(String[] args) {
