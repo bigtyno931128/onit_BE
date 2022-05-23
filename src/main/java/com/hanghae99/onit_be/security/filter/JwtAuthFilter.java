@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae99.onit_be.security.FilterSkipMatcher;
 import com.hanghae99.onit_be.security.jwt.HeaderTokenExtractor;
 import com.hanghae99.onit_be.security.jwt.JwtPreProcessingToken;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import java.io.PrintWriter;
  * Token 을 내려주는 Filter 가 아닌  client 에서 받아지는 Token 을 서버 사이드에서 검증하는 클레스 SecurityContextHolder 보관소에 해당
  * Token 값의 인증 상태를 보관 하고 필요할때 마다 인증 확인 후 권한 상태 확인 하는 기능
  */
+@Slf4j
 public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
     private final HeaderTokenExtractor extractor;
@@ -47,14 +49,20 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
         // JWT 값을 담아주는 변수 TokenPayload
         String tokenPayload = request.getHeader("Authorization");
+
+        log.info("token =============={}",tokenPayload);
+
         if (tokenPayload == null) {
             //예외 처리 로직 .
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=utf-8");
+
             JSONObject json = new JSONObject();
             String message = "토큰이 존재하지 않습니다.";
+
             json.put("httpStatus", HttpStatus.UNAUTHORIZED);
             json.put("errorMessage", message);
+
             PrintWriter out = response.getWriter();
             out.print(json);
         }

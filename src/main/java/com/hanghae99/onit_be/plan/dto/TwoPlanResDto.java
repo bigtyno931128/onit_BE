@@ -9,7 +9,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TwoPlanResDto {
+
+    private PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto;
+
+    private PlanResDto.MyFirstPlanDto myFirstPlanDto;
+
     private PlanListResDto.PlanListsResDto myPlanList;
+
     private PlanListResDto.PlanListsResDto invitedPlanList;
 
 
@@ -18,4 +24,10 @@ public class TwoPlanResDto {
         this.invitedPlanList = invitedPlanListsResDto;
     }
 
+    public TwoPlanResDto(PlanResDto.MyFirstPlanDto myFirstPlanDto, PlanListResDto.PlanListsResDto myPlanListsResDto, PlanListResDto.PlanListsResDto invitedPlanListsResDto, PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto) {
+        this.myFirstInvitedPlanDto = myFirstInvitedPlanDto;
+        this.invitedPlanList = invitedPlanListsResDto;
+        this.myFirstPlanDto = myFirstPlanDto;
+        this.myPlanList =myPlanListsResDto;
+    }
 }

@@ -19,6 +19,5 @@ public class ParticipantDto {
         this.id = participant.getUser().getId();
         this.nickName = participant.getUser().getNickname();
         this.img = participant.getUser().getProfileImg();
-
     }
 }
