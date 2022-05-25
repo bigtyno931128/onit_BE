@@ -67,16 +67,19 @@ public class FirebaseCloudMessageService {
 //    }
 
     // 구독 디바이스 푸쉬(topic)
-    private void sendSubscribeTopic(List<String> registrationTokens)
+    private void sendSubscribeTopic(List<String> registrationTokens, String planUrl)
             throws FirebaseMessagingException, IOException {
 //        List<String> registrationTokens =
 //                Collections.singletonList(user.getToken());
         log.info("9.유저 토큰 목록===== " + registrationTokens);
 
+        String fullPlanUrl = "https://imonit.co.kr/details/" + planUrl;
+        log.info("10.플랜 링크 확인==== " + fullPlanUrl);
+
         // 디바이스 토큰 구독하기
         TopicManagementResponse response = FirebaseMessaging.getInstance()
                 .subscribeToTopic(registrationTokens, "alarm");
-        log.info("9-1.유저 토큰들 구독 확인===== " + registrationTokens);
+        log.info("11.유저 토큰들 구독 확인===== " + registrationTokens);
 
         System.out.println(response.getSuccessCount() + " // 10.토큰들 구독 성공");
 
@@ -87,15 +90,19 @@ public class FirebaseCloudMessageService {
                         .setBody("약속시간 1시간 전입니다. 친구들의 위치를 확인해보세요!")
                         .build())
                 .setTopic("alarm")
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setFcmOptions(WebpushFcmOptions.withLink(fullPlanUrl))
+                        .build())
                 .build();
 
+
         String response2 = FirebaseMessaging.getInstance().send(message);
-        log.info("11.구독 메세지 전송===== " + response2);
+        log.info("12.구독 메세지 전송===== " + response2);
 
         // 메세지 요청 후 구독 해제
         TopicManagementResponse response3 = FirebaseMessaging.getInstance().unsubscribeFromTopic(
                 registrationTokens, "alarm");
-        System.out.println(response3.getSuccessCount() + " // 12.토큰들 구독 해제");
+        System.out.println(response3.getSuccessCount() + " // 13.토큰들 구독 해제");
 
 //        OkHttpClient client = new OkHttpClient();
 //        RequestBody requestBody = RequestBody.create(String.valueOf(message), MediaType.get("application/json; charset=utf-8"));
@@ -158,8 +165,9 @@ public class FirebaseCloudMessageService {
                     User user = participant.getUser();
 //                    sendSubscribeTopic(user);
                     registrationTokens.add(user.getToken());
+                    sendSubscribeTopic(registrationTokens,plan.getUrl());
                 }
-                sendSubscribeTopic(registrationTokens);
+//                sendSubscribeTopic(registrationTokens,plan.getUrl());
             }
         }
     }
