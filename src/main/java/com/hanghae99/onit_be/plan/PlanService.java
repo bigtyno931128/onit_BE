@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.time.temporal.ChronoUnit;
@@ -55,10 +56,9 @@ public class PlanService {
         // 지난 날짜로 등록 x
         checkPlanDate(planReqDto);
 
-        User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
         // 이중 약속 유효성 검사
         // 1. 로그인한 유저의 닉네임으로 저장된 모든 plan list 조회
-        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user1);
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
         List<Plan> planList = new ArrayList<>();
         for (Participant participant : participantList) {
             Plan plan = participant.getPlan();
@@ -66,18 +66,20 @@ public class PlanService {
         }
 
         LocalDateTime today = planReqDto.getPlanDate();
+
         for (Plan plans : planList) {
-            // 2. 이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교)
+
             int comResult = compareDay(plans.getPlanDate(), today);
             long remainHours = getHours(planReqDto, plans);
-            checkPlan(comResult,remainHours);
+            //이중 약속에 대한 처리 (약속 날짜와 오늘 날짜 비교, 약속 시간도 비교)
+            checkPlan(comResult, remainHours);
 
         }
         String url = UUID.randomUUID().toString();
         Plan plan = new Plan(planReqDto, user, url);
         planRepository.save(plan);
-        plan.addPlan(user1);
-        Participant participant = new Participant(plan, user1);
+
+        Participant participant = new Participant(plan, user);
         participantRepository.save(participant);
         eventPublisher.publishEvent(new WeatherCreateEvent(plan));
     }
@@ -170,9 +172,8 @@ public class PlanService {
             participantDtoList.add(participantDto);
         }
 
-        return new PlanDetailResDto(plan,isMember,participantDtoList);
+        return new PlanDetailResDto(plan, isMember, participantDtoList);
     }
-
 
 
     //일정 수정.
@@ -180,6 +181,7 @@ public class PlanService {
     @Transactional
     //@CachePut(value = CacheKey.PLAN, key ="#userDetails.user.id")
     public void editPlan(String url, PlanReqDto planRequestDto, User user) {
+
         Plan plan = planRepository.findByUrl(url);
 
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
@@ -187,7 +189,7 @@ public class PlanService {
         }
         // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
         checkPlanDate(planRequestDto);
-        plan.update(planRequestDto);
+        plan.update(planRequestDto, user);
         eventPublisher.publishEvent(new WeatherUpdateEvent(plan));
     }
 
@@ -201,8 +203,10 @@ public class PlanService {
             weatherRepository.deleteAllByPlanId(plan.getId());
             planRepository.deleteByUrl(url);
             eventPublisher.publishEvent(new PlanDeleteEvent(plan, "일정을 삭제 했습니다.", user));
+
         } else {
-            throw new IllegalArgumentException("작성자만 삭제 가능합니다.");
+            participantRepository.deleteByUserAndPlan(user, plan);
+            //throw new IllegalArgumentException("작성자만 삭제 가능합니다.");
         }
     }
 
@@ -217,6 +221,8 @@ public class PlanService {
         // 공유 받은 일정 리스트 초기화
         List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
 
+        List<PlanResDto.MyPlanDto> totalPlanList = new ArrayList<>();
+
         for (Participant participant : participantList) {
 
             if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(participant.getPlan().getPlanDate())) {
@@ -227,20 +233,19 @@ public class PlanService {
                 String locationName = participant.getPlan().getLocation().getName();
                 String url = participant.getPlan().getUrl();
                 String penalty = participant.getPlan().getPenalty();
+                String description = "Onit 서비스에서는 8일치 날씨예보만 제공 합니다.";
+                LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+                LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
+                // plan Date 가 오늘 날짜 기준 + 8 이라면
+                if (weatherDate.isBefore(today.plusDays(8))) {
 
-                int status = 0;
-                status = getStatus(status, participant.getPlan().getPlanDate());
-                LocalDate weatherDate = LocalDate.from(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
-
-                Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
-                log.info("날씨 값 확인==== " + weather);
-                String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
-                int comResult = compareDay(participant.getPlan().getPlanDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                if (comResult == 0) {
+                    Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
                     description = weather.getDescription();
+
                 }
 
-                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, status, description, penalty);
+                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, description, penalty);
+                totalPlanList.add(myPlanDto);
 
                 // 작성자가 사용자이면 myPlanListDto에 담아주기
                 if (Objects.equals(participant.getPlan().getWriter(), user.getNickname())) {
@@ -251,20 +256,6 @@ public class PlanService {
             }
         }
 
-        PlanResDto.MyFirstPlanDto myFirstPlanDto = null;
-        PlanResDto.MyFirstInvitedPlanDto myFirstInvitedPlanDto = null;
-
-        if (!myPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(myPlanList.get(0).getPlanDate()))) {
-            myFirstPlanDto = new PlanResDto.MyFirstPlanDto(myPlanList.get(0));
-            myPlanList.remove(0);
-        }
-
-        if (!invitedPlanList.isEmpty() && LocalDate.now(ZoneId.of("Asia/Seoul")).isEqual(ChronoLocalDate.from(invitedPlanList.get(0).getPlanDate()))) {
-            myFirstInvitedPlanDto = new PlanResDto.MyFirstInvitedPlanDto(invitedPlanList.get(0));
-            invitedPlanList.remove(0);
-        }
-
-
         Pageable pageable = getPageable(pageno);
 
         int start = pageno * 5;
@@ -273,13 +264,17 @@ public class PlanService {
         // invitedPlanList
         int end2 = Math.min((start + 5), invitedPlanList.size());
 
+        int end3 = Math.min((start + 5), totalPlanList.size());
+
         Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
         Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
+        Page<PlanResDto.MyPlanDto> totalPlanPage = new PageImpl<>(totalPlanList.subList(start, end3), pageable, totalPlanList.size());
 
         PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
         PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
+        PlanListResDto.PlanListsResDto totalPlanListsResDto = new PlanListResDto.PlanListsResDto(totalPlanPage);
 
-        return new TwoPlanResDto(myFirstPlanDto, myPlanListsResDto, invitedPlanListsResDto,myFirstInvitedPlanDto);
+        return new TwoPlanResDto( myPlanListsResDto, invitedPlanListsResDto, totalPlanListsResDto );
     }
 
     // 거리사 1키로 안쪽 일 때 도착신호 .
@@ -299,7 +294,7 @@ public class PlanService {
 
 
         String distnace = "가는중";
-        log.info("거리=={}",point);
+        log.info("거리=={}", point);
         if (1 >= point) {
             distnace = "도착";
             log.info(distnace);

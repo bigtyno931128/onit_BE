@@ -18,7 +18,6 @@ public class PlanResDto {
     private String planName;
     private LocalDateTime planDate;
     private Location locationDetail;
-    private int status;
     private boolean isMember;
     private String url;
     private String penalty;
@@ -32,12 +31,11 @@ public class PlanResDto {
         this.planDate = planDate;
     }
 
-    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, int status, String url, String penalty, String writer, boolean isMember) {
+    public PlanResDto(Long planId, String planName, LocalDateTime planDate, Location locationDetail, String url, String penalty, String writer, boolean isMember) {
         this.planId = planId;
         this.planName = planName;
         this.planDate = planDate;
         this.locationDetail = locationDetail;
-        this.status = status;
         this.writer = writer;
         this.isMember = isMember;
         this.url = url;
@@ -45,7 +43,7 @@ public class PlanResDto {
     }
 
     @Builder
-    @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class MyPlanDto {
         private Long planId;
@@ -54,69 +52,16 @@ public class PlanResDto {
         private String locationName;
         private String url;
         private String penalty;
-        private int status;
         private String description;
 
-        public MyPlanDto(Long planId, String planName, LocalDateTime planDate, String locationName, String url, int status, String description, String penalty) {
+        public MyPlanDto(Long planId, String planName, LocalDateTime planDate, String locationName, String url, String description, String penalty) {
             this.planId = planId;
             this.planName = planName;
             this.planDate = planDate;
             this.locationName = locationName;
             this.url = url;
-            this.status = status;
             this.description = description;
             this.penalty = penalty;
-        }
-    }
-
-    @Builder
-    @AllArgsConstructor
-    @Getter
-    public static class MyFirstPlanDto {
-        private Long planId;
-        private String planName;
-        private LocalDateTime planDate;
-        private String locationName;
-        private String url;
-        private String penalty;
-        private int status;
-        private String description;
-
-        public MyFirstPlanDto(MyPlanDto myPlanDto) {
-            this.planId = myPlanDto.getPlanId();
-            this.planName = myPlanDto.planName;
-            this.planDate = myPlanDto.planDate;
-            this.description =myPlanDto.description;
-            this.url = myPlanDto.url;
-            this.penalty = myPlanDto.penalty;
-            this.status = myPlanDto.status;
-            this.locationName = myPlanDto.locationName;
-        }
-    }
-
-    @Builder
-    @AllArgsConstructor
-    @Getter
-    public static class MyFirstInvitedPlanDto {
-        private Long planId;
-        private String planName;
-        private LocalDateTime planDate;
-        private String locationName;
-        private String url;
-        private String penalty;
-        private int status;
-        private String description;
-
-        public MyFirstInvitedPlanDto(MyPlanDto myPlanDto) {
-
-            this.planId = myPlanDto.getPlanId();
-            this.planName = myPlanDto.planName;
-            this.planDate = myPlanDto.planDate;
-            this.description =myPlanDto.description;
-            this.url = myPlanDto.url;
-            this.penalty = myPlanDto.penalty;
-            this.status = myPlanDto.status;
-            this.locationName = myPlanDto.locationName;
         }
     }
 }

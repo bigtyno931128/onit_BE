@@ -44,6 +44,10 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
 
         Map<String,Object> data = new HashMap<>();
         data.put(
+                "token",
+                token
+        );
+        data.put(
                 "id",
                 userDetails.getUser().getId());
         data.put(

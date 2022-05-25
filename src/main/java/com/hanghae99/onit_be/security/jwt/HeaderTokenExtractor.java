@@ -21,7 +21,7 @@ public class HeaderTokenExtractor {
          * header 값이 비어있거나 또는 HEADER_PREFIX 값보다 짧은 경우
          * 이셉션을(예외)를 던져주어야 합니다.
          */
-        System.out.println("===============================================" + header);
+
         System.out.println("===============================================" + request.getRequestURI());
 
 
