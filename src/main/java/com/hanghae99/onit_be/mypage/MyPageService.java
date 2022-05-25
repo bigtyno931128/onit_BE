@@ -1,6 +1,7 @@
 package com.hanghae99.onit_be.mypage;
 
 import com.hanghae99.onit_be.mypage.dto.RecordResDto;
+import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
 import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
 import com.hanghae99.onit_be.mypage.dto.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;
@@ -147,5 +148,16 @@ public class MyPageService {
         Page<RecordResDto> page = new PageImpl<>(recordResDtoList.subList(start, end), pageable, recordResDtoList.size());
         return page;
 
+    }
+
+    // 참가한 목록에서 지우기 .
+    @Transactional
+    public void deleteInvitationPlan(String url, User user) {
+        Plan plan = planRepository.findByUrl(url);
+        Participant participant = participantRepository.findByUserAndPlan(user,plan);
+        // 작성자만 삭제 가능
+        if (Objects.equals(participant.getUser().getId(), user.getId())) {
+            participantRepository.deleteByUserAndPlan(user, plan);
+        }
     }
 }

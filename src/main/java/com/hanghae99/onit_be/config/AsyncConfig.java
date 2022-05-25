@@ -19,7 +19,6 @@ public class AsyncConfig implements AsyncConfigurer, SchedulingConfigurer {
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-
         //현재 시스템의 프로세서 개수 가져오기 .
         int processors = Runtime.getRuntime().availableProcessors();
         // 코어 size 는 현재 프로세서 갯수 만큼 (cpu or 하는 작업에 따라 달라짐)
@@ -41,6 +40,4 @@ public class AsyncConfig implements AsyncConfigurer, SchedulingConfigurer {
         scheduler.initialize();
         scheduledTaskRegistrar.setTaskScheduler(scheduler);
     }
-
-
 }

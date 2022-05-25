@@ -1,5 +1,6 @@
 package com.hanghae99.onit_be.mypage;
 
+import com.hanghae99.onit_be.aop.LogExecutionTime;
 import com.hanghae99.onit_be.mypage.dto.ProfileResDto;
 import com.hanghae99.onit_be.mypage.dto.RecordListResDto;
 import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
@@ -48,5 +49,13 @@ public class MyPageController {
                                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         RecordListResDto recordListResDto = new RecordListResDto(mypageService.getPlanHistory(userDetails.getUser(), pageno - 1));
         return ResponseEntity.ok().body(new ResultDto<>("지난 일정 조회 성공!", recordListResDto));
+    }
+
+    // 내가 참여한 일정 삭제 .
+    @LogExecutionTime
+    @DeleteMapping("/invitation/{randomUrl}")
+    public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        mypageService.deleteInvitationPlan(url, userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto("내가 참여한 일정 삭제 성공!"));
     }
 }

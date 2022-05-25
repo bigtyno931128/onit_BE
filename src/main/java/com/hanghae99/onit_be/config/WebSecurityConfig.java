@@ -73,6 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/h2-console/**","/v3/api-docs","/favicon.ico",
                         "/swagger-resources/**", "/swagger-ui/", "/webjars/**", "/swagger/**","/swagger-ui/**");
+
     }
 
 
@@ -97,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
          */
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("https://imonint.shop/ws").permitAll()
+                .antMatchers("https://zsoon.shop/ws").permitAll()
                 .antMatchers("ws/**").permitAll()
                 .anyRequest()
                 .permitAll()
@@ -164,7 +165,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/api/idCheck");
         skipPathList.add("GET,/map/**");
         skipPathList.add("GET,/ws/**");
+        skipPathList.add("POST,/ws/**");
         skipPathList.add("GET,/ws/**/**");
+        skipPathList.add("POST,/ws/**/**");
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
