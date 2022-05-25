@@ -35,7 +35,6 @@ public class Weather {
     @Column
     private String description;
 
-
     private Long planId;
 
     @Column
