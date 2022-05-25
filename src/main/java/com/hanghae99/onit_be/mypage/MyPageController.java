@@ -19,7 +19,7 @@ public class MyPageController {
     private final MyPageService mypageService;
 
     @PutMapping("/member/profile")
-    public ResponseEntity<ResultDto<ProfileResDto>> updateImg (@RequestParam("profileImg") MultipartFile multipartFile,
+    public ResponseEntity<ResultDto> updateImg (@RequestParam("profileImg") MultipartFile multipartFile,
                                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         mypageService.updateProfile(multipartFile, userDetails);
         return ResponseEntity.ok().body(new ResultDto<>("프로필 이미지 수정 성공!"));

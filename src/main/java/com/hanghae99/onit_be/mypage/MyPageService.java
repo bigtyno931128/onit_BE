@@ -47,7 +47,7 @@ public class MyPageService {
 
     // 프로필 이미지 수정
     @Transactional
-    public ProfileResDto updateProfile(MultipartFile multipartFile, UserDetailsImpl userDetails) {
+    public void updateProfile(MultipartFile multipartFile, UserDetailsImpl userDetails) {
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다.")
         );
@@ -64,8 +64,6 @@ public class MyPageService {
         String[] newImgUrl = imageUrl.split("/");
         String imageKey = newImgUrl[newImgUrl.length - 1];
         user.update(user.getId(), imageKey);
-
-        return new ProfileResDto(profile);
     }
 
     // 이미지 파일명 변환 관련 메소드
@@ -118,14 +116,6 @@ public class MyPageService {
         return new PlanDetailResDto(participant);
     }
 
-    // 참여한 일정 취소
-    public void deletePlanInvitation(String url, User user){
-        Participant participant = participantRepository.findByUserAndPlan(
-                userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new),
-                planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new)
-        );
-        participantRepository.deleteById(participant.getId());
-    }
 
     // 지난 일정 목록 조회
     public Page<RecordResDto> getPlanHistory(User user, int pageno) {
