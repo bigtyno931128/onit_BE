@@ -233,7 +233,7 @@ public class PlanService {
                 LocalDate weatherDate = LocalDate.from(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
 
                 Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
-
+                log.info("날씨 값 확인==== " + weather);
                 String description = "일정 약속 당일에만 날씨정보를 제공 합니다.";
                 int comResult = compareDay(participant.getPlan().getPlanDate(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
                 if (comResult == 0) {
