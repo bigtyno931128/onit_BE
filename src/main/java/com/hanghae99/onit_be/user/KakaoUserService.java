@@ -75,12 +75,12 @@ public class KakaoUserService {
         if (kakaoUser == null) {
             // 회원가입
             String nickName = kakaoUserInfoDto.getNickname();
-
+            String profileImgUrl = kakaoUserInfoDto.getProfileImg();
             // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-            kakaoUser = new User(kakaoId,nickName,encodedPassword);
+            kakaoUser = new User(kakaoId,nickName,encodedPassword,profileImgUrl);
             userRepository.save(kakaoUser);
 
         }
@@ -109,12 +109,12 @@ public class KakaoUserService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         log.info(String.valueOf(jsonNode.get("id").asLong()));
         Long id = jsonNode.get("id").asLong();
-
+        String profileImgUrl = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         log.info("닉네임"+ nickname);
         log.info("카카오 사용자 정보 id: {},{}",id,nickname);
-        return new KakaoUserInfoResDto(id, nickname,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profile_default.png");
+        return new KakaoUserInfoResDto(id, nickname,profileImgUrl);
 
     }
 

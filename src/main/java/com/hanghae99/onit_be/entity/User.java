@@ -79,12 +79,12 @@ public class User {
         this.token = token;
     }
 
-    public User(Long kakaoId, String nickName, String encodedPassword) {
+    public User(Long kakaoId, String nickName, String encodedPassword, String profileImg) {
         this.kakaoId = kakaoId;
         this.username = nickName;
         this.nickname = nickName;
         this.password = encodedPassword;
-        this.profileImg = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+        this.profileImg = profileImg;
         this.userRole = UserRoleEnum.USER;
         this.isNoticeAllowed = false;
     }
