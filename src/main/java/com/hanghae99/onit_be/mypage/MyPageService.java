@@ -117,6 +117,15 @@ public class MyPageService {
         return new PlanDetailResDto(participant);
     }
 
+    // 참여한 일정 취소
+    public void deletePlanInvitation(String url, User user){
+        Participant participant = participantRepository.findByUserAndPlan(
+                userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new),
+                planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new)
+        );
+        participantRepository.deleteById(participant.getId());
+    }
+
     // 지난 일정 목록 조회
     public Page<RecordResDto> getPlanHistory(User user, int pageno) {
         List<Plan> planList = planRepository.findAllByUserOrderByPlanDateDesc(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
