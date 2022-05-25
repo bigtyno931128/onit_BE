@@ -28,7 +28,7 @@ public class UserController {
 
     // 회원 가입 요청 처리
     @PostMapping("/user/signup")
-    public ResponseEntity<ResultDto<Object>> registerUser(@RequestBody SignupReqDto requestDto) {
+    public ResponseEntity<Object> registerUser(@RequestBody SignupReqDto requestDto) {
         userService.registerUser(requestDto);
         return ResponseEntity.ok().body(new ResultDto<>("회원가입 성공!"));
     }

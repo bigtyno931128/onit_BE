@@ -167,7 +167,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/ws/**");
         skipPathList.add("POST,/ws/**");
         skipPathList.add("GET,/ws/**/**");
-        skipPathList.add("POST,/ws/**/**");
+        skipPathList.add("GET,/health");
 
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
