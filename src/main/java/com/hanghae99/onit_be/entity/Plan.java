@@ -55,6 +55,7 @@ public class Plan extends TimeStamped {
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
         this.url = url;
+        this.user = user;
     }
 
     public Plan(Plan planNew) {

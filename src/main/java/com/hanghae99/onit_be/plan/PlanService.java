@@ -68,6 +68,7 @@ public class PlanService {
         }
         String url = UUID.randomUUID().toString();
         Plan plan = new Plan(planReqDto, user, url);
+
         planRepository.save(plan);
 
         Participant participant = new Participant(plan, user);
