@@ -1,15 +1,13 @@
 package com.hanghae99.onit_be.plan;
 
-import com.hanghae99.onit_be.entity.Location;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.mypage.ParticipantRepository;
 import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
-import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
 import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.user.UserRepository;
-import com.hanghae99.onit_be.weather.Weather;
+import com.hanghae99.onit_be.entity.Weather;
 import com.hanghae99.onit_be.weather.WeatherCreateEvent;
 import com.hanghae99.onit_be.weather.WeatherRepository;
 import com.hanghae99.onit_be.weather.WeatherUpdateEvent;
@@ -22,14 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import java.time.temporal.ChronoUnit;
 import java.util.*;
