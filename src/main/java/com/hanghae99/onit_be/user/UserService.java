@@ -35,6 +35,7 @@ public class UserService {
         if (userRepository.existsByUsername(requestDto.getUsername())){
             throw new IllegalArgumentException("이미 사용중인 아이디 입니다!");
         }
+
         if (userRepository.existsByNickname(requestDto.getNickname())){
             throw new IllegalArgumentException("이미 사용중인 닉네임 입니다!");
         }
@@ -71,4 +72,5 @@ public class UserService {
         }
         user.updateToken(token);
     }
+
 }

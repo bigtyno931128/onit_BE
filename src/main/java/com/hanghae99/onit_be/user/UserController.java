@@ -2,7 +2,8 @@ package com.hanghae99.onit_be.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hanghae99.onit_be.common.ResultDto;
-import com.hanghae99.onit_be.entity.User;
+
+import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,6 @@ public class UserController {
     public IdCheckResDto vaildId(@RequestBody LoginReqDto requestDto) {
         return userService.vaildId(requestDto);
     }
-
-
-    //회원 정보
-//    @GetMapping("/api/user/info")
-//    public UserInfoResDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return userService.getUserInfo(userDetails.getUser());
-//    }
 
 
     // 카카오 로그인

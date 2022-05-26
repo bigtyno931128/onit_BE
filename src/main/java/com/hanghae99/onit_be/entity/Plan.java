@@ -22,6 +22,7 @@ public class Plan extends TimeStamped {
     @Column(name = "plan_id")
     private Long id;
 
+
     private String planName;
 
     private LocalDateTime planDate;
