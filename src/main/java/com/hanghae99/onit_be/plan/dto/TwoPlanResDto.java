@@ -24,5 +24,4 @@ public class TwoPlanResDto {
         this.invitedPlanList = invitedPlanListsResDto;
         this.totalPlanList = totalPlanList;
     }
-
 }

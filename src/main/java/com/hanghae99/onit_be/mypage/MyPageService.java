@@ -1,18 +1,19 @@
 package com.hanghae99.onit_be.mypage;
 
+import com.hanghae99.onit_be.entity.Weather;
 import com.hanghae99.onit_be.mypage.dto.RecordResDto;
 import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
-import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
+import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.mypage.dto.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.noti.event.NotificationEvent;
 import com.hanghae99.onit_be.plan.PlanRepository;
-import com.hanghae99.onit_be.plan.dto.PlanReqDto;
 import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.common.utils.S3Uploader;
+import com.hanghae99.onit_be.weather.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +46,7 @@ public class MyPageService {
     private final PlanRepository planRepository;
     private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final WeatherRepository weatherRepository;
 
     // 프로필 이미지 수정
     @Transactional
@@ -168,5 +171,54 @@ public class MyPageService {
         if (Objects.equals(participant.getUser().getId(), user.getId())) {
             participantRepository.deleteByUserAndPlan(user, plan);
         }
+    }
+
+    public PlanListResDto.PlanListsResDto getInvitationPlansList(User user, int pageNo) {
+
+        // 사용자 정보로 참여하는 일정 리스트 불러오기
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
+
+        // 공유 받은 일정 리스트 초기화
+        List<PlanResDto.MyPlanDto> invitedPlanList = new ArrayList<>();
+
+        for (Participant participant : participantList) {
+
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(participant.getPlan().getPlanDate())) {
+
+                Long planId = participant.getPlan().getId();
+                String planName = participant.getPlan().getPlanName();
+                LocalDateTime planDate = participant.getPlan().getPlanDate();
+                String locationName = participant.getPlan().getLocation().getName();
+                String url = participant.getPlan().getUrl();
+                String penalty = participant.getPlan().getPenalty();
+                String description = "Onit 서비스에서는 8일치 날씨예보만 제공 합니다.";
+                LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+                LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
+                // plan Date 가 오늘 날짜 기준 + 8 이라면
+                if (weatherDate.isBefore(today.plusDays(8))) {
+
+                    Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
+                    description = weather.getDescription();
+
+                }
+
+                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, description, penalty);
+
+                // 작성자가 사용자이면 myPlanListDto에 담아주기
+                if (!Objects.equals(participant.getPlan().getWriter(), user.getNickname())) {
+                    invitedPlanList.add(myPlanDto);
+                }
+            }
+        }
+
+        Pageable pageable = getPageable(pageNo);
+
+        int start = pageNo * 5;
+        // invitedPlanList
+        int end2 = Math.min((start + 5), invitedPlanList.size());
+
+        Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
+
+        return new PlanListResDto.PlanListsResDto(invitedPlanPage);
     }
 }

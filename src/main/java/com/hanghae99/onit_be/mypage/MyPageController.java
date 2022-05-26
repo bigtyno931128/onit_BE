@@ -5,6 +5,7 @@ import com.hanghae99.onit_be.mypage.dto.ProfileResDto;
 import com.hanghae99.onit_be.mypage.dto.RecordListResDto;
 import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
 import com.hanghae99.onit_be.common.ResultDto;
+import com.hanghae99.onit_be.plan.dto.PlanListResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,6 @@ public class MyPageController {
         return ResponseEntity.ok().body(new ResultDto<>("프로필 이미지 수정 성공!"));
     }
 
-
     // 링크 공유를 통한 약속 저장
     @PostMapping("/invitation/{randomUrl}")
     public ResponseEntity<ResultDto> savePlanInvitation(@PathVariable("randomUrl") String url,
@@ -33,7 +33,6 @@ public class MyPageController {
         mypageService.savePlanInvitation(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto<>("내 일정에 저장 성공!"));
     }
-
 
     //내가 참여한 plan detail.
     @GetMapping("/invitation/{randomUrl}")
@@ -57,5 +56,13 @@ public class MyPageController {
     public ResponseEntity<ResultDto> deletePlan (@PathVariable("randomUrl") String url, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         mypageService.deleteInvitationPlan(url, userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto("내가 참여한 일정 삭제 성공!"));
+    }
+
+    // 내가 참여한 일정 리스트
+    @LogExecutionTime
+    @GetMapping("/invitation/plans/{pageno}")
+    public PlanListResDto.PlanListsResDto getInvitationPlansList (@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                             @PathVariable int pageno) {
+        return mypageService.getInvitationPlansList(userDetails.getUser(),pageno-1);
     }
 }

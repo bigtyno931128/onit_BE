@@ -191,14 +191,16 @@ public class PlanService {
         int end3 = Math.min((start + 5), totalPlanList.size());
 
         Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
+
         Page<PlanResDto.MyPlanDto> invitedPlanPage = new PageImpl<>(invitedPlanList.subList(start, end2), pageable, invitedPlanList.size());
+
         Page<PlanResDto.MyPlanDto> totalPlanPage = new PageImpl<>(totalPlanList.subList(start, end3), pageable, totalPlanList.size());
 
         PlanListResDto.PlanListsResDto myPlanListsResDto = new PlanListResDto.PlanListsResDto(myPlanPage);
         PlanListResDto.PlanListsResDto invitedPlanListsResDto = new PlanListResDto.PlanListsResDto(invitedPlanPage);
         PlanListResDto.PlanListsResDto totalPlanListsResDto = new PlanListResDto.PlanListsResDto(totalPlanPage);
 
-        return new TwoPlanResDto( myPlanListsResDto, invitedPlanListsResDto, totalPlanListsResDto );
+        return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto, totalPlanListsResDto);
     }
 
     // 거리사 1키로 안쪽 일 때 도착신호 .
@@ -225,4 +227,78 @@ public class PlanService {
         }
     }
 
+    public PlanListResDto.PlanListsResDto getMyPlansList(User user, int pageno) {
+
+        List<Plan> planList = planRepository.findAllByUserOrderByPlanDateDesc(user);
+        // 내가 만든 일정 리스트 초기화
+        List<PlanResDto.MyPlanDto> myPlanList = new ArrayList<>();
+        for (Plan plan : planList) {
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(plan.getPlanDate())) {
+                Long planId = plan.getId();
+                String planName = plan.getPlanName();
+                LocalDateTime planDate = plan.getPlanDate();
+                String locationName = plan.getLocation().getName();
+                String url = plan.getUrl();
+                String penalty = plan.getPenalty();
+                String description = "Onit 서비스에서는 8일치 날씨예보만 제공 합니다.";
+                LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+                LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
+                // plan Date 가 오늘 날짜 기준 + 8 이라면
+                if (weatherDate.isBefore(today.plusDays(8))) {
+                    Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
+                    description = weather.getDescription();
+                }
+                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, description, penalty);
+                myPlanList.add(myPlanDto);
+            }
+        }
+        Pageable pageable = getPageable(pageno);
+
+        int start = pageno * 5;
+        // myPlanList
+        int end = Math.min((start + 5), myPlanList.size());
+
+        Page<PlanResDto.MyPlanDto> myPlanPage = new PageImpl<>(myPlanList.subList(start, end), pageable, myPlanList.size());
+        return new PlanListResDto.PlanListsResDto(myPlanPage);
+    }
+
+
+    public  PlanListResDto.PlanListsResDto getTotalPlansList(User user, int pageno) {
+        // 사용자 정보로 참여하는 일정 리스트 불러오기
+        List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new));
+
+        List<PlanResDto.MyPlanDto> totalPlanList = new ArrayList<>();
+
+        for (Participant participant : participantList) {
+
+            if (LocalDateTime.now(ZoneId.of("Asia/Seoul")).isBefore(participant.getPlan().getPlanDate())) {
+
+                Long planId = participant.getPlan().getId();
+                String planName = participant.getPlan().getPlanName();
+                LocalDateTime planDate = participant.getPlan().getPlanDate();
+                String locationName = participant.getPlan().getLocation().getName();
+                String url = participant.getPlan().getUrl();
+                String penalty = participant.getPlan().getPenalty();
+                String description = "Onit 서비스에서는 8일치 날씨예보만 제공 합니다.";
+                LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+                LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
+                // plan Date 가 오늘 날짜 기준 + 8 이라면
+                if (weatherDate.isBefore(today.plusDays(8))) {
+
+                    Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
+                    description = weather.getDescription();
+
+                }
+
+                PlanResDto.MyPlanDto myPlanDto = new PlanResDto.MyPlanDto(planId, planName, planDate, locationName, url, description, penalty);
+                totalPlanList.add(myPlanDto);
+            }
+        }
+
+        Pageable pageable = getPageable(pageno);
+        int start = pageno * 5;
+        int end3 = Math.min((start + 5), totalPlanList.size());
+        Page<PlanResDto.MyPlanDto> totalPlanPage = new PageImpl<>(totalPlanList.subList(start, end3), pageable, totalPlanList.size());
+        return new PlanListResDto.PlanListsResDto(totalPlanPage);
+    }
 }
