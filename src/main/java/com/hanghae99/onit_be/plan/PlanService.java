@@ -49,6 +49,11 @@ public class PlanService {
         // 지난 날짜로 등록 x
         checkPlanDate(planReqDto);
 
+        // 약속 제목 (20자 이상 x )
+        if (planReqDto.getPlanName().length() > 20) {
+            throw new IllegalArgumentException("약속 제목은 20 자 이상 등록 할 수 없습니당~ >,,< 😂");
+        }
+
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
         List<Plan> planList = new ArrayList<>();
         for (Participant participant : participantList) {
