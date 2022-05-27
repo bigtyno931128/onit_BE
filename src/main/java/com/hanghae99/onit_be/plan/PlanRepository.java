@@ -16,4 +16,6 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     void deleteByUrl(String url);
     List<Plan> findAllByUserOrderByPlanDateDesc(User user);
     List<Plan> findAllByPlanDateBetween(LocalDateTime tommorrow, LocalDateTime today);
+    //회원탈퇴용
+    void deleteAllByUser(User user);
 }

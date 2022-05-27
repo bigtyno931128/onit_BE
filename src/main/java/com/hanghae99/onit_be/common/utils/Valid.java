@@ -25,11 +25,14 @@ public class Valid {
     //회원가입 유효성 검사
     public static void validUser(SignupReqDto requestDto) throws IllegalArgumentException {
 
-        if(!requestDto.getUsername().matches("^[a-z0-9-_]{3,10}$")){
-            throw new IllegalArgumentException("아이디는 영어와 숫자로 3~9자리로 입력하셔야 합니다!");
+        if(!requestDto.getUsername().matches("^[a-zA-Z0-9-_]{3,10}$")){
+            throw new IllegalArgumentException("아이디는 영어 or 숫자로 3자리 이상 ~10자리 이하로 입력하셔야 합니다!");
         }
-        if(!requestDto.getPassword().matches("^[a-z0-9-_]{4,10}$")){
-            throw new IllegalArgumentException("비밀번호는 영어와 숫자로 4~12자리로 입력하셔야 합니다!");
+        if(!requestDto.getPassword().matches("^[a-zA-Z0-9-_]{4,10}$")){
+            throw new IllegalArgumentException("비밀번호는 영어 or 숫자로 4자리 이상 ~12자리 이하로 입력하셔야 합니다!");
+        }
+        if(!requestDto.getNickname().matches("^[가-힣a-zA-Z0-9-_]{2,8}$")){
+            throw new IllegalArgumentException("닉네임은 한글 or 영어 or 숫자로 2자리 이상 ~8자리 이하로 입력하셔야 합니다!");
         }
     }
 

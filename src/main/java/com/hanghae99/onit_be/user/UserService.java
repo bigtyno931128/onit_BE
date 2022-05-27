@@ -1,7 +1,10 @@
 package com.hanghae99.onit_be.user;
 
+import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.entity.UserRoleEnum;
+import com.hanghae99.onit_be.mypage.ParticipantRepository;
+import com.hanghae99.onit_be.noti.NotificationRepository;
 import com.hanghae99.onit_be.plan.PlanRepository;
 
 import com.hanghae99.onit_be.user.dto.IdCheckResDto;
@@ -9,24 +12,24 @@ import com.hanghae99.onit_be.user.dto.LoginReqDto;
 import com.hanghae99.onit_be.user.dto.SignupReqDto;
 import com.hanghae99.onit_be.common.utils.Valid;
 import com.hanghae99.onit_be.user.dto.UserInfoResDto;
+import com.hanghae99.onit_be.weather.WeatherRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,PlanRepository planRepository) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.planRepository = planRepository;
-    }
+    private final NotificationRepository notificationRepository;
+    private final ParticipantRepository participantRepository;
+    private final WeatherRepository weatherRepository;
 
     //회원가입 수정 .
     public void registerUser(SignupReqDto requestDto) {
@@ -36,6 +39,7 @@ public class UserService {
         if (userRepository.existsByUsername(requestDto.getUsername())){
             throw new IllegalArgumentException("이미 사용중인 아이디 입니다!");
         }
+
         if (userRepository.existsByNickname(requestDto.getNickname())){
             throw new IllegalArgumentException("이미 사용중인 닉네임 입니다!");
         }
@@ -76,7 +80,26 @@ public class UserService {
     // 회원 정보
     public UserInfoResDto getUserInfo(User user) {
         User userInfo = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
-        String profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+
+        String profile = "";
+        if(userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png")) {
+             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+        } else {
+             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+        }
         return new UserInfoResDto(user, profile);
+    }
+
+    //회원 탈퇴
+    @Transactional
+    public void deleteUser(User user) {
+        participantRepository.deleteAllByUser(user);
+        notificationRepository.deleteAllByUser(user);
+        List<Plan> planList = planRepository.findAllByUserOrderByPlanDateDesc(user);
+        for (Plan plan : planList) {
+            weatherRepository.deleteAllByPlanId(plan.getId());
+        }
+        planRepository.deleteAllByUser(user);
+        userRepository.deleteById(user.getId());
     }
 }

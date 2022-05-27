@@ -1,6 +1,5 @@
-package com.hanghae99.onit_be.weather;
+package com.hanghae99.onit_be.entity;
 
-import com.hanghae99.onit_be.entity.TimeStamped;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,13 +1,12 @@
 package com.hanghae99.onit_be.weather;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanghae99.onit_be.entity.Plan;
 
-import com.hanghae99.onit_be.mypage.ParticipantRepository;
+import com.hanghae99.onit_be.entity.Weather;
 import com.hanghae99.onit_be.plan.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -29,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -207,7 +204,7 @@ public class WeatherEventListener {
     //갱신 어떻게 할까 ,, ? 테스트  . --> (오류) 마지막 날짜  현재 날짜 + 8  에 해당하는 데이터 정보로 모든 정보가 업데이트 .
     // 매일 기상 테이블을 초기화 하면서 일정 리스트의 좌표들로 새롭게 갱신 .
     //@Scheduled(cron = "0 0/1 * * * *")
-    @Scheduled(cron = "0 0 06 * * ?")
+    @Scheduled(cron = "0 0 05 * * ?")
     public void updateAndDeleteWeatherData() {
 
         log.info("날씨 업데이트 스케쥴러 실행");
@@ -262,18 +259,18 @@ public class WeatherEventListener {
 
     // 매일 새벽 5시에 날씨 테이블을 조회 후 , 지난 날짜에 대한  정보들은 삭제 . ( test o  --> - 1  == 하루가 지나면 삭제 로직 )
     // 지나간 일정에 대한 날씨정보들도 삭제.
-    @Scheduled(cron = "0 0 05 * * ?")
-    public void deleteWeather() {
-        List<Weather> weatherList = weatherRepository.findAll();
-        for (Weather weather : weatherList) {
-
-            int comResult = compareDay(LocalDateTime.from(weather.getWeatherDate()), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-
-            if (comResult == -1 || LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(weather.getPlanDate())) {
-                weatherRepository.deleteById(weather.getId());
-            }
-        }
-    }
+//    @Scheduled(cron = "0 0 05 * * ?")
+//    public void deleteWeather() {
+//        List<Weather> weatherList = weatherRepository.findAll();
+//        for (Weather weather : weatherList) {
+//
+//            int comResult = compareDay(LocalDateTime.from(weather.getWeatherDate()), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+//
+//            if (comResult == -1 || LocalDateTime.now(ZoneId.of("Asia/Seoul")).isAfter(weather.getPlanDate())) {
+//                weatherRepository.deleteById(weather.getId());
+//            }
+//        }
+//    }
 
     // 사용자가 plan 을 업데이트 했을 때
     @EventListener

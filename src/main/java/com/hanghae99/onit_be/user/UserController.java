@@ -2,7 +2,8 @@ package com.hanghae99.onit_be.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hanghae99.onit_be.common.ResultDto;
-import com.hanghae99.onit_be.entity.User;
+
+import com.hanghae99.onit_be.plan.dto.PlanDetailResDto;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
 import com.hanghae99.onit_be.user.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +64,9 @@ public class UserController {
         return ResponseEntity.ok().body(new ResultDto<>("저장 완료"));
     }
 
+    @PostMapping("/user/Withdrawal")
+    public ResponseEntity<ResultDto> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteUser(userDetails.getUser());
+        return ResponseEntity.ok().body(new ResultDto<>("회원 탈퇴 완료"));
+    }
 }

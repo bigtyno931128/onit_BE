@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserInfoResDto {
     private Long userId;
-//    private String username;
+    //    private String username;
     private String nickname;
     private String profileImg;
 

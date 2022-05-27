@@ -24,7 +24,7 @@ public class PlanController {
         return ResponseEntity.ok().body(new ResultDto<>("일정 등록 성공!"));
     }
 
-    // 일정 목록 조회 (내가 만든 일정/초대된 일정)
+    // 일정 목록 조회 (전체 / 내가 만든 일정/초대된 일정)
     @LogExecutionTime
     @GetMapping("/member/plans/{pageno}")
     public TwoPlanResDto getPlansList (@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -61,10 +61,21 @@ public class PlanController {
     }
 
 
-    //날짜 계산
-    @PostMapping("/test/{planId}")
-    public void getDistance(@RequestBody TestDto testDto, @PathVariable Long planId) {
-        planService.getDistance(testDto,planId);
+    // 일정 목록 조회 (내가 만든 일정)
+    @LogExecutionTime
+    @GetMapping("/member/myplans/{pageno}")
+    public PlanListResDto.PlanListsResDto getMyPlansList (@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         @PathVariable int pageno) {
+        return planService.getMyPlansList(userDetails.getUser(),pageno-1);
     }
+
+    // 전체 일정 목록 조회 (내가 만든 일정 + 내가 참여한 일정)
+    @LogExecutionTime
+    @GetMapping("/member/totalplans/{pageno}")
+    public PlanListResDto.PlanListsResDto getTotalPlansList (@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         @PathVariable int pageno) {
+        return planService.getTotalPlansList(userDetails.getUser(),pageno-1);
+    }
+    
 }
 

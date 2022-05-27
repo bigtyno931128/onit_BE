@@ -20,7 +20,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column
@@ -48,8 +48,8 @@ public class User {
     @Column
     private String token;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Plan> planList = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Plan> planList = new ArrayList<>();
 
 
     public User(Builder builder) {

@@ -1,7 +1,6 @@
 package com.hanghae99.onit_be.entity;
 
 import com.hanghae99.onit_be.plan.dto.PlanReqDto;
-import com.hanghae99.onit_be.weather.Weather;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +20,7 @@ public class Plan extends TimeStamped {
     @Id
     @Column(name = "plan_id")
     private Long id;
+
 
     private String planName;
 
@@ -55,6 +55,7 @@ public class Plan extends TimeStamped {
         this.writer = user.getNickname();
         this.penalty = planReqDto.getPenalty();
         this.url = url;
+        this.user = user;
     }
 
     public Plan(Plan planNew) {
