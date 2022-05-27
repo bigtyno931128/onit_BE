@@ -50,8 +50,8 @@ public class PlanService {
         checkPlanDate(planReqDto);
 
         // 약속 제목 (20자 이상 x )
-        if (planReqDto.getPlanName().length() > 20) {
-            throw new IllegalArgumentException("약속 제목은 20 자 이상 등록 할 수 없습니당~ >,,< 😂");
+        if (planReqDto.getPlanName().length() > 10 ) {
+            throw new IllegalArgumentException("약속 제목은 10 자 이상 등록 할 수 없습니당~ >,,< 😂");
         }
 
         List<Participant> participantList = participantRepository.findAllByUserOrderByPlanDate(user);
@@ -162,8 +162,11 @@ public class PlanService {
                 String locationName = participant.getPlan().getLocation().getName();
                 String url = participant.getPlan().getUrl();
                 String penalty = participant.getPlan().getPenalty();
-                String description = "Onit 서비스에서는 8일치 날씨예보만 제공 합니다.";
+                
+                String description = "없음";
+
                 LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+                
                 LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
                 // plan Date 가 오늘 날짜 기준 + 8 이라면
                 if (weatherDate.isBefore(today.plusDays(8))) {
