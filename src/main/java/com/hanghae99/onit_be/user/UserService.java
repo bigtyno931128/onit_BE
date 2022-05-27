@@ -11,6 +11,7 @@ import com.hanghae99.onit_be.user.dto.IdCheckResDto;
 import com.hanghae99.onit_be.user.dto.LoginReqDto;
 import com.hanghae99.onit_be.user.dto.SignupReqDto;
 import com.hanghae99.onit_be.common.utils.Valid;
+import com.hanghae99.onit_be.user.dto.UserInfoResDto;
 import com.hanghae99.onit_be.weather.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,13 @@ public class UserService {
     // 회원 정보
     public UserInfoResDto getUserInfo(User user) {
         User userInfo = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
-        String profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+
+        String profile = "";
+        if(userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png")) {
+             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+        } else {
+             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+        }
         return new UserInfoResDto(user, profile);
     }
 
