@@ -18,10 +18,18 @@ public class ParticipantDto {
     public ParticipantDto (Participant participant ) {
         this.id = participant.getUser().getId();
         this.nickName = participant.getUser().getNickname();
-        if(!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png")) {
-            this.img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + participant.getUser().getProfileImg();
-        }else {
-            this.img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+
+        if (!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png")) {
+            img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png";
+        } else if (!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png")){
+            img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png";
+
+        } else if (!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png")){
+            img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png";
+        } else if (!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png")) {
+            img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png";
+        } else {
+            img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + participant.getUser().getProfileImg();
         }
     }
 }

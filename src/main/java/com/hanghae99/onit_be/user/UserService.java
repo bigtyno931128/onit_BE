@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -50,8 +52,20 @@ public class UserService {
 
         //사용자 ROLE 을 생성 하는 부분 추가 .
         UserRoleEnum role = UserRoleEnum.USER;
-        //사용자 profileImg 기본 이미지 부여
-        User user = new User(username, password,nickname,role,"https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profile_default.png");
+
+
+        List<String> imgList = new ArrayList<String>();
+        imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png");
+        imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png");
+        imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png");
+        imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png");
+        Collections.shuffle(imgList);
+
+        //사용자 profileImg 랜덤 이미지 부여
+        String profileImg = imgList.get(0);
+        System.out.println(profileImg);
+
+        User user = new User(username, password,nickname,role,profileImg);
         //return userRepository.save(user);
         userRepository.save(user);
     }
@@ -82,11 +96,19 @@ public class UserService {
         User userInfo = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
 
         String profile = "";
-        if(userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png")) {
-             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileImg_default.png";
+        if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png")) {
+             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png";
+        } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png")){
+            profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png";
+
+        } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png")){
+            profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png";
+        } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png")) {
+            profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png";
         } else {
-             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+            profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
         }
+
         return new UserInfoResDto(user, profile);
     }
 
