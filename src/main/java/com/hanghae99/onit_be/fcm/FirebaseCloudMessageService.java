@@ -67,18 +67,21 @@ public class FirebaseCloudMessageService {
 //    }
 
     // 구독 디바이스 푸쉬(topic)
-    private void sendSubscribeTopic(User user)
+    private void sendSubscribeTopic(List<String> registrationTokens, String planUrl)
             throws FirebaseMessagingException, IOException {
-        List<String> registrationTokens =
-                Collections.singletonList(user.getToken());
+//        List<String> registrationTokens =
+//                Collections.singletonList(user.getToken());
         log.info("9.유저 토큰 목록===== " + registrationTokens);
 
-        // 디바이스 토큰 구독시키기
-        TopicManagementResponse response = FirebaseMessaging.getInstance()
-                .subscribeToTopic(Collections.singletonList
-                        (user.getToken()), "alarm");
+        String fullPlanUrl = "https://imonit.co.kr/details/" + planUrl;
+        log.info("10.플랜 링크 확인==== " + fullPlanUrl);
 
-        System.out.println(response.getSuccessCount() + "10.토큰들 구독 성공");
+        // 디바이스 토큰 구독하기
+        TopicManagementResponse response = FirebaseMessaging.getInstance()
+                .subscribeToTopic(registrationTokens, "alarm");
+        log.info("11.유저 토큰들 구독 확인===== " + registrationTokens);
+
+        System.out.println(response.getSuccessCount() + " // 10.토큰들 구독 성공");
 
         // 구독한 주제에 메세지 요청
         Message message = Message.builder()
@@ -87,24 +90,33 @@ public class FirebaseCloudMessageService {
                         .setBody("약속시간 1시간 전입니다. 친구들의 위치를 확인해보세요!")
                         .build())
                 .setTopic("alarm")
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setFcmOptions(WebpushFcmOptions.withLink(fullPlanUrl))
+                        .build())
                 .build();
+
 
         String response2 = FirebaseMessaging.getInstance().send(message);
-        log.debug("11.구독 메세지 전송===== " + response2);
+        log.info("12.구독 메세지 전송===== " + response2);
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(String.valueOf(message), MediaType.get("application/json; charset=utf-8"));
+        // 메세지 요청 후 구독 해제
+        TopicManagementResponse response3 = FirebaseMessaging.getInstance().unsubscribeFromTopic(
+                registrationTokens, "alarm");
+        System.out.println(response3.getSuccessCount() + " // 13.토큰들 구독 해제");
 
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .addHeader("Authorization", "Bearer " + getAccessToken())
-                .addHeader("Content-Type", "application/json; UTF-8")
-                .build();
-        log.info("13.헤더 토큰 확인======= " + getAccessToken());
-        Response responseFcm = client.newCall(request).execute();
-
-        log.info("14.fcm 서버 응답===== " + Objects.requireNonNull(responseFcm.body()).string());
+//        OkHttpClient client = new OkHttpClient();
+//        RequestBody requestBody = RequestBody.create(String.valueOf(message), MediaType.get("application/json; charset=utf-8"));
+//
+//        Request request = new Request.Builder()
+//                .url(API_URL)
+//                .post(requestBody)
+//                .addHeader("Authorization", "Bearer " + getAccessToken())
+//                .addHeader("Content-Type", "application/json; UTF-8")
+//                .build();
+//        log.info("13.헤더 토큰 확인======= " + getAccessToken());
+//        Response responseFcm = client.newCall(request).execute();
+//
+//        log.info("14.fcm 서버 응답===== " + Objects.requireNonNull(responseFcm.body()).string());
     }
 
 
@@ -134,21 +146,28 @@ public class FirebaseCloudMessageService {
             LocalDateTime planDate = plan.getPlanDate();
             LocalDateTime alarmHour = LocalDateTime.now().plusHours(1);
             int alarm = compareHour(alarmHour, planDate);
-            log.info("7.약속시간 확인==== " + plan.getPlanDate());
-            log.info("7-1.약속시간/알람시간/일치여부==== " + planDate + " //// " + alarmHour + " //// " + alarm);
-            log.info(String.valueOf(alarmHour.truncatedTo(ChronoUnit.MINUTES)));
+//            log.info("7.약속시간 확인==== " + plan.getPlanDate());
+//            log.info("7-1.약속시간/알람시간/일치여부==== " + planDate + " //// " + alarmHour + " //// " + alarm);
+//            log.info(String.valueOf(alarmHour.truncatedTo(ChronoUnit.MINUTES)));
 
+//            List<User> alarmUserList = new ArrayList<>();
+            List<String> registrationTokens = new ArrayList<>();
             // 알림 시간 == 약속 시간일 때 사용자들에게 알림 푸쉬
             if (alarm == 0) {
-                log.info("7-2.알림시간==== " +alarm);
+//                log.info("7-2.알림시간==== " + alarm);
 //                Long planId = plan.getId();
-                List<Participant> participantList = participantRepository.findAllById(plan.getId());
-                log.info("7-3.참가자 수==== " + participantList.size());
+//                log.info("플랜==== " + plan.getId());
+//                log.info("플랜의 유저==== " + plan.getUser().getId());
+                List<Participant> participantList = participantRepository.findAllByPlan(plan);
+//                log.info("7-3.참가자 수==== " + participantList.size());
                 for (Participant participant : participantList) {
-                    log.info("8.참가자====" + participant.getUser().getNickname() + " //// " + participant.getUser().getId());
+//                    log.info("8.참가자====" + participant.getUser().getNickname() + " //// " + participant.getUser().getId());
                     User user = participant.getUser();
-                    sendSubscribeTopic(user);
+//                    sendSubscribeTopic(user);
+                    registrationTokens.add(user.getToken());
+                    sendSubscribeTopic(registrationTokens,plan.getUrl());
                 }
+//                sendSubscribeTopic(registrationTokens,plan.getUrl());
             }
         }
     }
@@ -182,44 +201,44 @@ public class FirebaseCloudMessageService {
 //    }
 
     // fcm 메세지 작성
-    private String makeMessage( String topic, String title, String body, String url) throws JsonProcessingException {
-        FcmMessage fcmMessage = FcmMessage.builder()
-                .message(FcmMessage.Message.builder()
-//                        .registration_ids(targetTokens)
-//                        .token(targetTokens)
-                        .topic(topic)
-//                        .allTolkens(registerationTokens)
-                        .notification(FcmMessage.Notification.builder()
-                                .title(title)
-                                .body(body)
-                                .image(null)
-                                .build()
-                        )
-                        .data(FcmMessage.FcmData.builder()
-                                .url(url)
-                                .build()
-                        )
-                        .build()
-                )
-                .validateOnly(false)
-                .build();
-
-        log.info(objectMapper.writeValueAsString(fcmMessage));
-        return objectMapper.writeValueAsString(fcmMessage);
-    }
+//    private String makeMessage( String topic, String title, String body, String url) throws JsonProcessingException {
+//        FcmMessage fcmMessage = FcmMessage.builder()
+//                .message(FcmMessage.Message.builder()
+////                        .registration_ids(targetTokens)
+////                        .token(targetTokens)
+//                        .topic(topic)
+////                        .allTolkens(registerationTokens)
+//                        .notification(FcmMessage.Notification.builder()
+//                                .title(title)
+//                                .body(body)
+//                                .image(null)
+//                                .build()
+//                        )
+//                        .data(FcmMessage.FcmData.builder()
+//                                .url(url)
+//                                .build()
+//                        )
+//                        .build()
+//                )
+//                .validateOnly(false)
+//                .build();
+//
+//        log.info(objectMapper.writeValueAsString(fcmMessage));
+//        return objectMapper.writeValueAsString(fcmMessage);
+//    }
 
 
     // AccessToken 발급 받기
-    private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/onit-a1529-firebase-adminsdk-dw4dd-94859bec82.json";
-
-        GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath)
-                .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
-
-        googleCredential.refreshIfExpired();
-        log.info("12.FCM access token 발급 성공");
-        return googleCredential.getAccessToken().getTokenValue();
-    }
+//    private String getAccessToken() throws IOException {
+//        String firebaseConfigPath = "firebase/onit-a1529-firebase-adminsdk-dw4dd-94859bec82.json";
+//
+//        GoogleCredentials googleCredential = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath)
+//                .getInputStream()).createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
+//
+//        googleCredential.refreshIfExpired();
+//        log.info("12.FCM access token 발급 성공");
+//        return googleCredential.getAccessToken().getTokenValue();
+//    }
 
 
 }

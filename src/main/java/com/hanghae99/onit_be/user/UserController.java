@@ -34,10 +34,17 @@ public class UserController {
         return ResponseEntity.ok().body(new ResultDto<>("회원가입 성공!"));
     }
 
-    //아이디 중복 검사
+    // 아이디 중복 검사
     @PostMapping("/api/idCheck")
     public IdCheckResDto vaildId(@RequestBody LoginReqDto requestDto) {
         return userService.vaildId(requestDto);
+    }
+
+
+    // 회원 정보
+    @GetMapping("/member/info")
+    public UserInfoResDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.getUserInfo(userDetails.getUser());
     }
 
 

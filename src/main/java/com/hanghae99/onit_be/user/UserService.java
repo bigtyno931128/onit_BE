@@ -55,7 +55,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    //아이디 중복검사
+    // 아이디 중복검사
     public IdCheckResDto vaildId(LoginReqDto requestDto) {
         String username = requestDto.getUsername();
         IdCheckResDto idCheckDto = new IdCheckResDto();
@@ -74,6 +74,13 @@ public class UserService {
             user.setNoticeAllowedFalse();
         }
         user.updateToken(token);
+    }
+
+    // 회원 정보
+    public UserInfoResDto getUserInfo(User user) {
+        User userInfo = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
+        String profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
+        return new UserInfoResDto(user, profile);
     }
 
     //회원 탈퇴
