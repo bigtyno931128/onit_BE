@@ -60,11 +60,6 @@ public class PlanController {
         return ResponseEntity.ok().body(new ResultDto("일정 삭제 성공!"));
     }
 
-    //날짜 계산
-    @PostMapping("/test/{planId}")
-    public void getDistance(@RequestBody TestDto testDto, @PathVariable Long planId) {
-        planService.getDistance(testDto,planId);
-    }
 
     // 일정 목록 조회 (내가 만든 일정)
     @LogExecutionTime

@@ -208,29 +208,6 @@ public class PlanService {
         return new TwoPlanResDto(myPlanListsResDto, invitedPlanListsResDto, totalPlanListsResDto);
     }
 
-    // 거리사 1키로 안쪽 일 때 도착신호 .
-
-    public void getDistance(TestDto testDto, Long planId) {
-
-        Plan plan = planRepository.findById(planId).orElseThrow(IllegalArgumentException::new);
-
-        double a = plan.getLocation().getLng();
-        double b = plan.getLocation().getLat();
-        double c = testDto.getX();
-        double d = testDto.getY();
-
-        double distance = distance(a, b, c, d, "kilometer");
-        int point = (int) Math.ceil(distance);
-        log.info("목적지 까지의 거리 =={}", distance);
-
-
-        String distnace = "가는중";
-        log.info("거리=={}", point);
-        if (1 >= point) {
-            distnace = "도착";
-            log.info(distnace);
-        }
-    }
 
     public PlanListResDto.PlanListsResDto getMyPlansList(User user, int pageno) {
 
