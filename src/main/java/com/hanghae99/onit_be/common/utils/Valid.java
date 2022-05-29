@@ -15,13 +15,6 @@ public class Valid {
         this.userRepository = userRepository;
     }
 
-    public static boolean validWriter(boolean plan, String s) {
-        if(plan){
-            throw new IllegalArgumentException(s);
-        }
-        return false;
-    }
-    
     //회원가입 유효성 검사
     public static void validUser(SignupReqDto requestDto) throws IllegalArgumentException {
 

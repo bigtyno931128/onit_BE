@@ -64,7 +64,7 @@ public class UserController {
         return ResponseEntity.ok().body(new ResultDto<>("저장 완료"));
     }
 
-    @PostMapping("/user/Withdrawal")
+    @DeleteMapping("/user/Withdrawal")
     public ResponseEntity<ResultDto> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteUser(userDetails.getUser());
         return ResponseEntity.ok().body(new ResultDto<>("회원 탈퇴 완료"));

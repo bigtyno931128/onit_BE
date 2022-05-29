@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class KakaoUserInfoResDto {
+
     private Long id;
     private String nickname;
     private String profileImg;

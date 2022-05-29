@@ -76,6 +76,5 @@ public class PlanController {
                                          @PathVariable int pageno) {
         return planService.getTotalPlansList(userDetails.getUser(),pageno-1);
     }
-    
 }
 

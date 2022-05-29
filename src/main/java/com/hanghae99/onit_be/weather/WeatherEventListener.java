@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -44,7 +46,7 @@ public class WeatherEventListener {
     private final PlanRepository planRepository;
 
     //일정을 처음 등록할때 위도 경도로 날씨 api 호출 -> 기상 예측 정보를 데이터로 받아옴. (8 일치 )
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleWeatherCreateEvent(WeatherCreateEvent weatherCreateEvent) {
 
         Plan plan = weatherCreateEvent.getPlan();
@@ -273,7 +275,7 @@ public class WeatherEventListener {
 //    }
 
     // 사용자가 plan 을 업데이트 했을 때
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleWeatherUpdateEvent(WeatherUpdateEvent weatherUpdateEvent) {
         Plan plan = weatherUpdateEvent.getPlan();
 

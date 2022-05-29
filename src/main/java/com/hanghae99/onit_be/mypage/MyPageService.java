@@ -2,13 +2,11 @@ package com.hanghae99.onit_be.mypage;
 
 import com.hanghae99.onit_be.entity.Weather;
 import com.hanghae99.onit_be.mypage.dto.RecordResDto;
-import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
+import com.hanghae99.onit_be.noti.event.ParticipateEvent;
 import com.hanghae99.onit_be.plan.dto.*;
-import com.hanghae99.onit_be.mypage.dto.ProfileResDto;
 import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
-import com.hanghae99.onit_be.noti.event.NotificationEvent;
 import com.hanghae99.onit_be.plan.PlanRepository;
 import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.security.UserDetailsImpl;
@@ -33,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static com.hanghae99.onit_be.common.utils.Date.*;
 import static com.hanghae99.onit_be.common.utils.Page.getPageable;
 
 @Slf4j
@@ -89,10 +86,12 @@ public class MyPageService {
     @Transactional
     public void savePlanInvitation(String url, User user) {
 
-
         User user1 = userRepository.findById(user.getId()).orElseThrow(IllegalArgumentException::new);
 
         Plan planNew = planRepository.findPlanByUrl(url).orElseThrow(IllegalArgumentException::new);
+
+        // 알림
+        eventPublisher.publishEvent(new ParticipateEvent(planNew,"일정에 참여하였습니다",user));
 
         List<Participant> participantList = participantRepository.findAllByPlan(planNew);
         if (!participantList.isEmpty()) {
@@ -105,10 +104,10 @@ public class MyPageService {
             }
         }
         Participant participant = new Participant(planNew, user1);
+
+
         participantRepository.save(participant);
 
-        // 알림
-        //eventPublisher.publishEvent(new NotificationEvent(participant));
     }
 
     // 내가 참여한 일정 상세 가져오는 메서드 ( 현재 사용 x)

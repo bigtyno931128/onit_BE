@@ -21,7 +21,5 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     // 참가자 list
     List<Participant> findAllByPlan(Plan plan);
 
-    List<Participant> findAllById(Long planId);
-
     void deleteAllByUser(User user);
 }

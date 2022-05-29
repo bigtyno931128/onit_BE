@@ -53,7 +53,6 @@ public class UserService {
         //사용자 ROLE 을 생성 하는 부분 추가 .
         UserRoleEnum role = UserRoleEnum.USER;
 
-
         List<String> imgList = new ArrayList<String>();
         imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png");
         imgList.add("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png");
@@ -100,15 +99,16 @@ public class UserService {
              profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM1.png";
         } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png")){
             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileM2.png";
-
         } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png")){
             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png";
         } else if (userInfo.getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png")) {
             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png";
-        } else {
+        } else if (userInfo.getProfileImg().contains("http://k.kakaocdn.net")) {
+            profile = userInfo.getProfileImg();
+        }
+        else {
             profile = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + userInfo.getProfileImg();
         }
-
         return new UserInfoResDto(user, profile);
     }
 

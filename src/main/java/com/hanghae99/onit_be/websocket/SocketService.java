@@ -30,6 +30,7 @@ public class SocketService {
     public void setDistance(MapDto mapDto) {
 
         Plan plan = planRepository.findById(mapDto.getPlanId()).orElseThrow(IllegalArgumentException::new);
+
         mapDto.setDestLat(String.valueOf(plan.getLocation().getLat()));
         mapDto.setDestLng(String.valueOf(plan.getLocation().getLng()));
         //mapDto.setProfileImg(plan.getUser().getProfileImg());
@@ -50,7 +51,6 @@ public class SocketService {
             log.info(distnace);
         }
         mapDto.setDistance(distnace);
-
 
     }
 }

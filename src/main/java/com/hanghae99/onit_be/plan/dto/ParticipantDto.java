@@ -28,7 +28,10 @@ public class ParticipantDto {
             img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW1.png";
         } else if (!participant.getUser().getProfileImg().equals("https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png")) {
             img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/profileW2.png";
-        } else {
+        } else if (participant.getUser().getProfileImg().contains("http://k.kakaocdn.net")) {
+            img = participant.getUser().getProfileImg();
+        }
+        else {
             img = "https://onit-bucket.s3.ap-northeast-2.amazonaws.com/" + participant.getUser().getProfileImg();
         }
     }

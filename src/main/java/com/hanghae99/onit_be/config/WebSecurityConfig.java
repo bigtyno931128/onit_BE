@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers("/h2-console/**","/v3/api-docs","/favicon.ico",
-                        "/swagger-resources/**", "/swagger-ui/", "/webjars/**", "/swagger/**","/swagger-ui/**");
+                        "/swagger-resources/**", "/swagger-ui/", "/webjars/**", "/swagger/**","/swagger-ui/**","/notice");
 
     }
 

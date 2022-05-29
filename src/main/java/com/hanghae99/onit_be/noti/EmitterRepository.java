@@ -19,4 +19,5 @@ public interface EmitterRepository {
     void deleteAllEmitterStartWithId(String userId);
     //해당 회원과 관련된 모든 이벤트를 지운다.
     void deleteAllEventCacheStartWithId(String userId);
+
 }

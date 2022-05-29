@@ -4,7 +4,9 @@ import com.hanghae99.onit_be.entity.Participant;
 import com.hanghae99.onit_be.entity.Plan;
 import com.hanghae99.onit_be.entity.User;
 import com.hanghae99.onit_be.mypage.ParticipantRepository;
+import com.hanghae99.onit_be.noti.event.LeaveEvent;
 import com.hanghae99.onit_be.noti.event.PlanDeleteEvent;
+import com.hanghae99.onit_be.noti.event.PlanUpdateEvent;
 import com.hanghae99.onit_be.plan.dto.*;
 import com.hanghae99.onit_be.user.UserRepository;
 import com.hanghae99.onit_be.entity.Weather;
@@ -42,6 +44,7 @@ public class PlanService {
     private final ApplicationEventPublisher eventPublisher;
     private final WeatherRepository weatherRepository;
 
+
     // 일정 생성
     @Transactional
     public void createPlan(PlanReqDto planReqDto, User user) {
@@ -78,6 +81,7 @@ public class PlanService {
 
         Participant participant = new Participant(plan, user);
         participantRepository.save(participant);
+
         eventPublisher.publishEvent(new WeatherCreateEvent(plan));
     }
 
@@ -112,13 +116,14 @@ public class PlanService {
     public void editPlan(String url, PlanReqDto planRequestDto, User user) {
 
         Plan plan = planRepository.findByUrl(url);
-
+        eventPublisher.publishEvent(new PlanUpdateEvent(plan, "일정을 수정 했습니다.", user));
         if (!Objects.equals(plan.getWriter(), user.getNickname())) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
         // 서울 현재시간 기준 , 예전이면 오류 발생 , 동일하게도 수정 불가 .
         checkPlanDate(planRequestDto);
         plan.update(planRequestDto, user);
+        // send (참가자들 한테 만 )
         eventPublisher.publishEvent(new WeatherUpdateEvent(plan));
     }
 
@@ -126,16 +131,19 @@ public class PlanService {
     @Transactional
     public void deletePlan(String url, User user) {
         Plan plan = planRepository.findByUrl(url);
+        
         // 작성자만 삭제 가능
         if (Objects.equals(plan.getWriter(), user.getNickname())) {
+            eventPublisher.publishEvent(new PlanDeleteEvent(plan, "일정을 삭제 했습니다.", user));
             participantRepository.deleteByUserAndPlan(user, plan);
             weatherRepository.deleteAllByPlanId(plan.getId());
             planRepository.deleteByUrl(url);
-            eventPublisher.publishEvent(new PlanDeleteEvent(plan, "일정을 삭제 했습니다.", user));
+
 
         } else {
+            eventPublisher.publishEvent(new LeaveEvent(plan, "일정을 취소 했습니다.", user));
             participantRepository.deleteByUserAndPlan(user, plan);
-            //throw new IllegalArgumentException("작성자만 삭제 가능합니다.");
+
         }
     }
 
