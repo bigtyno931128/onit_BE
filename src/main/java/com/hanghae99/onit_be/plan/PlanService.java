@@ -174,10 +174,12 @@ public class PlanService {
                 String description = "없음";
 
                 LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
-                
+
                 LocalDate weatherDate = LocalDate.from(planDate.truncatedTo(ChronoUnit.DAYS));
+
+
                 // plan Date 가 오늘 날짜 기준 + 8 이라면
-                if (weatherDate.isBefore(today.plusDays(8))) {
+                if (weatherDate.isBefore(today.plusDays(7))) {
 
                     Weather weather = weatherRepository.findByWeatherDateAndPlanId(weatherDate, planId);
                     description = weather.getDescription();

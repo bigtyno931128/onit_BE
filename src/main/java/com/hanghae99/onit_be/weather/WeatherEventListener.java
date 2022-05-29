@@ -205,7 +205,7 @@ public class WeatherEventListener {
 
     //갱신 어떻게 할까 ,, ? 테스트  . --> (오류) 마지막 날짜  현재 날짜 + 8  에 해당하는 데이터 정보로 모든 정보가 업데이트 .
     // 매일 기상 테이블을 초기화 하면서 일정 리스트의 좌표들로 새롭게 갱신 .
-    //@Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0/1 * * * *")
     @Scheduled(cron = "0 0 05 * * ?")
     public void updateAndDeleteWeatherData() {
 

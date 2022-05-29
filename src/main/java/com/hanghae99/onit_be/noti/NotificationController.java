@@ -27,7 +27,7 @@ public class NotificationController {
 
 //    private static final long SSE_SESSION_TIMEOUT = 30 * 60 * 1000L;
 //    private Set<SseEmitter> emitterSet = new CopyOnWriteArraySet<>();
-//    private final NotificationService notificationService;
+    private final NotificationService notificationService;
 //
 //
 //    @GetMapping(value = "/notice", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -46,10 +46,10 @@ public class NotificationController {
 //    }
 //
 //
-//    @GetMapping(value = "/notices")
-//    public List<NoticeDto> getNoticeList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return notificationService.getNoticeList(userDetails.getUser());
-//    }
+    @GetMapping(value = "/notices")
+    public List<NoticeDto> getNoticeList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return notificationService.getNoticeList(userDetails.getUser());
+    }
 
 
     public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();

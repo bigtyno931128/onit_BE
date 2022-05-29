@@ -85,12 +85,13 @@ public class NotificationEventListener {
     }
 
     private void sendEvent(Long userId, Notification notification1) {
-        log.info("1번 ", notification1.getNotificationType());
+        log.info("send = 1번 ", notification1.getNotificationType());
         if (sseEmitters.containsKey(userId)) {
             SseEmitter sseEmitter = sseEmitters.get(userId);
-            log.info("2번", sseEmitter);
+            log.info("send = 2번", sseEmitter);
             try {
-                sseEmitter.send(SseEmitter.event().name("addNotice").data(notification1), MediaType.APPLICATION_JSON);
+                sseEmitter.send(SseEmitter.event().name("addNotice").data(notification1));
+                log.info("send = 3번", sseEmitter);
             } catch (Exception e) {
                 sseEmitters.remove(userId);
             }
