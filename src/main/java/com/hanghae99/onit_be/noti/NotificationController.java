@@ -65,15 +65,17 @@ public class NotificationController {
         // 현재 클라이언트를 위한 SseEmitter 생성
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
+        log.info("연결 1번 ",sseEmitter);
         try {
             // 연결!!
-            sseEmitter.send(SseEmitter.event().name("connect"), MediaType.APPLICATION_JSON);
+            sseEmitter.send(SseEmitter.event().name("connect"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         // user의 pk값을 key값으로 해서 SseEmitter를 저장
         sseEmitters.put(userId, sseEmitter);
+        log.info("연결 2번 ",sseEmitters.get(1));
 
         sseEmitter.onCompletion(() -> sseEmitters.remove(userId));
         sseEmitter.onTimeout(() -> sseEmitters.remove(userId));

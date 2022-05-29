@@ -36,93 +36,58 @@ public class NotificationEventListener {
     private final EmitterRepository emitterRepository;
 
 
-
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleParticipateEvent(ParticipateEvent event) {
         log.info(event.toString());
         log.info("111111111111111번");
         Long userId = event.getUser().getId();
-        Optional<Notification> notification = notificationRepository.
-                findByUserAndPlanAndAndNotificationType(event.getUser(),event.getPlan()
-                        ,NotificationType.PARTICIPATE);
 
-        if(!notification.isPresent()) {
-            Notification notification1 = createNotification(event.getPlan(),event.getUser(), event.getMessage(), NotificationType.PARTICIPATE);
-            sendEvent(userId,notification1);
-        }
+        Notification notification1 = createNotification(event.getPlan(), event.getUser(), event.getMessage(), NotificationType.PARTICIPATE);
+        sendEvent(userId, notification1);
 
     }
 
 
-
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handlePlanUpdateEvent(@NotNull PlanUpdateEvent planUpdateEvent) {
-        Plan plan = participantRepository.findByUserAndPlan(planUpdateEvent.getUser(),planUpdateEvent.getPlan()).getPlan();
+        Plan plan = participantRepository.findByUserAndPlan(planUpdateEvent.getUser(), planUpdateEvent.getPlan()).getPlan();
         log.info("plan======================", planUpdateEvent.getPlan().getPlanName());
         Long userId = planUpdateEvent.getUser().getId();
-        Optional<Notification> notification = notificationRepository.
-                findByUserAndPlanAndAndNotificationType(planUpdateEvent.getUser(),planUpdateEvent.getPlan()
-        ,NotificationType.UPDATE);
 
-        if(!notification.isPresent()) {
-            Notification notification1 = createNotification(plan, planUpdateEvent.getUser(), planUpdateEvent.getMessage(), NotificationType.UPDATE);
-            sendEvent(userId,notification1);
-        }
+        Notification notification1 = createNotification(plan, planUpdateEvent.getUser(), planUpdateEvent.getMessage(), NotificationType.UPDATE);
+        sendEvent(userId, notification1);
 
     }
 
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handlePlanDeleteEvent(@NotNull PlanDeleteEvent planDeleteEvent) {
-        Plan plan = participantRepository.findByUserAndPlan(planDeleteEvent.getUser(),planDeleteEvent.getPlan()).getPlan();
+        Plan plan = participantRepository.findByUserAndPlan(planDeleteEvent.getUser(), planDeleteEvent.getPlan()).getPlan();
         Long userId = planDeleteEvent.getUser().getId();
-        Optional<Notification> notification = notificationRepository.
-                findByUserAndPlanAndAndNotificationType(planDeleteEvent.getUser(),planDeleteEvent.getPlan()
-                        ,NotificationType.DELETE);
+        Notification notification1 = createNotification(plan, planDeleteEvent.getUser(), planDeleteEvent.getMessage(), NotificationType.DELETE);
+        sendEvent(userId, notification1);
 
-        if(!notification.isPresent()) {
-            Notification notification1 = createNotification(plan, planDeleteEvent.getUser(), planDeleteEvent.getMessage(), NotificationType.DELETE);
-            sendEvent(userId,notification1);
-        }
-
-        // send ( 작성자 )
-        //sendToClient(emitter, key, NotificationResponse.from(notification));
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handleLeaveEvent(@NotNull LeaveEvent leaveEvent) {
-        Plan plan = participantRepository.findByUserAndPlan(leaveEvent.getUser(),leaveEvent.getPlan()).getPlan();
+        Plan plan = participantRepository.findByUserAndPlan(leaveEvent.getUser(), leaveEvent.getPlan()).getPlan();
         Long userId = leaveEvent.getUser().getId();
 
-        Optional<Notification> notification = notificationRepository.
-                findByUserAndPlanAndAndNotificationType(leaveEvent.getUser(),leaveEvent.getPlan()
-                        ,NotificationType.LEAVE);
-
-        if(!notification.isPresent()) {
-            Notification notification1 = createNotification(plan, leaveEvent.getUser(), leaveEvent.getMessage(), NotificationType.LEAVE);
-            sendEvent(userId,notification1);
-            log.info("3번",notification1.getNotificationType());
-        } else {
-            Notification notification1 = updateNotification(plan, leaveEvent.getUser(), leaveEvent.getMessage(), NotificationType.LEAVE);
-            log.info("제발",notification1.toString());
-            log.info("4번",notification.get().getNotificationType());
-            log.info("5번",notification.get().getMessage());
-
-        }
+        Notification notification1 = createNotification(plan, leaveEvent.getUser(), leaveEvent.getMessage(), NotificationType.LEAVE);
+        sendEvent(userId, notification1);
     }
 
-    private Notification updateNotification(Plan plan, User user, String message,  NotificationType notificationType) {
+    private Notification updateNotification(Plan plan, User user, String message, NotificationType notificationType) {
         Notification notification = new Notification();
-        notification.update(plan,user,message,notificationType);
+        notification.update(plan, user, message, notificationType);
         return notification;
     }
 
     private void sendEvent(Long userId, Notification notification1) {
         log.info("1번 ", notification1.getNotificationType());
         if (sseEmitters.containsKey(userId)) {
-
             SseEmitter sseEmitter = sseEmitters.get(userId);
-
             log.info("2번", sseEmitter);
             try {
                 sseEmitter.send(SseEmitter.event().name("addNotice").data(notification1), MediaType.APPLICATION_JSON);
@@ -131,7 +96,6 @@ public class NotificationEventListener {
             }
         }
     }
-
 
 
     private Notification createNotification(Plan plan, User user, String message, NotificationType notificationType) {
