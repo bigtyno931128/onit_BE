@@ -121,7 +121,7 @@ public class FirebaseCloudMessageService {
 
 
     @Transactional
-    @Scheduled(cron = "0 0/2 * * * *")
+    //@Scheduled(cron = "0 0/2 * * * *")
     public void noticeScheduler() throws InterruptedException, FirebaseMessagingException, IOException {
         log.info(new Date() + "1.스케쥴러 실행");
 

@@ -37,4 +37,11 @@ public class Notification extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
 
+    public void update(Plan plan, User user, String message, NotificationType notificationType) {
+        this.plan = plan;
+        this.user = user;
+        this.message = message;
+        this.notificationType = notificationType;
+        this.isRead = false;
+    }
 }

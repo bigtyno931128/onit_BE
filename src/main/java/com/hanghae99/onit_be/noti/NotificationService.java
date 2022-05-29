@@ -45,34 +45,33 @@ public class NotificationService {
 
 
 
-    public SseEmitter subscribe(Long userId) {
-        // 1
-        String id = userId + "_" + System.currentTimeMillis();
-
-        // 2
-        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
-
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
-
-        // 3
-        // 503 에러를 방지하기 위한 더미 이벤트 전송
-        sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
-        Map<String, Object> events = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(userId));
-        // 4
-        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
-//        if (!lastEventId.isEmpty()) {
+//    public SseEmitter subscribe(Long userId) {
+//        // 1
+//        String id = userId + "_" + System.currentTimeMillis();
 //
+//        // 2
+//        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 //
-//            events.entrySet().stream()
-//                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-//                    .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
-//        }
+//        emitter.onCompletion(() -> emitterRepository.deleteById(id));
+//        emitter.onTimeout(() -> emitterRepository.deleteById(id));
+//
+//        // 3
+//        // 503 에러를 방지하기 위한 더미 이벤트 전송
+//        sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+//        Map<String, Object> events = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(userId));
+//        // 4
+//        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
+////        if (!lastEventId.isEmpty()) {
+////
+////
+////            events.entrySet().stream()
+////                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+////                    .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+////        }
+//
+//        return emitter;
+//    }
 
-        return emitter;
-    }
-
-    // 3
     public void sendToClient(SseEmitter emitter, String id, Object data) {
         try {
             emitter.send(SseEmitter.event()
